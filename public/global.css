@@ -1,0 +1,31 @@
+html {
+	box-sizing: border-box;
+  }
+  *, *::before, *::after {
+	box-sizing: inherit;
+}
+
+body {
+	font-family: 'MabryPro';
+	width: 200vmax;
+	height: 200vmax;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #151515;
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar {
+	display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .example {
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none;  /* Firefox */
+  }
+
+  @font-face{
+	font-family: 'MabryPro';
+	src: url('/fonts/MabryPro-Regular.woff2') format('woff');
+  }

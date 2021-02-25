@@ -1,0 +1,268 @@
+<script>
+    import { onDestroy } from "svelte";
+    import windowHandler from "../UX/window-state";
+
+    export let gridColumnStart;
+    export let gridColumnEnd;
+    export let gridRowStart;
+    export let gridRowEnd;
+    export let backgroundColor = "";
+    export let title;
+    export let enlargeable = true;
+    export let id;
+    export let isInForeground = true;
+    export let intersections = [];
+    export let intersectingSide = null;
+    let touched = false;
+    let zIndex = 0;
+    let thisWindowObject;
+
+    windowHandler.registerWindow({
+        id: id,
+        zIndex: zIndex,
+        isInForeground: isInForeground,
+        intersections: intersections,
+        touched: touched,
+    });
+
+    const unsubscribe = windowHandler.subscribe((windows) => {
+        thisWindowObject = windows.find((wdws) => wdws.id === id);
+        isInForeground = thisWindowObject.isInForeground;
+        zIndex = thisWindowObject.zIndex;
+        touched = thisWindowObject.touched;
+    });
+
+    function handleWindowClick() {
+        if (isInForeground) {
+        } else {
+            windowHandler.bringToForeground(id);
+        }
+    }
+
+    onDestroy(() => {
+        if (unsubscribe) {
+            unsubscribe();
+        }
+    });
+</script>
+
+<section
+    style="position: relative; z-index: {zIndex}; grid-column: {gridColumnStart} / {gridColumnEnd}; grid-row: {gridRowStart} / {gridRowEnd}; background-color: {backgroundColor};"
+    on:click={handleWindowClick}
+    class:trigger-shuffle-right={!isInForeground &&
+        intersectingSide === "right" &&
+        touched}
+    class:trigger-shuffle-left={!isInForeground &&
+        intersectingSide === "left" &&
+        touched}
+>
+    <header>
+        <button class="shrink">
+            <span>Shrink this {title} window</span>
+            <svg
+                version="1.1"
+                viewBox="0 0 54 15"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                tabindex="0"
+            >
+                <title>Group 7</title>
+                <g fill="none" fill-rule="evenodd">
+                    <g transform="translate(-615 -1492)">
+                        <g transform="translate(606 1483)">
+                            <g transform="translate(9 9)">
+                                <rect
+                                    x=".5"
+                                    y=".5"
+                                    width="53"
+                                    height="14"
+                                    rx="3"
+                                    fill="#151515"
+                                    stroke="#FEFEFE"
+                                />
+                                <rect
+                                    x="17"
+                                    y="7"
+                                    width="20"
+                                    height="1"
+                                    fill="#FEFEFE"
+                                />
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </svg>
+        </button>
+        {#if title}
+            <h1>{title}</h1>
+        {:else}
+            <h1>Title</h1>
+        {/if}
+        {#if enlargeable}
+            <button class="enlarge">
+                <span>Enlarge this {title} window</span>
+                <svg
+                    version="1.1"
+                    viewBox="0 0 54 15"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                    tabindex="0"
+                >
+                    <title>Group 6</title>
+                    <g fill="none" fill-rule="evenodd">
+                        <g transform="translate(-1042 -1492)">
+                            <g transform="translate(606 1483)">
+                                <g transform="translate(436 9)">
+                                    <rect
+                                        x=".5"
+                                        y=".5"
+                                        width="53"
+                                        height="14"
+                                        rx="3"
+                                        fill="#151515"
+                                        stroke="#FEFEFE"
+                                    />
+                                    <rect
+                                        x="17"
+                                        y="6"
+                                        width="20"
+                                        height="1"
+                                        fill="#FEFEFE"
+                                    />
+                                    <polygon
+                                        points="47 7 37 4 37 7"
+                                        fill="#FEFEFE"
+                                    />
+                                    <rect
+                                        transform="translate(27 8.5) rotate(180) translate(-27 -8.5)"
+                                        x="17"
+                                        y="8"
+                                        width="20"
+                                        height="1"
+                                        fill="#FEFEFE"
+                                    />
+                                    <polygon
+                                        transform="translate(12 9.5) rotate(180) translate(-12 -9.5)"
+                                        points="17 11 7 8 7 11"
+                                        fill="#FEFEFE"
+                                    />
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </button>
+        {:else}
+            <button class="disabled" />
+        {/if}
+    </header>
+    <article class:no-events={!isInForeground}>
+        <slot><p>Content goes here</p></slot>
+    </article>
+    <footer />
+</section>
+
+<style>
+    .disabled {
+        visibility: hidden;
+    }
+    button {
+        width: 6.5vmax;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+        padding: 0;
+    }
+    button:hover {
+        transform: scale(1.05);
+    }
+    button:focus {
+        box-shadow: 0 0 0 3px #a25c24;
+        outline: none;
+    }
+    svg {
+        outline: none;
+    }
+
+    span {
+        overflow: hidden;
+        height: 1px;
+        width: 1px;
+        position: absolute;
+    }
+    h1 {
+        margin: 0;
+        font-size: 2vmax;
+    }
+
+    section {
+        border: 0.2vmax solid #fefefe;
+        border-radius: 5px;
+        color: #fefefe;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        background-color: #151515;
+        transition: z-index 0.2s;
+    }
+
+    header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 0.2vmax solid #fefefe;
+        background-color: #151515;
+        padding: 1vmax 1vmax;
+        margin: 0px;
+    }
+    article {
+        height: 100%;
+        widows: 100%;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .no-events {
+        pointer-events: none;
+    }
+
+    @keyframes shuffle-right {
+        0% {
+            right: 0;
+        }
+        50% {
+            right: 20vmax;
+        }
+        100% {
+            right: 0;
+        }
+    }
+
+    .trigger-shuffle-right {
+        animation-name: shuffle-right;
+        animation-duration: 0.4s;
+        animation-timing-function: ease-in-out;
+    }
+
+    @keyframes shuffle-left {
+        0% {
+            left: 0;
+        }
+        50% {
+            left: 20vmax;
+        }
+        100% {
+            left: 0;
+        }
+    }
+
+    .trigger-shuffle-left {
+        animation-name: shuffle-left;
+        animation-duration: 0.4s;
+        animation-timing-function: ease-in-out;
+    }
+</style>
