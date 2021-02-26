@@ -1,5 +1,10 @@
 <script>
     import WindowElement from "../UI/WindowElement.svelte";
+    const maxPixels =
+        window.innerWidth > window.innerHeight
+            ? window.innerWidth
+            : window.innerHeight;
+    const pixelWidth = Math.ceil(maxPixels * 0.6);
     const jpGallery = [
         {
             name: "SHINJUKU.JPG",
@@ -34,11 +39,11 @@
     distanceFromIntersection={21}
 >
     <img
-        src="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug}"
-        sizes="60vmax"
+        sizes="{pixelWidth}px"
         srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug} 1280w,
-        https://res.cloudinary.com/thdrstnr/image/upload/w_640,f_auto/{slug} 640w,
-        https://res.cloudinary.com/thdrstnr/image/upload/w_320,f_auto/{slug} 320w,"
+    https://res.cloudinary.com/thdrstnr/image/upload/w_640,f_auto/{slug} 640w,
+    https://res.cloudinary.com/thdrstnr/image/upload/w_320,f_auto/{slug} 320w,"
+        src="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug}"
         alt={jpGallery[randomIndex].alt}
     />
 </WindowElement>
