@@ -13,10 +13,11 @@
     export let isInForeground = true;
     export let intersections = [];
     export let intersectingSide = null;
+    export let distanceFromIntersection = 20;
     let touched = false;
     let zIndex = 0;
     let thisWindowObject;
-
+    distanceFromIntersection = distanceFromIntersection + 5;
     windowHandler.registerWindow({
         id: id,
         zIndex: zIndex,
@@ -47,7 +48,7 @@
 </script>
 
 <section
-    style="position: relative; z-index: {zIndex}; grid-column: {gridColumnStart} / {gridColumnEnd}; grid-row: {gridRowStart} / {gridRowEnd}; background-color: {backgroundColor};"
+    style="--shuffledistance: {distanceFromIntersection}vmax; position: relative; z-index: {zIndex}; grid-column: {gridColumnStart} / {gridColumnEnd}; grid-row: {gridRowStart} / {gridRowEnd}; background-color: {backgroundColor};"
     on:click={handleWindowClick}
     class:trigger-shuffle-right={!isInForeground &&
         intersectingSide === "right" &&
@@ -196,19 +197,15 @@
         width: 1px;
         position: absolute;
     }
-    h1 {
-        margin: 0;
-        font-size: 2vmax;
-    }
 
     section {
         border: 0.2vmax solid #fefefe;
         border-radius: 5px;
+        background-color: #fefefe;
         color: #fefefe;
         overflow: hidden;
         margin: 0;
         padding: 0;
-        background-color: #151515;
         transition: z-index 0.2s;
     }
 
@@ -222,6 +219,12 @@
         padding: 1vmax 1vmax;
         margin: 0px;
     }
+
+    h1 {
+        margin: 0;
+        font-size: 2vmax;
+    }
+    /* Section: Border Top+ Bottom (2* 0.2) 0.4vmax + Header: Padding 2vmax, Text 2vmax, Borderbottom 0.2vmax = 4.6vmax vertikal fehlen und 0.4 horizontal */
     article {
         height: 100%;
         width: 100%;
@@ -238,7 +241,7 @@
             right: 0;
         }
         50% {
-            right: 20vmax;
+            right: var(--shuffledistance);
         }
         100% {
             right: 0;
@@ -256,7 +259,7 @@
             left: 0;
         }
         50% {
-            left: 20vmax;
+            left: var(--shuffledistance);
         }
         100% {
             left: 0;
@@ -266,6 +269,6 @@
     .trigger-shuffle-left {
         animation-name: shuffle-left;
         animation-duration: 0.4s;
-        animation-timing-function: ease-in-out;
+        animation-timing-function: ease;
     }
 </style>

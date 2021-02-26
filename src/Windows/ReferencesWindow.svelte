@@ -14,6 +14,7 @@
     isInForeground={true}
     intersections={[11]}
     intersectingSide="left"
+    distanceFromIntersection={31}
 >
     <ul>
         <li><a href="www.reference.com">Bureau Johannes Erler</a></li>

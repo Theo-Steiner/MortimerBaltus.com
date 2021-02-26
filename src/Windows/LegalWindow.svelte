@@ -13,6 +13,7 @@
     isInForeground={true}
     intersections={[2]}
     intersectingSide="right"
+    distanceFromIntersection={15}
 >
     <p>
         You like boring legal texts and bureaucracy? <br /><br /> We've got you covered!

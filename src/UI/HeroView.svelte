@@ -52,7 +52,7 @@
     h1 {
         text-align: center;
         color: white;
-        font-size: 2.5vw;
+        font-size: 2.2vw;
     }
 
     .hero-view {

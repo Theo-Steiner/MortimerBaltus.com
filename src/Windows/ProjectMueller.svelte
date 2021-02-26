@@ -1,5 +1,6 @@
 <script>
     import WindowElement from "../UI/WindowElement.svelte";
+    const slug = "MortimerBaltus/Projects/EberhardMueller_v2tpxi";
 </script>
 
 <WindowElement
@@ -12,17 +13,22 @@
     isInForeground={true}
     intersections={[10]}
     intersectingSide="left"
+    distanceFromIntersection={10}
 >
-    <div
-        style="background-image: url('images/EberhardMueller.jpg');"
-        title="Eberhard Müller develops sophisticated textile interiors at the highest level"
+    <img
+        src="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug}"
+        sizes="40vmax"
+        srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug} 960w,
+    https://res.cloudinary.com/thdrstnr/image/upload/w_480,f_auto/{slug} 480w,
+    https://res.cloudinary.com/thdrstnr/image/upload/w_240,f_auto/{slug} 240w,"
+        alt="Eberhard Müller develops sophisticated textile interiors at the highest level"
     />
 </WindowElement>
 
 <style>
-    div {
-        width: 40vmax;
-        height: 36vmax;
-        background-size: cover;
+    img {
+        width: 39.6vmax;
+        height: 35.4vmax;
+        object-fit: cover;
     }
 </style>

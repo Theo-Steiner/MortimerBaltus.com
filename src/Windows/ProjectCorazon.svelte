@@ -1,5 +1,6 @@
 <script>
     import WindowElement from "../UI/WindowElement.svelte";
+    const slug = "MortimerBaltus/Projects/ConCorazon_mksjj0";
 </script>
 
 <WindowElement
@@ -12,17 +13,22 @@
     isInForeground={false}
     intersections={[0]}
     intersectingSide="right"
+    distanceFromIntersection={15}
 >
-    <div
-        style="background-image: url('images/ConCorazon.jpg');"
-        title="Con Corazón is embracing artisans from countries at war"
+    <img
+        src="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug}"
+        sizes="40vmax"
+        srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug} 960w,
+    https://res.cloudinary.com/thdrstnr/image/upload/w_480,f_auto/{slug} 480w,
+    https://res.cloudinary.com/thdrstnr/image/upload/w_240,f_auto/{slug} 240w,"
+        alt="Con Corazón is embracing artisans from countries at war"
     />
 </WindowElement>
 
 <style>
-    div {
-        width: 40vmax;
-        height: 46vmax;
-        background-size: cover;
+    img {
+        width: 39.6vmax;
+        height: 45.4vmax;
+        object-fit: cover;
     }
 </style>

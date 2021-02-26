@@ -13,6 +13,7 @@
     isInForeground={true}
     intersections={[1]}
     intersectingSide="left"
+    distanceFromIntersection={15}
 >
     <p>NICE <br /> TO<br /> MEET<br /> YOU</p>
 </WindowElement>

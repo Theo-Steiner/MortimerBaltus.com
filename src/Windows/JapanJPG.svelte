@@ -3,16 +3,22 @@
     const jpGallery = [
         {
             name: "SHINJUKU.JPG",
-            src: "images/Shinjuku.jpg",
+            src: "/MortimerBaltus/jpGallery/TokyoTaxi_zbokhg",
             alt: "Shinjuku, Tokyo (JP)",
         },
         {
             name: "TAXI.JPG",
-            src: "images/TokyoTaxi.jpg",
+            src: "/MortimerBaltus/jpGallery/ShinjukuSakura_dgdj2h",
             alt: "A cab in Tokyo (JP)",
+        },
+        {
+            name: "TRAINSTATION.JPG",
+            src: "/MortimerBaltus/jpGallery/TokyoTrainstation_sovh7s",
+            alt: "A Trainstation in Tokyo",
         },
     ];
     var randomIndex = Math.floor(Math.random() * jpGallery.length);
+    const slug = jpGallery[randomIndex].src;
 </script>
 
 <WindowElement
@@ -25,17 +31,22 @@
     isInForeground={false}
     intersections={[9]}
     intersectingSide="right"
+    distanceFromIntersection={21}
 >
-    <div
-        style="background-image: url({jpGallery[randomIndex].src});"
-        title={jpGallery[randomIndex].alt}
+    <img
+        src="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug}"
+        sizes="60vmax"
+        srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug} 1280w,
+        https://res.cloudinary.com/thdrstnr/image/upload/w_640,f_auto/{slug} 640w,
+        https://res.cloudinary.com/thdrstnr/image/upload/w_320,f_auto/{slug} 320w,"
+        alt={jpGallery[randomIndex].alt}
     />
 </WindowElement>
 
 <style>
-    div {
-        width: 60vmax;
-        height: 36vmax;
-        background-size: cover;
+    img {
+        object-fit: cover;
+        width: 59.6vmax;
+        height: 35.4vmax;
     }
 </style>

@@ -13,6 +13,7 @@
     isInForeground={false}
     intersections={[3]}
     intersectingSide="right"
+    distanceFromIntersection={10}
 >
     <p>
         I suppose it is tempting, <br /> if the only tool you have is a hammer, to

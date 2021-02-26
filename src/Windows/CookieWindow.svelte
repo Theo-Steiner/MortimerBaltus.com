@@ -14,6 +14,7 @@
     isInForeground={true}
     intersections={[8]}
     intersectingSide="left"
+    distanceFromIntersection={21}
 >
     <p>
         We use necessary cookies to ensure visitors have the best possible

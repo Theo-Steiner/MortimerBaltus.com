@@ -1,5 +1,6 @@
 <script>
     import WindowElement from "../UI/WindowElement.svelte";
+    const slug = "MortimerBaltus/Projects/Raceworx_wfjyou";
 </script>
 
 <WindowElement
@@ -12,17 +13,22 @@
     isInForeground={false}
     intersections={[7]}
     intersectingSide="left"
+    distanceFromIntersection={15}
 >
-    <div
-        style="background-image: url('images/Raceworx.webp');"
-        title="Raceworx"
+    <img
+        src="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug}"
+        sizes="60vmax"
+        srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug} 1280w,
+https://res.cloudinary.com/thdrstnr/image/upload/w_640,f_auto/{slug} 640w,
+https://res.cloudinary.com/thdrstnr/image/upload/w_320,f_auto/{slug} 320w,"
+        alt="Raceworx"
     />
 </WindowElement>
 
 <style>
-    div {
-        width: 50vmax;
-        height: 31vmax;
-        background-size: cover;
+    img {
+        width: 49.6vmax;
+        height: 30.4vmax;
+        object-fit: cover;
     }
 </style>
