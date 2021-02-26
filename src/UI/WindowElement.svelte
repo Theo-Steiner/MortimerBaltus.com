@@ -171,14 +171,17 @@
         cursor: pointer;
         display: flex;
         align-items: center;
-        border-radius: 4px;
+        border-radius: 2px;
         padding: 0;
     }
     button:hover {
         transform: scale(1.05);
     }
+    button:active {
+        transform: scale(1);
+    }
     button:focus {
-        box-shadow: 0 0 0 3px #a25c24;
+        box-shadow: 0 0 0 1px #a25c24;
         outline: none;
     }
     svg {

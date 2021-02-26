@@ -3,10 +3,10 @@
 </script>
 
 <WindowElement
-    gridColumnStart={40}
-    gridColumnEnd={90}
-    gridRowStart={130}
-    gridRowEnd={165}
+    gridColumnStart={30}
+    gridColumnEnd={80}
+    gridRowStart={140}
+    gridRowEnd={175}
     title="PROJECT_02"
     id={2}
     isInForeground={false}

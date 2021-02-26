@@ -16,10 +16,10 @@
 </script>
 
 <WindowElement
-    gridColumnStart={5}
-    gridColumnEnd={65}
-    gridRowStart={65}
-    gridRowEnd={105}
+    gridColumnStart={1}
+    gridColumnEnd={61}
+    gridRowStart={75}
+    gridRowEnd={115}
     title={jpGallery[randomIndex].name}
     id={8}
     isInForeground={false}

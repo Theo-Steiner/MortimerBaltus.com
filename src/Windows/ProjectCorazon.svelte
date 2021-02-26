@@ -5,8 +5,8 @@
 <WindowElement
     gridColumnStart={110}
     gridColumnEnd={150}
-    gridRowStart={130}
-    gridRowEnd={180}
+    gridRowStart={135}
+    gridRowEnd={185}
     title="PROJECT_01"
     id={1}
     isInForeground={false}

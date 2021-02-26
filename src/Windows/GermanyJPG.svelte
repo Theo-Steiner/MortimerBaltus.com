@@ -13,8 +13,8 @@
 <WindowElement
     gridColumnStart={130}
     gridColumnEnd={190}
-    gridRowStart={5}
-    gridRowEnd={45}
+    gridRowStart={1}
+    gridRowEnd={41}
     title={deGallery[randomIndex].name}
     id={11}
     isInForeground={false}

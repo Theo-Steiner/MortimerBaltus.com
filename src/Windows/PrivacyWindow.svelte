@@ -5,8 +5,8 @@
 <WindowElement
     gridColumnStart={158}
     gridColumnEnd={198}
-    gridRowStart={170}
-    gridRowEnd={195}
+    gridRowStart={173}
+    gridRowEnd={198}
     backgroundColor="#FEC7A3"
     title="PRIVACY POLICY"
     id={5}

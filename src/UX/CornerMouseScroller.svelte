@@ -49,106 +49,101 @@
     on:mouseleave={terminateScrolling}
 />
 
-<svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 100"
-    preserveAspectRatio="none"
+<div
     class="top-left"
+    on:mouseenter={() => {
+        initiateScrolling(-1, -1);
+    }}
+    on:mouseleave={terminateScrolling}
 >
-    <polygon
-        points="0,0 0,100 100,0"
-        on:mouseenter={() => {
-            initiateScrolling(-1, -1);
-        }}
-        on:mouseleave={terminateScrolling}
-    />
-</svg>
+    <div class="horizontal" />
+    <div class="vertical" />
+</div>
 
-<svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 100"
-    preserveAspectRatio="none"
+<div
     class="top-right"
+    on:mouseenter={() => {
+        initiateScrolling(1, -1);
+    }}
+    on:mouseleave={terminateScrolling}
 >
-    <polygon
-        points="100,100 0,0 100,0"
-        on:mouseenter={() => {
-            initiateScrolling(1, -1);
-        }}
-        on:mouseleave={terminateScrolling}
-    />
-</svg>
+    <div class="horizontal" />
+    <div class="vertical" />
+</div>
 
-<svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 100"
-    preserveAspectRatio="none"
+<div
     class="bottom-left"
+    on:mouseenter={() => {
+        initiateScrolling(-1, 1);
+    }}
+    on:mouseleave={terminateScrolling}
 >
-    <polygon
-        points="100,100 0,0 0,100"
-        on:mouseenter={() => {
-            initiateScrolling(-1, 1);
-        }}
-        on:mouseleave={terminateScrolling}
-    />
-</svg>
-<!--Richtig points="0,100 100,0 100,100" -->
-<svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 100"
-    preserveAspectRatio="none"
+    <div class="horizontal" />
+    <div class="vertical" />
+</div>
+
+<div
     class="bottom-right"
+    on:mouseenter={() => {
+        initiateScrolling(1, 1);
+    }}
+    on:mouseleave={terminateScrolling}
 >
-    <polygon
-        points="0,100 100,0 100,100"
-        on:mouseenter={() => {
-            initiateScrolling(1, 1);
-        }}
-        on:mouseleave={terminateScrolling}
-    />
-</svg>
+    <div class="horizontal" />
+    <div class="vertical" />
+</div>
 
 <!--Richtig points="0,100 100,0 100,100" -->
 <style>
-    svg {
-        position: fixed;
-        width: 7em;
-        visibility: hidden;
-        pointer-events: none;
-    }
-
-    polygon {
-        pointer-events: all;
-    }
-
     div {
         position: fixed;
+        visibility: hidden;
+        z-index: 9999;
+    }
+
+    .horizontal {
+        height: 1vmax;
+        width: 7em;
+        position: inherit;
+        top: inherit;
+        right: inherit;
+        left: inherit;
+        bottom: inherit;
+    }
+
+    .vertical {
+        width: 1vmax;
+        height: 7em;
+        position: inherit;
+        top: inherit;
+        right: inherit;
+        left: inherit;
+        bottom: inherit;
     }
 
     .top {
         width: calc(100vw - 14em);
-        height: 2.5em;
+        height: 1vmax;
         top: 0;
         left: 7em;
     }
 
     .bottom {
         width: calc(100vw - 14em);
-        height: 2.5em;
+        height: 1vmax;
         bottom: 0;
         left: 7em;
     }
 
     .left {
-        width: 2.5em;
+        width: 1vmax;
         height: calc(100vh - 14em);
         left: 0;
         top: 7em;
     }
 
     .right {
-        width: 2.5em;
+        width: 1vmax;
         height: calc(100vh - 14em);
         right: 0;
         top: 7em;

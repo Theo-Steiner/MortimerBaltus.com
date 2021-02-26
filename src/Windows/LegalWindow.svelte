@@ -3,10 +3,10 @@
 </script>
 
 <WindowElement
-    gridColumnStart={15}
-    gridColumnEnd={55}
-    gridRowStart={160}
-    gridRowEnd={180}
+    gridColumnStart={5}
+    gridColumnEnd={45}
+    gridRowStart={165}
+    gridRowEnd={185}
     backgroundColor="#1C6370"
     title="LEGAL NOTICE"
     id={7}

@@ -5,8 +5,8 @@
 <WindowElement
     gridColumnStart={40}
     gridColumnEnd={70}
-    gridRowStart={100}
-    gridRowEnd={120}
+    gridRowStart={65}
+    gridRowEnd={90}
     backgroundColor="#5E4B1B"
     title="COOKIES"
     enlargeable={false}
@@ -16,18 +16,17 @@
     intersectingSide="left"
 >
     <p>
-        As with real cookies, not all browser cookies are created equal. Some
-        websites feed your browser cookies to track your behavior online. We
-        value your privacy, therefore we only use cookies to ensure you can use
-        our page as intended! <br /> <br /> Please read our Privacy Policy for more
-        informations on this subject.
+        We use necessary cookies to ensure visitors have the best possible
+        experience on our site. Your privacy is important to us, therefore we
+        don’t use any tracking services by third-parties. <br /> Please read our
+        Privacy Policy for more info on this
     </p>
 </WindowElement>
 
 <style>
     p {
         color: #151515;
-        font-size: 1.5vmax;
+        font-size: 2vmax;
         margin: 0px;
         padding: 0.5vmax;
     }

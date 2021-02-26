@@ -9,9 +9,6 @@ body {
 	font-family: 'MabryPro';
 	width: 200vmax;
 	height: 200vmax;
-	display: flex;
-	justify-content: center;
-	align-items: center;
 	background-color: #151515;
 }
 /* Hide scrollbar for Chrome, Safari and Opera */

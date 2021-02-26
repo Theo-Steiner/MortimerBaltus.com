@@ -5,8 +5,8 @@
 <WindowElement
     gridColumnStart={135}
     gridColumnEnd={165}
-    gridRowStart={120}
-    gridRowEnd={160}
+    gridRowStart={125}
+    gridRowEnd={165}
     backgroundColor="#A25C24"
     title="ABOUT"
     id={0}

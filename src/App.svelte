@@ -16,7 +16,6 @@
 	import Logopedia from "./Windows/Logopedia.svelte";
 </script>
 
-<CornerMouseScroller />
 <ScrollSlowDown />
 
 <main>

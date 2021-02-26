@@ -5,8 +5,8 @@
 <WindowElement
     gridColumnStart={159}
     gridColumnEnd={199}
-    gridRowStart={30}
-    gridRowEnd={80}
+    gridRowStart={25}
+    gridRowEnd={75}
     backgroundColor="#5F583D"
     title="References"
     enlargeable={false}
