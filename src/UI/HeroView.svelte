@@ -21,7 +21,9 @@
 
 <style>
     img {
-        margin-bottom: 8vh;
+        margin-bottom: 5vh;
+        width: 70vw;
+        height: 7.5vw;
     }
     section {
         grid-row: 60/160;
@@ -35,7 +37,7 @@
     h1 {
         text-align: center;
         color: white;
-        font-size: 1.5vmax;
+        font-size: 2.5vw;
     }
 
     .hero-view {
@@ -45,6 +47,5 @@
         align-items: center;
         width: 100vw;
         height: 100vh;
-        padding: 20vh 20vw;
     }
 </style>

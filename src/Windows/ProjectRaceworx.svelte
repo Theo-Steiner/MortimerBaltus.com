@@ -5,19 +5,24 @@
 <WindowElement
     gridColumnStart={40}
     gridColumnEnd={90}
-    gridRowStart={128}
-    gridRowEnd={163}
+    gridRowStart={130}
+    gridRowEnd={165}
     title="PROJECT_02"
     id={2}
     isInForeground={false}
     intersections={[7]}
     intersectingSide="left"
 >
-    <img src="images/Raceworx.webp" alt="Raceworx" />
+    <div
+        style="background-image: url('images/Raceworx.webp');"
+        title="Raceworx"
+    />
 </WindowElement>
 
 <style>
-    img {
-        width: 100%;
+    div {
+        width: 50vmax;
+        height: 31vmax;
+        background-size: cover;
     }
 </style>

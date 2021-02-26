@@ -28,4 +28,5 @@ body::-webkit-scrollbar {
   @font-face{
 	font-family: 'MabryPro';
 	src: url('/fonts/MabryPro-Regular.woff2') format('woff');
+	font-display: swap;
   }

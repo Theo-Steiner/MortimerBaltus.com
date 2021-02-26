@@ -17,20 +17,25 @@
 
 <WindowElement
     gridColumnStart={5}
-    gridColumnEnd={64}
+    gridColumnEnd={65}
     gridRowStart={65}
-    gridRowEnd={103}
+    gridRowEnd={105}
     title={jpGallery[randomIndex].name}
     id={8}
     isInForeground={false}
     intersections={[9]}
     intersectingSide="right"
 >
-    <img src={jpGallery[randomIndex].src} alt={jpGallery[randomIndex].alt} />
+    <div
+        style="background-image: url({jpGallery[randomIndex].src});"
+        title={jpGallery[randomIndex].alt}
+    />
 </WindowElement>
 
 <style>
-    img {
-        width: 100%;
+    div {
+        width: 60vmax;
+        height: 36vmax;
+        background-size: cover;
     }
 </style>

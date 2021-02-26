@@ -37,9 +37,9 @@
 
 <style>
 	main {
+		display: grid;
 		width: 100%;
 		height: 100%;
-		display: grid;
 		grid-template-columns: repeat(200, 1fr);
 		grid-template-rows: repeat(200, 1fr);
 	}

@@ -63,8 +63,7 @@
                 version="1.1"
                 viewBox="0 0 54 15"
                 xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-                tabindex="0"
+                role="presentation"
             >
                 <title>Group 7</title>
                 <g fill="none" fill-rule="evenodd">
@@ -105,8 +104,7 @@
                     version="1.1"
                     viewBox="0 0 54 15"
                     xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                    tabindex="0"
+                    role="presentation"
                 >
                     <title>Group 6</title>
                     <g fill="none" fill-rule="evenodd">
@@ -185,6 +183,8 @@
     }
     svg {
         outline: none;
+        width: 100%;
+        height: 100%;
     }
 
     span {
@@ -221,7 +221,7 @@
     }
     article {
         height: 100%;
-        widows: 100%;
+        width: 100%;
         padding: 0px;
         margin: 0px;
     }

@@ -12,20 +12,25 @@
 
 <WindowElement
     gridColumnStart={130}
-    gridColumnEnd={195}
+    gridColumnEnd={190}
     gridRowStart={5}
-    gridRowEnd={43}
+    gridRowEnd={45}
     title={deGallery[randomIndex].name}
     id={11}
     isInForeground={false}
     intersections={[4]}
     intersectingSide="right"
 >
-    <img src={deGallery[randomIndex].src} alt={deGallery[randomIndex].alt} />
+    <div
+        style="background-image: url({deGallery[randomIndex].src});"
+        title={deGallery[randomIndex].alt}
+    />
 </WindowElement>
 
 <style>
-    img {
-        width: 100%;
+    div {
+        width: 60vmax;
+        height: 40vmax;
+        background-size: cover;
     }
 </style>

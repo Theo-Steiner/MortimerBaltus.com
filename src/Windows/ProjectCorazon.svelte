@@ -4,7 +4,7 @@
 
 <WindowElement
     gridColumnStart={110}
-    gridColumnEnd={148}
+    gridColumnEnd={150}
     gridRowStart={130}
     gridRowEnd={180}
     title="PROJECT_01"
@@ -13,14 +13,16 @@
     intersections={[0]}
     intersectingSide="right"
 >
-    <img
-        src="images/ConCorazon.jpg"
-        alt="Con Corazón is embracing artisans from countries at war"
+    <div
+        style="background-image: url('images/ConCorazon.jpg');"
+        title="Con Corazón is embracing artisans from countries at war"
     />
 </WindowElement>
 
 <style>
-    img {
-        width: 100%;
+    div {
+        width: 40vmax;
+        height: 46vmax;
+        background-size: cover;
     }
 </style>

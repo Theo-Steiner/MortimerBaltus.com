@@ -13,20 +13,21 @@
     id={6}
     isInForeground={true}
 >
-    <div>
-        <img src="images/Logopedia.svg" alt="Logo Portfolio" />
-    </div>
+    <div
+        style="background-image: url('images/Logopedia.svg');"
+        title="Logo Portfolio"
+    />
 </WindowElement>
 
 <style>
     div {
         display: flex;
         align-items: center;
+        width: 40vmax;
+        height: 26vmax;
         justify-content: center;
-        height: 80%;
-    }
-    img {
-        height: 30%;
-        width: 70%;
+        background-size: 30vmax;
+        background-position: center;
+        background-repeat: no-repeat;
     }
 </style>

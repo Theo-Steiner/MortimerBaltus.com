@@ -4,7 +4,7 @@
 
 <WindowElement
     gridColumnStart={50}
-    gridColumnEnd={88}
+    gridColumnEnd={90}
     gridRowStart={15}
     gridRowEnd={55}
     title="PROJECT_03"
@@ -13,14 +13,16 @@
     intersections={[10]}
     intersectingSide="left"
 >
-    <img
-        src="images/EberhardMueller.jpg"
-        alt="Eberhard Müller develops sophisticated textile interiors at the highest level"
+    <div
+        style="background-image: url('images/EberhardMueller.jpg');"
+        title="Eberhard Müller develops sophisticated textile interiors at the highest level"
     />
 </WindowElement>
 
 <style>
-    img {
-        height: 100%;
+    div {
+        width: 40vmax;
+        height: 36vmax;
+        background-size: cover;
     }
 </style>
