@@ -1,10 +1,5 @@
 <script>
     import WindowElement from "../UI/WindowElement.svelte";
-    const maxPixels =
-        window.innerWidth > window.innerHeight
-            ? window.innerWidth
-            : window.innerHeight;
-    const pixelWidth = Math.ceil(maxPixels * 0.5);
     const slug = "MortimerBaltus/Projects/Raceworx_wfjyou";
 </script>
 
@@ -21,10 +16,14 @@
     distanceFromIntersection={15}
 >
     <img
-        sizes="{pixelWidth}px"
+        sizes="49.6vmax"
         srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug} 1280w,
-    https://res.cloudinary.com/thdrstnr/image/upload/w_640,f_auto/{slug} 640w,
-    https://res.cloudinary.com/thdrstnr/image/upload/w_320,f_auto/{slug} 320w,"
+        https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug} 960w,
+        https://res.cloudinary.com/thdrstnr/image/upload/w_800,f_auto/{slug} 800w,
+        https://res.cloudinary.com/thdrstnr/image/upload/w_640,f_auto/{slug} 640w,
+        https://res.cloudinary.com/thdrstnr/image/upload/w_480,f_auto/{slug} 480w,
+        https://res.cloudinary.com/thdrstnr/image/upload/w_320,f_auto/{slug} 320w,
+        https://res.cloudinary.com/thdrstnr/image/upload/w_160,f_auto/{slug} 160w,"
         alt="Raceworx"
         src="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug}"
     />
