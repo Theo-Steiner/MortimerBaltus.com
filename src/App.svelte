@@ -1,7 +1,6 @@
 <script>
 	import ScrollHandler from "./UX/ScrollHandler.svelte";
 	import MortimerBaltus from "./UI/MortimerBaltus.svelte";
-	import HeroView from "./UI/HeroView.svelte";
 	import AboutWindow from "./Windows/AboutWindow.svelte";
 	import ProjectCorazon from "./Windows/ProjectCorazon.svelte";
 	import ProjectRaceworx from "./Windows/ProjectRaceworx.svelte";
@@ -18,29 +17,16 @@
 
 <ScrollHandler />
 
-<main>
-	<MortimerBaltus />
-	<HeroView />
-	<ProjectCorazon />
-	<AboutWindow />
-	<JapanJPG />
-	<CookieWindow />
-	<ProjectRaceworx />
-	<LegalWindow />
-	<PrivacyWindow />
-	<CleanCode />
-	<ProjectMueller />
-	<GermanyJPG />
-	<ReferencesWindow />
-	<Logopedia />
-</main>
-
-<style>
-	main {
-		display: grid;
-		width: 100%;
-		height: 100%;
-		grid-template-columns: repeat(200, 1fr);
-		grid-template-rows: repeat(200, 1fr);
-	}
-</style>
+<MortimerBaltus />
+<ProjectCorazon />
+<AboutWindow />
+<JapanJPG />
+<CookieWindow />
+<ProjectRaceworx />
+<LegalWindow />
+<PrivacyWindow />
+<CleanCode />
+<ProjectMueller />
+<GermanyJPG />
+<ReferencesWindow />
+<Logopedia />
