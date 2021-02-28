@@ -1,6 +1,5 @@
 <script>
 	import ScrollHandler from "./UX/ScrollHandler.svelte";
-	import MortimerBaltus from "./UI/MortimerBaltus.svelte";
 	import AboutWindow from "./Windows/AboutWindow.svelte";
 	import ProjectCorazon from "./Windows/ProjectCorazon.svelte";
 	import ProjectRaceworx from "./Windows/ProjectRaceworx.svelte";
@@ -17,7 +16,6 @@
 
 <ScrollHandler />
 
-<MortimerBaltus />
 <ProjectCorazon />
 <AboutWindow />
 <JapanJPG />
