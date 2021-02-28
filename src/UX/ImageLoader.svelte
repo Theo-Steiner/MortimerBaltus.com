@@ -1,14 +1,4 @@
 <script>
-    import { onMount } from "svelte";
-
-    let nativeLoading = false;
-    // Determine whether to bypass our intersecting check
-    onMount(() => {
-        if ("loading" in HTMLImageElement.prototype) {
-            nativeLoading = true;
-        }
-    });
-
     export let src;
     export let alt;
     export let sizes;
@@ -18,7 +8,7 @@
 </script>
 
 <IntersectionObserver once={true} let:intersecting>
-    {#if intersecting || nativeLoading}
+    {#if intersecting}
         <Image {srcset} {sizes} {alt} {src} />
     {/if}
 </IntersectionObserver>
