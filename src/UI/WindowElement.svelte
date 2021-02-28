@@ -57,7 +57,7 @@
 <section
     style="--gridColumnStart: {gridColumnStart}; --gridColumnEnd: {gridColumnEnd}; --gridRowStart: {gridRowStart}; --gridRowEnd: {gridRowEnd};
      --largeGridColumnStart: {largeGridColumnStart}; --largeGridColumnEnd: {largeGridColumnEnd}; --largeGridRowStart: {largeGridRowStart}; --largeGridRowEnd: {largeGridRowEnd};
-     --shuffledistance: {distanceFromIntersection}vmax; --largeshuffledistance: {largeDistanceFromIntersection}vmax; position: relative; z-index: {zIndex};  background-color: {backgroundColor};"
+     --shuffledistance: {distanceFromIntersection}vmax; --largeshuffledistance: {largeDistanceFromIntersection}vmax; position: relative; z-index: {zIndex};"
     on:click={handleWindowClick}
     class:trigger-shuffle-right={!isInForeground &&
         intersectingSide === "right" &&
@@ -164,7 +164,10 @@
             <button class="disabled" />
         {/if}
     </header>
-    <article class:no-events={!isInForeground}>
+    <article
+        class:no-events={!isInForeground}
+        style="background-color: {backgroundColor};"
+    >
         <slot><p>Content goes here</p></slot>
     </article>
     <footer />

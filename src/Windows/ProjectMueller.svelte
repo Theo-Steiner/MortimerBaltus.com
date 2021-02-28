@@ -10,10 +10,10 @@
     gridColumnEnd={90}
     gridRowStart={15}
     gridRowEnd={55}
-    largeGridColumnStart={55}
-    largeGridColumnEnd={81}
-    largeGridRowStart={21}
-    largeGridRowEnd={47}
+    largeGridColumnStart={65}
+    largeGridColumnEnd={91}
+    largeGridRowStart={51}
+    largeGridRowEnd={77}
     title="PROJECT_03"
     id={3}
     isInForeground={true}

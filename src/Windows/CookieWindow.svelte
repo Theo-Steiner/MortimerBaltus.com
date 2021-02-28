@@ -3,14 +3,14 @@
 </script>
 
 <WindowElement
-    gridColumnStart={40}
-    gridColumnEnd={70}
+    gridColumnStart={50}
+    gridColumnEnd={80}
     gridRowStart={65}
     gridRowEnd={90}
     largeGridColumnStart={40}
     largeGridColumnEnd={60}
-    largeGridRowStart={70}
-    largeGridRowEnd={87}
+    largeGridRowStart={95}
+    largeGridRowEnd={112}
     backgroundColor="#5E4B1B"
     title="COOKIES"
     enlargeable={false}
@@ -18,14 +18,14 @@
     isInForeground={true}
     intersections={[8]}
     intersectingSide="left"
-    distanceFromIntersection={21}
+    distanceFromIntersection={11}
     largeDistanceFromIntersection={6}
 >
     <p>
         We use necessary cookies to ensure visitors have the best possible
         experience on our site. Your privacy is important to us, therefore we
         don’t use any tracking services by third-parties. <br /> Please read our
-        Privacy Policy for more info on this
+        Privacy Policy for more info on this!
     </p>
 </WindowElement>
 

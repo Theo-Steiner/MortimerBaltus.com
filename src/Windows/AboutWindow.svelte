@@ -3,14 +3,14 @@
 </script>
 
 <WindowElement
-    gridColumnStart={135}
-    gridColumnEnd={165}
-    gridRowStart={125}
-    gridRowEnd={165}
-    largeGridColumnStart={145}
-    largeGridColumnEnd={165}
-    largeGridRowStart={119}
-    largeGridRowEnd={145}
+    gridColumnStart={105}
+    gridColumnEnd={135}
+    gridRowStart={115}
+    gridRowEnd={155}
+    largeGridColumnStart={125}
+    largeGridColumnEnd={145}
+    largeGridRowStart={112}
+    largeGridRowEnd={138}
     backgroundColor="#A25C24"
     title="ABOUT"
     id={0}

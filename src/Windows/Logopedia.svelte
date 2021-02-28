@@ -5,12 +5,12 @@
 <WindowElement
     gridColumnStart={105}
     gridColumnEnd={145}
-    gridRowStart={48}
-    gridRowEnd={78}
-    largeGridColumnStart={119}
-    largeGridColumnEnd={145}
-    largeGridRowStart={53}
-    largeGridRowEnd={73}
+    gridRowStart={38}
+    gridRowEnd={68}
+    largeGridColumnStart={129}
+    largeGridColumnEnd={155}
+    largeGridRowStart={63}
+    largeGridRowEnd={83}
     title="LOGOPEDIA.MP4"
     enlargeable={false}
     backgroundColor="#C4BDBD"

@@ -20,6 +20,17 @@
 	</noscript>
 	<link rel="preload" href="/fonts/MabryPro-Regular.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="preload" href="/build/bundle.js" as="script">
+	<link rel="preload" as="image"
+		href="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0"
+		imagesrcset="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 960w,
+		https://res.cloudinary.com/thdrstnr/image/upload/w_840,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 840w,
+		https://res.cloudinary.com/thdrstnr/image/upload/w_720,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 720w,
+		https://res.cloudinary.com/thdrstnr/image/upload/w_600,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 600w,
+		https://res.cloudinary.com/thdrstnr/image/upload/w_480,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 480w,
+		https://res.cloudinary.com/thdrstnr/image/upload/w_360,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 360w,
+		https://res.cloudinary.com/thdrstnr/image/upload/w_240,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 240w,
+		https://res.cloudinary.com/thdrstnr/image/upload/w_120,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 120w,"
+		imagesizes="39.6vmax, (min-width: 1024px) 25.8vmax" />
 
 	<style>
 		body {
@@ -35,7 +46,7 @@
 		@font-face {
 			font-family: 'MabryPro';
 			src: url('/fonts/MabryPro-Regular.woff2') format('woff');
-			font-display: swap;
+			font-display: block;
 		}
 
 		.mortimer-baltus h1 {
@@ -88,9 +99,8 @@
 		window.history.scrollRestoration = "manual";
 	}
 	let vmax = window.innerWidth >= window.innerHeight ? window.innerWidth : window.innerHeight;
-	scrollTo(vmax * 0.5, 0.8 * vmax)
+	scrollTo(vmax * 0.5 + (vmax - window.innerWidth) / 2, vmax * 0.5 + (vmax - window.innerHeight) / 2)
 	window.onload = () => {
-
 		var preloadedScript = document.createElement("script");
 		preloadedScript.src = "/build/bundle.js";
 		document.body.appendChild(preloadedScript);

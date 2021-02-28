@@ -6,14 +6,14 @@
 </script>
 
 <WindowElement
-    gridColumnStart={110}
-    gridColumnEnd={150}
-    gridRowStart={135}
-    gridRowEnd={185}
-    largeGridColumnStart={125}
-    largeGridColumnEnd={151}
-    largeGridRowStart={125}
-    largeGridRowEnd={158}
+    gridColumnStart={80}
+    gridColumnEnd={120}
+    gridRowStart={125}
+    gridRowEnd={175}
+    largeGridColumnStart={105}
+    largeGridColumnEnd={131}
+    largeGridRowStart={120}
+    largeGridRowEnd={153}
     title="PROJECT_01"
     id={1}
     isInForeground={false}

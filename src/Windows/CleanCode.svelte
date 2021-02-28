@@ -7,10 +7,10 @@
     gridColumnEnd={60}
     gridRowStart={2}
     gridRowEnd={32}
-    largeGridColumnStart={34}
-    largeGridColumnEnd={60}
-    largeGridRowStart={10}
-    largeGridRowEnd={30}
+    largeGridColumnStart={44}
+    largeGridColumnEnd={70}
+    largeGridRowStart={47}
+    largeGridRowEnd={67}
     backgroundColor="#7d7d7d"
     title="CLEAN.CODE"
     id={10}

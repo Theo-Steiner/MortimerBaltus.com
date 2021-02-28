@@ -6,8 +6,8 @@
 </script>
 
 <WindowElement
-    gridColumnStart={30}
-    gridColumnEnd={80}
+    gridColumnStart={20}
+    gridColumnEnd={70}
     gridRowStart={140}
     gridRowEnd={175}
     largeGridColumnStart={30}
@@ -20,7 +20,7 @@
     intersections={[7]}
     intersectingSide="left"
     distanceFromIntersection={15}
-    largeDistanceFromIntersection={9}
+    largeDistanceFromIntersection={0}
 >
     <div>
         <ImageLoader
