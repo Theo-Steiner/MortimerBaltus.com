@@ -7,6 +7,10 @@
     gridColumnEnd={70}
     gridRowStart={65}
     gridRowEnd={90}
+    largeGridColumnStart={40}
+    largeGridColumnEnd={60}
+    largeGridRowStart={70}
+    largeGridRowEnd={87}
     backgroundColor="#5E4B1B"
     title="COOKIES"
     enlargeable={false}
@@ -15,6 +19,7 @@
     intersections={[8]}
     intersectingSide="left"
     distanceFromIntersection={21}
+    largeDistanceFromIntersection={6}
 >
     <p>
         We use necessary cookies to ensure visitors have the best possible
@@ -30,5 +35,11 @@
         font-size: 2vmax;
         margin: 0px;
         padding: 0.5vmax;
+    }
+    @media only screen and (min-width: 1024px) {
+        p {
+            font-size: 1.35vmax;
+            padding: 0.3vmax;
+        }
     }
 </style>

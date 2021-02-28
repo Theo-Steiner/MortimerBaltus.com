@@ -1,6 +1,6 @@
 <script>
-	import CornerMouseScroller from "./UX/CornerMouseScroller.svelte";
-	import ScrollSlowDown from "./UX/ScrollSlowDown.svelte";
+	import ScrollHandler from "./UX/ScrollHandler.svelte";
+	import MortimerBaltus from "./UI/MortimerBaltus.svelte";
 	import HeroView from "./UI/HeroView.svelte";
 	import AboutWindow from "./Windows/AboutWindow.svelte";
 	import ProjectCorazon from "./Windows/ProjectCorazon.svelte";
@@ -16,10 +16,10 @@
 	import Logopedia from "./Windows/Logopedia.svelte";
 </script>
 
-<CornerMouseScroller />
-<ScrollSlowDown />
+<ScrollHandler />
 
 <main>
+	<MortimerBaltus />
 	<HeroView />
 	<ProjectCorazon />
 	<AboutWindow />

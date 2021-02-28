@@ -19,14 +19,14 @@ function windowHandler() {
             windowStore.update(windowObjects => {
                 let window = windowObjects.find(wndw => wndw.id === windowID);
                 const windowIndex = windowObjects.indexOf(window);
-                window.zIndex = 1;
+                window.zIndex = 10;
                 window.isInForeground = true;
                 let updatedWindowObjects = windowObjects.filter(wndw => true)
                 updatedWindowObjects[windowIndex] = window;
                 window.intersections.forEach(intersectingID => {
                     let intersectingWindow = windowObjects.find(wndw => wndw.id === intersectingID);
                     const intersectingWindowIndex = windowObjects.indexOf(intersectingWindow);
-                    intersectingWindow.zIndex = 0;
+                    intersectingWindow.zIndex = 5;
                     intersectingWindow.isInForeground = false;
                     intersectingWindow.touched = true;
                     updatedWindowObjects[intersectingWindowIndex] = intersectingWindow;

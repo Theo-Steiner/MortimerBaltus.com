@@ -7,6 +7,10 @@
     gridColumnEnd={199}
     gridRowStart={25}
     gridRowEnd={75}
+    largeGridColumnStart={173}
+    largeGridColumnEnd={199}
+    largeGridRowStart={20}
+    largeGridRowEnd={53}
     backgroundColor="#5F583D"
     title="References"
     enlargeable={false}
@@ -15,6 +19,7 @@
     intersections={[11]}
     intersectingSide="left"
     distanceFromIntersection={31}
+    largeDistanceFromIntersection={7}
 >
     <ul>
         <li><a href="www.reference.com">Bureau Johannes Erler</a></li>
@@ -55,5 +60,16 @@
     }
     li {
         padding-top: 0.5vmax;
+    }
+    @media only screen and (min-width: 1024px) {
+        a {
+            font-size: 1.6vmax;
+        }
+        ul {
+            padding: 0 1.3vmax 0 0.7vmax;
+        }
+        li {
+            padding-top: 0.3vmax;
+        }
     }
 </style>

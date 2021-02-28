@@ -7,6 +7,10 @@
     gridColumnEnd={60}
     gridRowStart={2}
     gridRowEnd={32}
+    largeGridColumnStart={34}
+    largeGridColumnEnd={60}
+    largeGridRowStart={10}
+    largeGridRowEnd={30}
     backgroundColor="#7d7d7d"
     title="CLEAN.CODE"
     id={10}
@@ -14,6 +18,7 @@
     intersections={[3]}
     intersectingSide="right"
     distanceFromIntersection={10}
+    largeDistanceFromIntersection={5}
 >
     <p>
         I suppose it is tempting, <br /> if the only tool you have is a hammer, to
@@ -35,5 +40,11 @@
     }
     .text-right {
         text-align: right;
+    }
+    @media only screen and (min-width: 1024px) {
+        p {
+            font-size: 1.4vmax;
+            padding: 0.7vmax;
+        }
     }
 </style>

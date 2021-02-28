@@ -6,6 +6,10 @@
     export let gridColumnEnd;
     export let gridRowStart;
     export let gridRowEnd;
+    export let largeGridColumnStart = 0;
+    export let largeGridColumnEnd = 0;
+    export let largeGridRowStart = 0;
+    export let largeGridRowEnd = 0;
     export let backgroundColor = "";
     export let title;
     export let enlargeable = true;
@@ -14,10 +18,13 @@
     export let intersections = [];
     export let intersectingSide = null;
     export let distanceFromIntersection = 20;
+    export let largeDistanceFromIntersection = 10;
+    distanceFromIntersection = distanceFromIntersection * 1.25;
+    largeDistanceFromIntersection = largeDistanceFromIntersection * 1.25;
+
     let touched = false;
-    let zIndex = 0;
+    let zIndex = 5;
     let thisWindowObject;
-    distanceFromIntersection = distanceFromIntersection + 5;
     windowHandler.registerWindow({
         id: id,
         zIndex: zIndex,
@@ -48,7 +55,9 @@
 </script>
 
 <section
-    style="--shuffledistance: {distanceFromIntersection}vmax; position: relative; z-index: {zIndex}; grid-column: {gridColumnStart} / {gridColumnEnd}; grid-row: {gridRowStart} / {gridRowEnd}; background-color: {backgroundColor};"
+    style="--gridColumnStart: {gridColumnStart}; --gridColumnEnd: {gridColumnEnd}; --gridRowStart: {gridRowStart}; --gridRowEnd: {gridRowEnd};
+     --largeGridColumnStart: {largeGridColumnStart}; --largeGridColumnEnd: {largeGridColumnEnd}; --largeGridRowStart: {largeGridRowStart}; --largeGridRowEnd: {largeGridRowEnd};
+     --shuffledistance: {distanceFromIntersection}vmax; --largeshuffledistance: {largeDistanceFromIntersection}vmax; position: relative; z-index: {zIndex};  background-color: {backgroundColor};"
     on:click={handleWindowClick}
     class:trigger-shuffle-right={!isInForeground &&
         intersectingSide === "right" &&
@@ -162,6 +171,29 @@
 </section>
 
 <style>
+    section {
+        border: 0.2vmax solid #fefefe;
+        border-radius: 5px;
+        background-color: #fefefe;
+        color: #fefefe;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        transition: z-index 0.2s;
+        grid-column: var(--gridColumnStart) / var(--gridColumnEnd);
+        grid-row: var(--gridRowStart) / var(--gridRowEnd);
+    }
+
+    header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 0.2vmax solid #fefefe;
+        background-color: #151515;
+        padding: 1vmax;
+        margin: 0px;
+    }
     .disabled {
         visibility: hidden;
     }
@@ -196,28 +228,6 @@
         height: 1px;
         width: 1px;
         position: absolute;
-    }
-
-    section {
-        border: 0.2vmax solid #fefefe;
-        border-radius: 5px;
-        background-color: #fefefe;
-        color: #fefefe;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-        transition: z-index 0.2s;
-    }
-
-    header {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 0.2vmax solid #fefefe;
-        background-color: #151515;
-        padding: 1vmax 1vmax;
-        margin: 0px;
     }
 
     h1 {
@@ -270,5 +280,50 @@
         animation-name: shuffle-left;
         animation-duration: 0.4s;
         animation-timing-function: ease;
+    }
+    /* 2,96 vmax vertikal und 0,23 horizontal */
+    @media only screen and (min-width: 1024px) {
+        section {
+            grid-column: var(--largeGridColumnStart) / var(--largeGridColumnEnd);
+            grid-row: var(--largeGridRowStart) / var(--largeGridRowEnd);
+            border-width: 0.13vmax;
+        }
+        header {
+            padding: 0.7vmax;
+            border-width: 0.13vmax;
+        }
+        button {
+            width: 4.3vmax;
+        }
+        h1 {
+            font-size: 1.3vmax;
+        }
+
+        svg {
+            stroke-width: 2;
+        }
+
+        @keyframes shuffle-left {
+            0% {
+                left: 0;
+            }
+            50% {
+                left: var(--largeshuffledistance);
+            }
+            100% {
+                left: 0;
+            }
+        }
+        @keyframes shuffle-right {
+            0% {
+                right: 0;
+            }
+            50% {
+                right: var(--largeshuffledistance);
+            }
+            100% {
+                right: 0;
+            }
+        }
     }
 </style>
