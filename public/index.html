@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset='utf-8'>
-	<meta name="viewport" content="width=device-width, user-scalable=no" id="viewportmetatag">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" id="viewportmetatag">
 	<meta name="description"
 		content="MortimerBaltus provides creative services & solutions for digital development. Founded in 2021, MortimerBaltus is based in Hamburg (DE) and Tokyo (JP).">
 
@@ -99,13 +99,6 @@
 
 
 <script>
-	if (!navigator.userAgent.includes("Android")) {
-		let viewportmetatag = document.getElementById("viewportmetatag");
-		viewportmetatag.setAttribute("content", "width=device-width, initial-scale=1")
-	}
-	if ("scrollRestoration" in window.history) {
-		window.history.scrollRestoration = "manual";
-	}
 	// DOESN'T WORK ON LIGHTHOUSE DEVICE!! WHY?! MOTO G4: BACKGROUNDPOSITION BROKEN, SCROLL BROKEN.... WARUM?
 	let vmax;
 	if (window.visualViewport.width) {
