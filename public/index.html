@@ -3,7 +3,13 @@
 
 <head>
 	<meta charset='utf-8'>
-	<meta name='viewport' content='width=device-width,initial-scale=1'>
+	<meta name="viewport" content="width=device-width, user-scalable=no" id="viewportmetatag">
+	<script>
+		if (!navigator.userAgent.includes("Android")) {
+			let viewportmetatag = document.getElementById("viewportmetatag");
+			viewportmetatag.setAttribute("content", "width=device-width, initial-scale=1")
+		} 
+	</script>
 	<meta name="description"
 		content="MortimerBaltus provides creative services & solutions for digital development. Founded in 2021, MortimerBaltus is based in Hamburg (DE) and Tokyo (JP).">
 
@@ -63,7 +69,11 @@
 
 		.mortimer-baltus {
 			position: fixed;
+			backface-visibility: hidden;
+			-webkit-backface-visibility: hidden;
 			z-index: 0;
+			top: 0;
+			left: 0;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
@@ -98,7 +108,13 @@
 	if ("scrollRestoration" in window.history) {
 		window.history.scrollRestoration = "manual";
 	}
-	let vmax = window.innerWidth >= window.innerHeight ? window.innerWidth : window.innerHeight;
+	// DOESN'T WORK ON LIGHTHOUSE DEVICE!! WHY?! MOTO G4: BACKGROUNDPOSITION BROKEN, SCROLL BROKEN.... WARUM?
+	let vmax;
+	if (window.visualViewport.width) {
+		vmax = window.visualViewport.width >= window.visualViewport.height ? window.visualViewport.width : window.visualViewport.height;
+	} else {
+		vmax = window.innerWidth >= window.innerHeight ? window.innerWidth : window.innerHeight;
+	}
 	scrollTo(vmax * 0.5 + (vmax - window.innerWidth) / 2, vmax * 0.5 + (vmax - window.innerHeight) / 2)
 	window.onload = () => {
 		var preloadedScript = document.createElement("script");

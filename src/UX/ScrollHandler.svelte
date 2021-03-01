@@ -17,12 +17,14 @@
         initialM.x = event.clientX;
         initialM.y = event.clientY;
         background.addEventListener("mousemove", handleMousemove);
+        background.addEventListener("mouseout", handleMouseup);
         let selection = window.getSelection();
         selection.removeAllRanges();
     }
     function handleMouseup() {
         isMousedown = false;
         background.removeEventListener("mousemove", handleMousemove);
+        background.removeEventListener("mouseout", handleMouseup);
     }
     function handleMousemove(event) {
         currentM.x = event.clientX;
@@ -44,7 +46,6 @@
     class:mousedown={isMousedown}
     on:mousedown={handleMousedown}
     on:mouseup={handleMouseup}
-    on:mouseout={handleMouseup}
     bind:this={background}
 />
 
@@ -59,5 +60,6 @@
     .mousedown {
         cursor: grabbing;
         user-select: none;
+        z-index: 9999;
     }
 </style>

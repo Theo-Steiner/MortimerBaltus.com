@@ -8,8 +8,8 @@
 <WindowElement
     gridColumnStart={50}
     gridColumnEnd={90}
-    gridRowStart={15}
-    gridRowEnd={55}
+    gridRowStart={10}
+    gridRowEnd={50}
     largeGridColumnStart={65}
     largeGridColumnEnd={91}
     largeGridRowStart={51}
