@@ -4,6 +4,7 @@ var app = (function () {
     'use strict';
 
     function noop() { }
+    const identity = x => x;
     function assign(tar, src) {
         // @ts-ignore
         for (const k in src)
@@ -70,6 +71,41 @@ var app = (function () {
         }
     }
 
+    const is_client = typeof window !== 'undefined';
+    let now = is_client
+        ? () => window.performance.now()
+        : () => Date.now();
+    let raf = is_client ? cb => requestAnimationFrame(cb) : noop;
+
+    const tasks = new Set();
+    function run_tasks(now) {
+        tasks.forEach(task => {
+            if (!task.c(now)) {
+                tasks.delete(task);
+                task.f();
+            }
+        });
+        if (tasks.size !== 0)
+            raf(run_tasks);
+    }
+    /**
+     * Creates a new task that runs on each raf frame
+     * until it returns a falsy value or is aborted
+     */
+    function loop(callback) {
+        let task;
+        if (tasks.size === 0)
+            raf(run_tasks);
+        return {
+            promise: new Promise(fulfill => {
+                tasks.add(task = { c: callback, f: fulfill });
+            }),
+            abort() {
+                tasks.delete(task);
+            }
+        };
+    }
+
     function append(target, node) {
         target.appendChild(node);
     }
@@ -131,6 +167,67 @@ var app = (function () {
         const e = document.createEvent('CustomEvent');
         e.initCustomEvent(type, false, false, detail);
         return e;
+    }
+
+    const active_docs = new Set();
+    let active = 0;
+    // https://github.com/darkskyapp/string-hash/blob/master/index.js
+    function hash(str) {
+        let hash = 5381;
+        let i = str.length;
+        while (i--)
+            hash = ((hash << 5) - hash) ^ str.charCodeAt(i);
+        return hash >>> 0;
+    }
+    function create_rule(node, a, b, duration, delay, ease, fn, uid = 0) {
+        const step = 16.666 / duration;
+        let keyframes = '{\n';
+        for (let p = 0; p <= 1; p += step) {
+            const t = a + (b - a) * ease(p);
+            keyframes += p * 100 + `%{${fn(t, 1 - t)}}\n`;
+        }
+        const rule = keyframes + `100% {${fn(b, 1 - b)}}\n}`;
+        const name = `__svelte_${hash(rule)}_${uid}`;
+        const doc = node.ownerDocument;
+        active_docs.add(doc);
+        const stylesheet = doc.__svelte_stylesheet || (doc.__svelte_stylesheet = doc.head.appendChild(element('style')).sheet);
+        const current_rules = doc.__svelte_rules || (doc.__svelte_rules = {});
+        if (!current_rules[name]) {
+            current_rules[name] = true;
+            stylesheet.insertRule(`@keyframes ${name} ${rule}`, stylesheet.cssRules.length);
+        }
+        const animation = node.style.animation || '';
+        node.style.animation = `${animation ? `${animation}, ` : ''}${name} ${duration}ms linear ${delay}ms 1 both`;
+        active += 1;
+        return name;
+    }
+    function delete_rule(node, name) {
+        const previous = (node.style.animation || '').split(', ');
+        const next = previous.filter(name
+            ? anim => anim.indexOf(name) < 0 // remove specific animation
+            : anim => anim.indexOf('__svelte') === -1 // remove all Svelte animations
+        );
+        const deleted = previous.length - next.length;
+        if (deleted) {
+            node.style.animation = next.join(', ');
+            active -= deleted;
+            if (!active)
+                clear_rules();
+        }
+    }
+    function clear_rules() {
+        raf(() => {
+            if (active)
+                return;
+            active_docs.forEach(doc => {
+                const stylesheet = doc.__svelte_stylesheet;
+                let i = stylesheet.cssRules.length;
+                while (i--)
+                    stylesheet.deleteRule(i);
+                doc.__svelte_rules = {};
+            });
+            active_docs.clear();
+        });
     }
 
     let current_component;
@@ -212,6 +309,20 @@ var app = (function () {
             $$.after_update.forEach(add_render_callback);
         }
     }
+
+    let promise;
+    function wait() {
+        if (!promise) {
+            promise = Promise.resolve();
+            promise.then(() => {
+                promise = null;
+            });
+        }
+        return promise;
+    }
+    function dispatch(node, direction, kind) {
+        node.dispatchEvent(custom_event(`${direction ? 'intro' : 'outro'}${kind}`));
+    }
     const outroing = new Set();
     let outros;
     function group_outros() {
@@ -248,6 +359,69 @@ var app = (function () {
             });
             block.o(local);
         }
+    }
+    const null_transition = { duration: 0 };
+    function create_in_transition(node, fn, params) {
+        let config = fn(node, params);
+        let running = false;
+        let animation_name;
+        let task;
+        let uid = 0;
+        function cleanup() {
+            if (animation_name)
+                delete_rule(node, animation_name);
+        }
+        function go() {
+            const { delay = 0, duration = 300, easing = identity, tick = noop, css } = config || null_transition;
+            if (css)
+                animation_name = create_rule(node, 0, 1, duration, delay, easing, css, uid++);
+            tick(0, 1);
+            const start_time = now() + delay;
+            const end_time = start_time + duration;
+            if (task)
+                task.abort();
+            running = true;
+            add_render_callback(() => dispatch(node, true, 'start'));
+            task = loop(now => {
+                if (running) {
+                    if (now >= end_time) {
+                        tick(1, 0);
+                        dispatch(node, true, 'end');
+                        cleanup();
+                        return running = false;
+                    }
+                    if (now >= start_time) {
+                        const t = easing((now - start_time) / duration);
+                        tick(t, 1 - t);
+                    }
+                }
+                return running;
+            });
+        }
+        let started = false;
+        return {
+            start() {
+                if (started)
+                    return;
+                delete_rule(node);
+                if (is_function(config)) {
+                    config = config();
+                    wait().then(go);
+                }
+                else {
+                    go();
+                }
+            },
+            invalidate() {
+                started = false;
+            },
+            end() {
+                if (running) {
+                    cleanup();
+                    running = false;
+                }
+            }
+        };
     }
 
     const globals = (typeof window !== 'undefined'
@@ -461,7 +635,7 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			div = element("div");
-    			attr_dev(div, "class", "grabbable svelte-broixr");
+    			attr_dev(div, "class", "grabbable svelte-128ee0a");
     			toggle_class(div, "mousedown", /*isMousedown*/ ctx[0]);
     			add_location(div, file, 43, 0, 1437);
     		},
@@ -601,6 +775,28 @@ var app = (function () {
     	}
     }
 
+    function cubicOut(t) {
+        const f = t - 1.0;
+        return f * f * f + 1.0;
+    }
+
+    function scale(node, { delay = 0, duration = 400, easing = cubicOut, start = 0, opacity = 0 } = {}) {
+        const style = getComputedStyle(node);
+        const target_opacity = +style.opacity;
+        const transform = style.transform === 'none' ? '' : style.transform;
+        const sd = 1 - start;
+        const od = target_opacity * (1 - opacity);
+        return {
+            delay,
+            duration,
+            easing,
+            css: (_t, u) => `
+			transform: ${transform} scale(${1 - (sd * u)});
+			opacity: ${target_opacity - (od * u)}
+		`
+        };
+    }
+
     const subscriber_queue = [];
     /**
      * Create a `Writable` store that allows both updating and reading by subscription.
@@ -693,10 +889,10 @@ var app = (function () {
 
     var windowHandler$1 = windowHandler();
 
-    /* src/UI/WindowElement.svelte generated by Svelte v3.32.1 */
-    const file$1 = "src/UI/WindowElement.svelte";
+    /* src/UI/FixedWindowElement.svelte generated by Svelte v3.32.1 */
+    const file$1 = "src/UI/FixedWindowElement.svelte";
 
-    // (107:8) {:else}
+    // (95:8) {:else}
     function create_else_block_1(ctx) {
     	let h1;
 
@@ -704,8 +900,8 @@ var app = (function () {
     		c: function create() {
     			h1 = element("h1");
     			h1.textContent = "Title";
-    			attr_dev(h1, "class", "svelte-5cwxig");
-    			add_location(h1, file$1, 107, 12, 3843);
+    			attr_dev(h1, "class", "svelte-p3beqy");
+    			add_location(h1, file$1, 95, 12, 3206);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h1, anchor);
@@ -720,14 +916,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1.name,
     		type: "else",
-    		source: "(107:8) {:else}",
+    		source: "(95:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (105:8) {#if title}
+    // (93:8) {#if title}
     function create_if_block_1(ctx) {
     	let h1;
     	let t;
@@ -735,16 +931,16 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			h1 = element("h1");
-    			t = text(/*title*/ ctx[12]);
-    			attr_dev(h1, "class", "svelte-5cwxig");
-    			add_location(h1, file$1, 105, 12, 3798);
+    			t = text(/*title*/ ctx[4]);
+    			attr_dev(h1, "class", "svelte-p3beqy");
+    			add_location(h1, file$1, 93, 12, 3161);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h1, anchor);
     			append_dev(h1, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*title*/ 4096) set_data_dev(t, /*title*/ ctx[12]);
+    			if (dirty & /*title*/ 16) set_data_dev(t, /*title*/ ctx[4]);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(h1);
@@ -755,22 +951,22 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(105:8) {#if title}",
+    		source: "(93:8) {#if title}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (163:8) {:else}
+    // (151:8) {:else}
     function create_else_block(ctx) {
     	let button;
 
     	const block = {
     		c: function create() {
     			button = element("button");
-    			attr_dev(button, "class", "disabled svelte-5cwxig");
-    			add_location(button, file$1, 163, 12, 6397);
+    			attr_dev(button, "class", "disabled svelte-p3beqy");
+    			add_location(button, file$1, 151, 12, 5760);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -785,14 +981,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(163:8) {:else}",
+    		source: "(151:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (110:8) {#if enlargeable}
+    // (98:8) {#if enlargeable}
     function create_if_block(ctx) {
     	let button;
     	let span;
@@ -818,7 +1014,7 @@ var app = (function () {
     			button = element("button");
     			span = element("span");
     			t0 = text("Enlarge this ");
-    			t1 = text(/*title*/ ctx[12]);
+    			t1 = text(/*title*/ ctx[4]);
     			t2 = text(" window");
     			t3 = space();
     			svg = svg_element("svg");
@@ -833,9 +1029,9 @@ var app = (function () {
     			polygon0 = svg_element("polygon");
     			rect2 = svg_element("rect");
     			polygon1 = svg_element("polygon");
-    			attr_dev(span, "class", "svelte-5cwxig");
-    			add_location(span, file$1, 111, 16, 3951);
-    			add_location(title_1, file$1, 118, 20, 4220);
+    			attr_dev(span, "class", "svelte-p3beqy");
+    			add_location(span, file$1, 99, 16, 3314);
+    			add_location(title_1, file$1, 106, 20, 3583);
     			attr_dev(rect0, "x", ".5");
     			attr_dev(rect0, "y", ".5");
     			attr_dev(rect0, "width", "53");
@@ -843,44 +1039,44 @@ var app = (function () {
     			attr_dev(rect0, "rx", "3");
     			attr_dev(rect0, "fill", "#151515");
     			attr_dev(rect0, "stroke", "#FEFEFE");
-    			add_location(rect0, file$1, 123, 36, 4527);
+    			add_location(rect0, file$1, 111, 36, 3890);
     			attr_dev(rect1, "x", "17");
     			attr_dev(rect1, "y", "6");
     			attr_dev(rect1, "width", "20");
     			attr_dev(rect1, "height", "1");
     			attr_dev(rect1, "fill", "#FEFEFE");
-    			add_location(rect1, file$1, 132, 36, 4964);
+    			add_location(rect1, file$1, 120, 36, 4327);
     			attr_dev(polygon0, "points", "47 7 37 4 37 7");
     			attr_dev(polygon0, "fill", "#FEFEFE");
-    			add_location(polygon0, file$1, 139, 36, 5295);
+    			add_location(polygon0, file$1, 127, 36, 4658);
     			attr_dev(rect2, "transform", "translate(27 8.5) rotate(180) translate(-27 -8.5)");
     			attr_dev(rect2, "x", "17");
     			attr_dev(rect2, "y", "8");
     			attr_dev(rect2, "width", "20");
     			attr_dev(rect2, "height", "1");
     			attr_dev(rect2, "fill", "#FEFEFE");
-    			add_location(rect2, file$1, 143, 36, 5498);
+    			add_location(rect2, file$1, 131, 36, 4861);
     			attr_dev(polygon1, "transform", "translate(12 9.5) rotate(180) translate(-12 -9.5)");
     			attr_dev(polygon1, "points", "17 11 7 8 7 11");
     			attr_dev(polygon1, "fill", "#FEFEFE");
-    			add_location(polygon1, file$1, 151, 36, 5931);
+    			add_location(polygon1, file$1, 139, 36, 5294);
     			attr_dev(g0, "transform", "translate(436 9)");
-    			add_location(g0, file$1, 122, 32, 4458);
+    			add_location(g0, file$1, 110, 32, 3821);
     			attr_dev(g1, "transform", "translate(606 1483)");
-    			add_location(g1, file$1, 121, 28, 4390);
+    			add_location(g1, file$1, 109, 28, 3753);
     			attr_dev(g2, "transform", "translate(-1042 -1492)");
-    			add_location(g2, file$1, 120, 24, 4323);
+    			add_location(g2, file$1, 108, 24, 3686);
     			attr_dev(g3, "fill", "none");
     			attr_dev(g3, "fill-rule", "evenodd");
-    			add_location(g3, file$1, 119, 20, 4263);
+    			add_location(g3, file$1, 107, 20, 3626);
     			attr_dev(svg, "version", "1.1");
     			attr_dev(svg, "viewBox", "0 0 54 15");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "role", "presentation");
-    			attr_dev(svg, "class", "svelte-5cwxig");
-    			add_location(svg, file$1, 112, 16, 4008);
-    			attr_dev(button, "class", "enlarge svelte-5cwxig");
-    			add_location(button, file$1, 110, 12, 3910);
+    			attr_dev(svg, "class", "svelte-p3beqy");
+    			add_location(svg, file$1, 100, 16, 3371);
+    			attr_dev(button, "class", "enlarge svelte-p3beqy");
+    			add_location(button, file$1, 98, 12, 3273);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -903,7 +1099,7 @@ var app = (function () {
     			append_dev(g0, polygon1);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*title*/ 4096) set_data_dev(t1, /*title*/ ctx[12]);
+    			if (dirty & /*title*/ 16) set_data_dev(t1, /*title*/ ctx[4]);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(button);
@@ -914,14 +1110,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(110:8) {#if enlargeable}",
+    		source: "(98:8) {#if enlargeable}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (171:14) <p>
+    // (156:14) <p>
     function fallback_block(ctx) {
     	let p;
 
@@ -929,7 +1125,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "Content goes here";
-    			add_location(p, file$1, 170, 14, 6581);
+    			add_location(p, file$1, 155, 14, 5908);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -943,7 +1139,7 @@ var app = (function () {
     		block,
     		id: fallback_block.name,
     		type: "fallback",
-    		source: "(171:14) <p>",
+    		source: "(156:14) <p>",
     		ctx
     	});
 
@@ -971,15 +1167,16 @@ var app = (function () {
     	let t5;
     	let t6;
     	let t7;
-    	let article;
+    	let div;
     	let t8;
     	let footer;
+    	let section_intro;
     	let current;
     	let mounted;
     	let dispose;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*title*/ ctx[12]) return create_if_block_1;
+    		if (/*title*/ ctx[4]) return create_if_block_1;
     		return create_else_block_1;
     	}
 
@@ -987,14 +1184,14 @@ var app = (function () {
     	let if_block0 = current_block_type(ctx);
 
     	function select_block_type_1(ctx, dirty) {
-    		if (/*enlargeable*/ ctx[13]) return create_if_block;
+    		if (/*enlargeable*/ ctx[5]) return create_if_block;
     		return create_else_block;
     	}
 
     	let current_block_type_1 = select_block_type_1(ctx);
     	let if_block1 = current_block_type_1(ctx);
-    	const default_slot_template = /*#slots*/ ctx[21].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[20], null);
+    	const default_slot_template = /*#slots*/ ctx[13].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[12], null);
     	const default_slot_or_fallback = default_slot || fallback_block(ctx);
 
     	const block = {
@@ -1004,7 +1201,7 @@ var app = (function () {
     			button = element("button");
     			span = element("span");
     			t0 = text("Shrink this ");
-    			t1 = text(/*title*/ ctx[12]);
+    			t1 = text(/*title*/ ctx[4]);
     			t2 = text(" window");
     			t3 = space();
     			svg = svg_element("svg");
@@ -1021,13 +1218,13 @@ var app = (function () {
     			t6 = space();
     			if_block1.c();
     			t7 = space();
-    			article = element("article");
+    			div = element("div");
     			if (default_slot_or_fallback) default_slot_or_fallback.c();
     			t8 = space();
     			footer = element("footer");
-    			attr_dev(span, "class", "svelte-5cwxig");
-    			add_location(span, file$1, 70, 12, 2425);
-    			add_location(title_1, file$1, 77, 16, 2665);
+    			attr_dev(span, "class", "svelte-p3beqy");
+    			add_location(span, file$1, 58, 12, 1788);
+    			add_location(title_1, file$1, 65, 16, 2028);
     			attr_dev(rect0, "x", ".5");
     			attr_dev(rect0, "y", ".5");
     			attr_dev(rect0, "width", "53");
@@ -1035,53 +1232,49 @@ var app = (function () {
     			attr_dev(rect0, "rx", "3");
     			attr_dev(rect0, "fill", "#151515");
     			attr_dev(rect0, "stroke", "#FEFEFE");
-    			add_location(rect0, file$1, 82, 32, 2949);
+    			add_location(rect0, file$1, 70, 32, 2312);
     			attr_dev(rect1, "x", "17");
     			attr_dev(rect1, "y", "7");
     			attr_dev(rect1, "width", "20");
     			attr_dev(rect1, "height", "1");
     			attr_dev(rect1, "fill", "#FEFEFE");
-    			add_location(rect1, file$1, 91, 32, 3350);
+    			add_location(rect1, file$1, 79, 32, 2713);
     			attr_dev(g0, "transform", "translate(9 9)");
-    			add_location(g0, file$1, 81, 28, 2886);
+    			add_location(g0, file$1, 69, 28, 2249);
     			attr_dev(g1, "transform", "translate(606 1483)");
-    			add_location(g1, file$1, 80, 24, 2822);
+    			add_location(g1, file$1, 68, 24, 2185);
     			attr_dev(g2, "transform", "translate(-615 -1492)");
-    			add_location(g2, file$1, 79, 20, 2760);
+    			add_location(g2, file$1, 67, 20, 2123);
     			attr_dev(g3, "fill", "none");
     			attr_dev(g3, "fill-rule", "evenodd");
-    			add_location(g3, file$1, 78, 16, 2704);
+    			add_location(g3, file$1, 66, 16, 2067);
     			attr_dev(svg, "version", "1.1");
     			attr_dev(svg, "viewBox", "0 0 54 15");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "role", "presentation");
-    			attr_dev(svg, "class", "svelte-5cwxig");
-    			add_location(svg, file$1, 71, 12, 2477);
-    			attr_dev(button, "class", "shrink svelte-5cwxig");
-    			add_location(button, file$1, 69, 8, 2389);
-    			attr_dev(header, "class", "svelte-5cwxig");
-    			add_location(header, file$1, 68, 4, 2372);
-    			set_style(article, "background-color", /*backgroundColor*/ ctx[11]);
-    			attr_dev(article, "class", "svelte-5cwxig");
-    			toggle_class(article, "no-events", !/*isInForeground*/ ctx[0]);
-    			add_location(article, file$1, 166, 4, 6457);
-    			add_location(footer, file$1, 172, 4, 6632);
-    			set_style(section, "--gridColumnStart", /*gridColumnStart*/ ctx[3]);
-    			set_style(section, "--gridColumnEnd", /*gridColumnEnd*/ ctx[4]);
-    			set_style(section, "--gridRowStart", /*gridRowStart*/ ctx[5]);
-    			set_style(section, "--gridRowEnd", /*gridRowEnd*/ ctx[6]);
-    			set_style(section, "--largeGridColumnStart", /*largeGridColumnStart*/ ctx[7]);
-    			set_style(section, "--largeGridColumnEnd", /*largeGridColumnEnd*/ ctx[8]);
-    			set_style(section, "--largeGridRowStart", /*largeGridRowStart*/ ctx[9]);
-    			set_style(section, "--largeGridRowEnd", /*largeGridRowEnd*/ ctx[10]);
-    			set_style(section, "--shuffledistance", /*distanceFromIntersection*/ ctx[1] + "vmax");
-    			set_style(section, "--largeshuffledistance", /*largeDistanceFromIntersection*/ ctx[2] + "vmax");
+    			attr_dev(svg, "class", "svelte-p3beqy");
+    			add_location(svg, file$1, 59, 12, 1840);
+    			attr_dev(button, "class", "shrink svelte-p3beqy");
+    			add_location(button, file$1, 57, 8, 1752);
+    			attr_dev(header, "class", "svelte-p3beqy");
+    			add_location(header, file$1, 56, 4, 1735);
+    			set_style(div, "background", /*background*/ ctx[3]);
+    			attr_dev(div, "class", "svelte-p3beqy");
+    			toggle_class(div, "no-events", !/*isInForeground*/ ctx[0]);
+    			add_location(div, file$1, 154, 4, 5820);
+    			add_location(footer, file$1, 157, 4, 5955);
+    			set_style(section, "--baseWindowWidth", /*width*/ ctx[2].base);
+    			set_style(section, "--baseWindowHeight", /*height*/ ctx[1].base);
+    			set_style(section, "--smallWindowWidth", /*width*/ ctx[2].small);
+    			set_style(section, "--smallWindowHeight", /*height*/ ctx[1].small);
+    			set_style(section, "--baseShuffleDistance", /*distanceFromIntersection*/ ctx[6].base);
+    			set_style(section, "--smallShuffleDistance", /*distanceFromIntersection*/ ctx[6].small);
+    			set_style(section, "--largeShuffleDistance", /*distanceFromIntersection*/ ctx[6].large);
     			set_style(section, "position", "relative");
-    			set_style(section, "z-index", /*zIndex*/ ctx[16]);
-    			attr_dev(section, "class", "svelte-5cwxig");
-    			toggle_class(section, "trigger-shuffle-right", !/*isInForeground*/ ctx[0] && /*intersectingSide*/ ctx[14] === "right" && /*touched*/ ctx[15]);
-    			toggle_class(section, "trigger-shuffle-left", !/*isInForeground*/ ctx[0] && /*intersectingSide*/ ctx[14] === "left" && /*touched*/ ctx[15]);
-    			add_location(section, file$1, 56, 0, 1631);
+    			set_style(section, "z-index", /*zIndex*/ ctx[8]);
+    			attr_dev(section, "class", "svelte-p3beqy");
+    			toggle_class(section, "trigger-shuffle", !/*isInForeground*/ ctx[0] && /*touched*/ ctx[7]);
+    			add_location(section, file$1, 47, 0, 1217);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1109,10 +1302,10 @@ var app = (function () {
     			append_dev(header, t6);
     			if_block1.m(header, null);
     			append_dev(section, t7);
-    			append_dev(section, article);
+    			append_dev(section, div);
 
     			if (default_slot_or_fallback) {
-    				default_slot_or_fallback.m(article, null);
+    				default_slot_or_fallback.m(div, null);
     			}
 
     			append_dev(section, t8);
@@ -1120,12 +1313,12 @@ var app = (function () {
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(section, "click", /*handleWindowClick*/ ctx[17], false, false, false);
+    				dispose = listen_dev(section, "click", /*handleWindowClick*/ ctx[9], false, false, false);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (!current || dirty & /*title*/ 4096) set_data_dev(t1, /*title*/ ctx[12]);
+    			if (!current || dirty & /*title*/ 16) set_data_dev(t1, /*title*/ ctx[4]);
 
     			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block0) {
     				if_block0.p(ctx, dirty);
@@ -1152,74 +1345,66 @@ var app = (function () {
     			}
 
     			if (default_slot) {
-    				if (default_slot.p && dirty & /*$$scope*/ 1048576) {
-    					update_slot(default_slot, default_slot_template, ctx, /*$$scope*/ ctx[20], dirty, null, null);
+    				if (default_slot.p && dirty & /*$$scope*/ 4096) {
+    					update_slot(default_slot, default_slot_template, ctx, /*$$scope*/ ctx[12], dirty, null, null);
     				}
     			}
 
-    			if (!current || dirty & /*backgroundColor*/ 2048) {
-    				set_style(article, "background-color", /*backgroundColor*/ ctx[11]);
+    			if (!current || dirty & /*background*/ 8) {
+    				set_style(div, "background", /*background*/ ctx[3]);
     			}
 
     			if (dirty & /*isInForeground*/ 1) {
-    				toggle_class(article, "no-events", !/*isInForeground*/ ctx[0]);
+    				toggle_class(div, "no-events", !/*isInForeground*/ ctx[0]);
     			}
 
-    			if (!current || dirty & /*gridColumnStart*/ 8) {
-    				set_style(section, "--gridColumnStart", /*gridColumnStart*/ ctx[3]);
+    			if (!current || dirty & /*width*/ 4) {
+    				set_style(section, "--baseWindowWidth", /*width*/ ctx[2].base);
     			}
 
-    			if (!current || dirty & /*gridColumnEnd*/ 16) {
-    				set_style(section, "--gridColumnEnd", /*gridColumnEnd*/ ctx[4]);
+    			if (!current || dirty & /*height*/ 2) {
+    				set_style(section, "--baseWindowHeight", /*height*/ ctx[1].base);
     			}
 
-    			if (!current || dirty & /*gridRowStart*/ 32) {
-    				set_style(section, "--gridRowStart", /*gridRowStart*/ ctx[5]);
+    			if (!current || dirty & /*width*/ 4) {
+    				set_style(section, "--smallWindowWidth", /*width*/ ctx[2].small);
     			}
 
-    			if (!current || dirty & /*gridRowEnd*/ 64) {
-    				set_style(section, "--gridRowEnd", /*gridRowEnd*/ ctx[6]);
+    			if (!current || dirty & /*height*/ 2) {
+    				set_style(section, "--smallWindowHeight", /*height*/ ctx[1].small);
     			}
 
-    			if (!current || dirty & /*largeGridColumnStart*/ 128) {
-    				set_style(section, "--largeGridColumnStart", /*largeGridColumnStart*/ ctx[7]);
+    			if (!current || dirty & /*distanceFromIntersection*/ 64) {
+    				set_style(section, "--baseShuffleDistance", /*distanceFromIntersection*/ ctx[6].base);
     			}
 
-    			if (!current || dirty & /*largeGridColumnEnd*/ 256) {
-    				set_style(section, "--largeGridColumnEnd", /*largeGridColumnEnd*/ ctx[8]);
+    			if (!current || dirty & /*distanceFromIntersection*/ 64) {
+    				set_style(section, "--smallShuffleDistance", /*distanceFromIntersection*/ ctx[6].small);
     			}
 
-    			if (!current || dirty & /*largeGridRowStart*/ 512) {
-    				set_style(section, "--largeGridRowStart", /*largeGridRowStart*/ ctx[9]);
+    			if (!current || dirty & /*distanceFromIntersection*/ 64) {
+    				set_style(section, "--largeShuffleDistance", /*distanceFromIntersection*/ ctx[6].large);
     			}
 
-    			if (!current || dirty & /*largeGridRowEnd*/ 1024) {
-    				set_style(section, "--largeGridRowEnd", /*largeGridRowEnd*/ ctx[10]);
+    			if (!current || dirty & /*zIndex*/ 256) {
+    				set_style(section, "z-index", /*zIndex*/ ctx[8]);
     			}
 
-    			if (!current || dirty & /*distanceFromIntersection*/ 2) {
-    				set_style(section, "--shuffledistance", /*distanceFromIntersection*/ ctx[1] + "vmax");
-    			}
-
-    			if (!current || dirty & /*largeDistanceFromIntersection*/ 4) {
-    				set_style(section, "--largeshuffledistance", /*largeDistanceFromIntersection*/ ctx[2] + "vmax");
-    			}
-
-    			if (!current || dirty & /*zIndex*/ 65536) {
-    				set_style(section, "z-index", /*zIndex*/ ctx[16]);
-    			}
-
-    			if (dirty & /*isInForeground, intersectingSide, touched*/ 49153) {
-    				toggle_class(section, "trigger-shuffle-right", !/*isInForeground*/ ctx[0] && /*intersectingSide*/ ctx[14] === "right" && /*touched*/ ctx[15]);
-    			}
-
-    			if (dirty & /*isInForeground, intersectingSide, touched*/ 49153) {
-    				toggle_class(section, "trigger-shuffle-left", !/*isInForeground*/ ctx[0] && /*intersectingSide*/ ctx[14] === "left" && /*touched*/ ctx[15]);
+    			if (dirty & /*isInForeground, touched*/ 129) {
+    				toggle_class(section, "trigger-shuffle", !/*isInForeground*/ ctx[0] && /*touched*/ ctx[7]);
     			}
     		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(default_slot_or_fallback, local);
+
+    			if (!section_intro) {
+    				add_render_callback(() => {
+    					section_intro = create_in_transition(section, scale, { duration: 1200 });
+    					section_intro.start();
+    				});
+    			}
+
     			current = true;
     		},
     		o: function outro(local) {
@@ -1249,26 +1434,16 @@ var app = (function () {
 
     function instance$1($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots("WindowElement", slots, ['default']);
-    	let { gridColumnStart } = $$props;
-    	let { gridColumnEnd } = $$props;
-    	let { gridRowStart } = $$props;
-    	let { gridRowEnd } = $$props;
-    	let { largeGridColumnStart = 0 } = $$props;
-    	let { largeGridColumnEnd = 0 } = $$props;
-    	let { largeGridRowStart = 0 } = $$props;
-    	let { largeGridRowEnd = 0 } = $$props;
-    	let { backgroundColor = "" } = $$props;
+    	validate_slots("FixedWindowElement", slots, ['default']);
+    	let { height } = $$props;
+    	let { width } = $$props;
+    	let { background = "" } = $$props;
     	let { title } = $$props;
     	let { enlargeable = true } = $$props;
     	let { id } = $$props;
     	let { isInForeground = true } = $$props;
     	let { intersections = [] } = $$props;
-    	let { intersectingSide = null } = $$props;
     	let { distanceFromIntersection = 20 } = $$props;
-    	let { largeDistanceFromIntersection = 10 } = $$props;
-    	distanceFromIntersection = distanceFromIntersection * 1.25;
-    	largeDistanceFromIntersection = largeDistanceFromIntersection * 1.25;
     	let touched = false;
     	let zIndex = 5;
     	let thisWindowObject;
@@ -1284,8 +1459,8 @@ var app = (function () {
     	const unsubscribe = windowHandler$1.subscribe(windows => {
     		thisWindowObject = windows.find(wdws => wdws.id === id);
     		$$invalidate(0, isInForeground = thisWindowObject.isInForeground);
-    		$$invalidate(16, zIndex = thisWindowObject.zIndex);
-    		$$invalidate(15, touched = thisWindowObject.touched);
+    		$$invalidate(8, zIndex = thisWindowObject.zIndex);
+    		$$invalidate(7, touched = thisWindowObject.touched);
     	});
 
     	function handleWindowClick() {
@@ -1301,70 +1476,47 @@ var app = (function () {
     	});
 
     	const writable_props = [
-    		"gridColumnStart",
-    		"gridColumnEnd",
-    		"gridRowStart",
-    		"gridRowEnd",
-    		"largeGridColumnStart",
-    		"largeGridColumnEnd",
-    		"largeGridRowStart",
-    		"largeGridRowEnd",
-    		"backgroundColor",
+    		"height",
+    		"width",
+    		"background",
     		"title",
     		"enlargeable",
     		"id",
     		"isInForeground",
     		"intersections",
-    		"intersectingSide",
-    		"distanceFromIntersection",
-    		"largeDistanceFromIntersection"
+    		"distanceFromIntersection"
     	];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<WindowElement> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<FixedWindowElement> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
-    		if ("gridColumnStart" in $$props) $$invalidate(3, gridColumnStart = $$props.gridColumnStart);
-    		if ("gridColumnEnd" in $$props) $$invalidate(4, gridColumnEnd = $$props.gridColumnEnd);
-    		if ("gridRowStart" in $$props) $$invalidate(5, gridRowStart = $$props.gridRowStart);
-    		if ("gridRowEnd" in $$props) $$invalidate(6, gridRowEnd = $$props.gridRowEnd);
-    		if ("largeGridColumnStart" in $$props) $$invalidate(7, largeGridColumnStart = $$props.largeGridColumnStart);
-    		if ("largeGridColumnEnd" in $$props) $$invalidate(8, largeGridColumnEnd = $$props.largeGridColumnEnd);
-    		if ("largeGridRowStart" in $$props) $$invalidate(9, largeGridRowStart = $$props.largeGridRowStart);
-    		if ("largeGridRowEnd" in $$props) $$invalidate(10, largeGridRowEnd = $$props.largeGridRowEnd);
-    		if ("backgroundColor" in $$props) $$invalidate(11, backgroundColor = $$props.backgroundColor);
-    		if ("title" in $$props) $$invalidate(12, title = $$props.title);
-    		if ("enlargeable" in $$props) $$invalidate(13, enlargeable = $$props.enlargeable);
-    		if ("id" in $$props) $$invalidate(18, id = $$props.id);
+    		if ("height" in $$props) $$invalidate(1, height = $$props.height);
+    		if ("width" in $$props) $$invalidate(2, width = $$props.width);
+    		if ("background" in $$props) $$invalidate(3, background = $$props.background);
+    		if ("title" in $$props) $$invalidate(4, title = $$props.title);
+    		if ("enlargeable" in $$props) $$invalidate(5, enlargeable = $$props.enlargeable);
+    		if ("id" in $$props) $$invalidate(10, id = $$props.id);
     		if ("isInForeground" in $$props) $$invalidate(0, isInForeground = $$props.isInForeground);
-    		if ("intersections" in $$props) $$invalidate(19, intersections = $$props.intersections);
-    		if ("intersectingSide" in $$props) $$invalidate(14, intersectingSide = $$props.intersectingSide);
-    		if ("distanceFromIntersection" in $$props) $$invalidate(1, distanceFromIntersection = $$props.distanceFromIntersection);
-    		if ("largeDistanceFromIntersection" in $$props) $$invalidate(2, largeDistanceFromIntersection = $$props.largeDistanceFromIntersection);
-    		if ("$$scope" in $$props) $$invalidate(20, $$scope = $$props.$$scope);
+    		if ("intersections" in $$props) $$invalidate(11, intersections = $$props.intersections);
+    		if ("distanceFromIntersection" in $$props) $$invalidate(6, distanceFromIntersection = $$props.distanceFromIntersection);
+    		if ("$$scope" in $$props) $$invalidate(12, $$scope = $$props.$$scope);
     	};
 
     	$$self.$capture_state = () => ({
     		onDestroy,
+    		scale,
     		windowHandler: windowHandler$1,
-    		gridColumnStart,
-    		gridColumnEnd,
-    		gridRowStart,
-    		gridRowEnd,
-    		largeGridColumnStart,
-    		largeGridColumnEnd,
-    		largeGridRowStart,
-    		largeGridRowEnd,
-    		backgroundColor,
+    		height,
+    		width,
+    		background,
     		title,
     		enlargeable,
     		id,
     		isInForeground,
     		intersections,
-    		intersectingSide,
     		distanceFromIntersection,
-    		largeDistanceFromIntersection,
     		touched,
     		zIndex,
     		thisWindowObject,
@@ -1373,25 +1525,17 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ("gridColumnStart" in $$props) $$invalidate(3, gridColumnStart = $$props.gridColumnStart);
-    		if ("gridColumnEnd" in $$props) $$invalidate(4, gridColumnEnd = $$props.gridColumnEnd);
-    		if ("gridRowStart" in $$props) $$invalidate(5, gridRowStart = $$props.gridRowStart);
-    		if ("gridRowEnd" in $$props) $$invalidate(6, gridRowEnd = $$props.gridRowEnd);
-    		if ("largeGridColumnStart" in $$props) $$invalidate(7, largeGridColumnStart = $$props.largeGridColumnStart);
-    		if ("largeGridColumnEnd" in $$props) $$invalidate(8, largeGridColumnEnd = $$props.largeGridColumnEnd);
-    		if ("largeGridRowStart" in $$props) $$invalidate(9, largeGridRowStart = $$props.largeGridRowStart);
-    		if ("largeGridRowEnd" in $$props) $$invalidate(10, largeGridRowEnd = $$props.largeGridRowEnd);
-    		if ("backgroundColor" in $$props) $$invalidate(11, backgroundColor = $$props.backgroundColor);
-    		if ("title" in $$props) $$invalidate(12, title = $$props.title);
-    		if ("enlargeable" in $$props) $$invalidate(13, enlargeable = $$props.enlargeable);
-    		if ("id" in $$props) $$invalidate(18, id = $$props.id);
+    		if ("height" in $$props) $$invalidate(1, height = $$props.height);
+    		if ("width" in $$props) $$invalidate(2, width = $$props.width);
+    		if ("background" in $$props) $$invalidate(3, background = $$props.background);
+    		if ("title" in $$props) $$invalidate(4, title = $$props.title);
+    		if ("enlargeable" in $$props) $$invalidate(5, enlargeable = $$props.enlargeable);
+    		if ("id" in $$props) $$invalidate(10, id = $$props.id);
     		if ("isInForeground" in $$props) $$invalidate(0, isInForeground = $$props.isInForeground);
-    		if ("intersections" in $$props) $$invalidate(19, intersections = $$props.intersections);
-    		if ("intersectingSide" in $$props) $$invalidate(14, intersectingSide = $$props.intersectingSide);
-    		if ("distanceFromIntersection" in $$props) $$invalidate(1, distanceFromIntersection = $$props.distanceFromIntersection);
-    		if ("largeDistanceFromIntersection" in $$props) $$invalidate(2, largeDistanceFromIntersection = $$props.largeDistanceFromIntersection);
-    		if ("touched" in $$props) $$invalidate(15, touched = $$props.touched);
-    		if ("zIndex" in $$props) $$invalidate(16, zIndex = $$props.zIndex);
+    		if ("intersections" in $$props) $$invalidate(11, intersections = $$props.intersections);
+    		if ("distanceFromIntersection" in $$props) $$invalidate(6, distanceFromIntersection = $$props.distanceFromIntersection);
+    		if ("touched" in $$props) $$invalidate(7, touched = $$props.touched);
+    		if ("zIndex" in $$props) $$invalidate(8, zIndex = $$props.zIndex);
     		if ("thisWindowObject" in $$props) thisWindowObject = $$props.thisWindowObject;
     	};
 
@@ -1401,20 +1545,12 @@ var app = (function () {
 
     	return [
     		isInForeground,
-    		distanceFromIntersection,
-    		largeDistanceFromIntersection,
-    		gridColumnStart,
-    		gridColumnEnd,
-    		gridRowStart,
-    		gridRowEnd,
-    		largeGridColumnStart,
-    		largeGridColumnEnd,
-    		largeGridRowStart,
-    		largeGridRowEnd,
-    		backgroundColor,
+    		height,
+    		width,
+    		background,
     		title,
     		enlargeable,
-    		intersectingSide,
+    		distanceFromIntersection,
     		touched,
     		zIndex,
     		handleWindowClick,
@@ -1425,33 +1561,25 @@ var app = (function () {
     	];
     }
 
-    class WindowElement extends SvelteComponentDev {
+    class FixedWindowElement extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
 
     		init(this, options, instance$1, create_fragment$1, safe_not_equal, {
-    			gridColumnStart: 3,
-    			gridColumnEnd: 4,
-    			gridRowStart: 5,
-    			gridRowEnd: 6,
-    			largeGridColumnStart: 7,
-    			largeGridColumnEnd: 8,
-    			largeGridRowStart: 9,
-    			largeGridRowEnd: 10,
-    			backgroundColor: 11,
-    			title: 12,
-    			enlargeable: 13,
-    			id: 18,
+    			height: 1,
+    			width: 2,
+    			background: 3,
+    			title: 4,
+    			enlargeable: 5,
+    			id: 10,
     			isInForeground: 0,
-    			intersections: 19,
-    			intersectingSide: 14,
-    			distanceFromIntersection: 1,
-    			largeDistanceFromIntersection: 2
+    			intersections: 11,
+    			distanceFromIntersection: 6
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
-    			tagName: "WindowElement",
+    			tagName: "FixedWindowElement",
     			options,
     			id: create_fragment$1.name
     		});
@@ -1459,172 +1587,100 @@ var app = (function () {
     		const { ctx } = this.$$;
     		const props = options.props || {};
 
-    		if (/*gridColumnStart*/ ctx[3] === undefined && !("gridColumnStart" in props)) {
-    			console.warn("<WindowElement> was created without expected prop 'gridColumnStart'");
+    		if (/*height*/ ctx[1] === undefined && !("height" in props)) {
+    			console.warn("<FixedWindowElement> was created without expected prop 'height'");
     		}
 
-    		if (/*gridColumnEnd*/ ctx[4] === undefined && !("gridColumnEnd" in props)) {
-    			console.warn("<WindowElement> was created without expected prop 'gridColumnEnd'");
+    		if (/*width*/ ctx[2] === undefined && !("width" in props)) {
+    			console.warn("<FixedWindowElement> was created without expected prop 'width'");
     		}
 
-    		if (/*gridRowStart*/ ctx[5] === undefined && !("gridRowStart" in props)) {
-    			console.warn("<WindowElement> was created without expected prop 'gridRowStart'");
+    		if (/*title*/ ctx[4] === undefined && !("title" in props)) {
+    			console.warn("<FixedWindowElement> was created without expected prop 'title'");
     		}
 
-    		if (/*gridRowEnd*/ ctx[6] === undefined && !("gridRowEnd" in props)) {
-    			console.warn("<WindowElement> was created without expected prop 'gridRowEnd'");
-    		}
-
-    		if (/*title*/ ctx[12] === undefined && !("title" in props)) {
-    			console.warn("<WindowElement> was created without expected prop 'title'");
-    		}
-
-    		if (/*id*/ ctx[18] === undefined && !("id" in props)) {
-    			console.warn("<WindowElement> was created without expected prop 'id'");
+    		if (/*id*/ ctx[10] === undefined && !("id" in props)) {
+    			console.warn("<FixedWindowElement> was created without expected prop 'id'");
     		}
     	}
 
-    	get gridColumnStart() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	get height() {
+    		throw new Error("<FixedWindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	set gridColumnStart(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	set height(value) {
+    		throw new Error("<FixedWindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	get gridColumnEnd() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	get width() {
+    		throw new Error("<FixedWindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	set gridColumnEnd(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	set width(value) {
+    		throw new Error("<FixedWindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	get gridRowStart() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	get background() {
+    		throw new Error("<FixedWindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	set gridRowStart(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get gridRowEnd() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set gridRowEnd(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get largeGridColumnStart() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set largeGridColumnStart(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get largeGridColumnEnd() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set largeGridColumnEnd(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get largeGridRowStart() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set largeGridRowStart(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get largeGridRowEnd() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set largeGridRowEnd(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get backgroundColor() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set backgroundColor(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	set background(value) {
+    		throw new Error("<FixedWindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	get title() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	set title(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	get enlargeable() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	set enlargeable(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	get id() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	set id(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	get isInForeground() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	set isInForeground(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	get intersections() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	set intersections(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get intersectingSide() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set intersectingSide(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	get distanceFromIntersection() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
     	set distanceFromIntersection(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get largeDistanceFromIntersection() {
-    		throw new Error("<WindowElement>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set largeDistanceFromIntersection(value) {
-    		throw new Error("<WindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    		throw new Error("<FixedWindowElement>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
     /* src/Windows/AboutWindow.svelte generated by Svelte v3.32.1 */
     const file$2 = "src/Windows/AboutWindow.svelte";
 
-    // (5:0) <WindowElement     gridColumnStart={105}     gridColumnEnd={135}     gridRowStart={115}     gridRowEnd={155}     largeGridColumnStart={125}     largeGridColumnEnd={145}     largeGridRowStart={112}     largeGridRowEnd={138}     backgroundColor="#A25C24"     title="ABOUT"     id={0}     isInForeground={true}     intersections={[1]}     intersectingSide="left"     distanceFromIntersection={15}     largeDistanceFromIntersection={6} >
+    // (6:4) <WindowElement         width={{ base: 238, small: 378 }}         height={{ base: 247, small: 392 }}         background="#A25C24"         title="ABOUT"         id={0}         isInForeground={true}         intersections={[1]}         distanceFromIntersection={{ base: -8, small: -6, large: -13 }}     >
     function create_default_slot(ctx) {
     	let p;
     	let t0;
@@ -1645,11 +1701,11 @@ var app = (function () {
     			t2 = text(" MEET");
     			br2 = element("br");
     			t3 = text(" YOU");
-    			add_location(br0, file$2, 22, 12, 526);
-    			add_location(br1, file$2, 22, 21, 535);
-    			add_location(br2, file$2, 22, 32, 546);
-    			attr_dev(p, "class", "svelte-16wbfzu");
-    			add_location(p, file$2, 22, 4, 518);
+    			add_location(br0, file$2, 15, 16, 412);
+    			add_location(br1, file$2, 15, 25, 421);
+    			add_location(br2, file$2, 15, 36, 432);
+    			attr_dev(p, "class", "svelte-138qylp");
+    			add_location(p, file$2, 15, 8, 404);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -1670,7 +1726,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(5:0) <WindowElement     gridColumnStart={105}     gridColumnEnd={135}     gridRowStart={115}     gridRowEnd={155}     largeGridColumnStart={125}     largeGridColumnEnd={145}     largeGridRowStart={112}     largeGridRowEnd={138}     backgroundColor=\\\"#A25C24\\\"     title=\\\"ABOUT\\\"     id={0}     isInForeground={true}     intersections={[1]}     intersectingSide=\\\"left\\\"     distanceFromIntersection={15}     largeDistanceFromIntersection={6} >",
+    		source: "(6:4) <WindowElement         width={{ base: 238, small: 378 }}         height={{ base: 247, small: 392 }}         background=\\\"#A25C24\\\"         title=\\\"ABOUT\\\"         id={0}         isInForeground={true}         intersections={[1]}         distanceFromIntersection={{ base: -8, small: -6, large: -13 }}     >",
     		ctx
     	});
 
@@ -1678,27 +1734,20 @@ var app = (function () {
     }
 
     function create_fragment$2(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 105,
-    				gridColumnEnd: 135,
-    				gridRowStart: 115,
-    				gridRowEnd: 155,
-    				largeGridColumnStart: 125,
-    				largeGridColumnEnd: 145,
-    				largeGridRowStart: 112,
-    				largeGridRowEnd: 138,
-    				backgroundColor: "#A25C24",
+    				width: { base: 238, small: 378 },
+    				height: { base: 247, small: 392 },
+    				background: "#A25C24",
     				title: "ABOUT",
     				id: 0,
     				isInForeground: true,
     				intersections: [1],
-    				intersectingSide: "left",
-    				distanceFromIntersection: 15,
-    				largeDistanceFromIntersection: 6,
+    				distanceFromIntersection: { base: -8, small: -6, large: -13 },
     				$$slots: { default: [create_default_slot] },
     				$$scope: { ctx }
     			},
@@ -1707,13 +1756,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-138qylp");
+    			add_location(div, file$2, 4, 0, 85);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -1735,7 +1788,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -1759,7 +1813,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<AboutWindow> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ WindowElement });
+    	$$self.$capture_state = () => ({ WindowElement: FixedWindowElement });
     	return [];
     }
 
@@ -2019,7 +2073,7 @@ var app = (function () {
     			attr_dev(img, "srcset", /*srcset*/ ctx[0]);
     			attr_dev(img, "alt", /*alt*/ ctx[2]);
     			if (img.src !== (img_src_value = /*src*/ ctx[1])) attr_dev(img, "src", img_src_value);
-    			attr_dev(img, "class", "svelte-l4ev2d");
+    			attr_dev(img, "class", "svelte-vdxc3e");
     			toggle_class(img, "loaded", /*loaded*/ ctx[4]);
     			add_location(img, file$4, 18, 0, 290);
     		},
@@ -2500,16 +2554,15 @@ var app = (function () {
     /* src/Windows/ProjectCorazon.svelte generated by Svelte v3.32.1 */
     const file$5 = "src/Windows/ProjectCorazon.svelte";
 
-    // (8:0) <WindowElement     gridColumnStart={80}     gridColumnEnd={120}     gridRowStart={125}     gridRowEnd={175}     largeGridColumnStart={105}     largeGridColumnEnd={131}     largeGridRowStart={120}     largeGridRowEnd={153}     title="PROJECT_01"     id={1}     isInForeground={false}     intersections={[0]}     intersectingSide="right"     distanceFromIntersection={15}     largeDistanceFromIntersection={6} >
+    // (9:4) <WindowElement         width={{ base: 293, small: 465 }}         height={{ base: 388, small: 616 }}         background={'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NjAgMTIwMCI+PHBhdGggZmlsbD0iIzgwNzI1ZiIgZD0iTTAgMGg5NTZ2MTIwMEgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0tMzkuNSAxMjcyLjdsNDQ2LTEzMzEgNTMuOSA2NjMuOS0yMjcuNiA2Njd6Ii8+PHBhdGggZD0iTS03Mi43IDkyMlYtLjVsMzY4LjggMy4yTDE2Mi40IDgwN3oiLz48cGF0aCBmaWxsPSIjMWExZjEzIiBkPSJNOTU5IDU0MS41TDQyOC40IDcyOCAzMjMgMTA5Mi4xbDYzMC43IDE4MC42eiIvPjxwYXRoIGZpbGw9IiNmZWRjYmUiIGQ9Ik0xMzQuNiA4MjlsMTY1LjEtNDA3LjIgNjA0LjctNDM2LTIxLjEgNDgxLjh6Ii8+PHBhdGggZD0iTS03Mi43IDk5Mi43bDIzOC4yLTI5M0wyNjAuOC02MSAxLjgtNzIuN3oiLz48cGF0aCBmaWxsPSJpdm9yeSIgZD0iTTM2NSA4NDkuOUw0NDEgMzYybC01MTMuNyA3NDYuOCA3NSAxMjQuNXoiLz48cGF0aCBmaWxsPSIjNjgzYjFjIiBkPSJNODk0LTcyLjdMMzg2IDcwLjdsMjMxLjQgMTIwMi0xNS4yLTExMjJ6Ii8+PHBhdGggZmlsbD0iI2ZmY2ZiMyIgZD0iTTQ0OCA5MS4zbC03OC40IDM1MEwyNzYuNi0xbDI5MC4yLTcxLjZ6Ii8+PHBhdGggZmlsbD0iI2NmZThlOSIgZD0iTTQ1My44IDEwODkuOGwtMjcxIDg5LjQtMzAuNiA5My41TDU1MyAxMDg5Ljl6Ii8+PHBhdGggZmlsbD0iI2QzYjhhMCIgZD0iTTU0Ny42IDIwOC4yTDc0OC41IDcwOWwxOTItNTAxLjZMNjM0LjEgODkuMXoiLz48cGF0aCBmaWxsPSIjMTMyNzI5IiBkPSJNNzI4LjQgNzg3LjJsMjA2LjMgMzgzLjItNzMwLjYgMTAyLjMgMzQ3LjctMTQxLjR6Ii8+PHBhdGggZmlsbD0iIzE1MGIwMiIgZD0iTTU0Mi43LTcyLjdsMzI0LjcgMjIuMUw0MDQgMjYwLjNsMTU0LjItMTAuOXoiLz48cGF0aCBmaWxsPSIjNTM4MzkwIiBkPSJNMTAyOSAxMDk5LjhsLTI5Ny41LTI4MiAxMDcuNS05MCAxNzEuNyA0NC4yeiIvPjxwYXRoIGZpbGw9IiNhOTgzNGEiIGQ9Ik0zMDUuNCA5NzQuN2wtMjY2IDI0Ni45IDI3OS04NC41IDIwMi40LTcwNC40eiIvPjxwYXRoIGZpbGw9IiM5OTZjMzMiIGQ9Ik0xMDUgODA1bDIwMC4zLTU3NS40TDE0NCA4OTQuOS03Mi43IDk5Ny44eiIvPjxwYXRoIGZpbGw9IiNmZmZhZjAiIGQ9Ik0yMzAuNiAxMDIzbDI1Ny45LTY0Ni0xNDUuOC0xMS4yLTEzMCAyODkuM3oiLz48cGF0aCBmaWxsPSIjYzlhODg3IiBkPSJNNTE1LjkgMzkwLjFMMzg1LjMgMjEzLjZsNDAuMyAzMzEuN0w4NDIgNjIzLjV6Ii8+PHBhdGggZmlsbD0iIzAwMGEwNyIgZD0iTTMxOC4xIDI0Ny44bC0zOTAuOCA0MjYgMjExLTc0Ni41IDE1Ni4xIDQ5My44eiIvPjxwYXRoIGZpbGw9IiM2ZjUwMmEiIGQ9Ik0xMDI5IDcxMS43TDM4NyA4MTMuNmw1MzUuNi0zMjIuMUw5NDQtMzcuM3oiLz48cGF0aCBmaWxsPSIjZmZlMGJmIiBkPSJNLTcyLjcgOTg2bDM4LjggMjg2LjcgMzUwLjgtMzM1IDgwLTE3My42eiIvPjxwYXRoIGZpbGw9IiNkZjNhMDAiIGQ9Ik01MTkuMSA1Ni4ybC05Mi4zIDU0LjYtNjUuNCA4Mi41IDYwLjUtMTU0Ljd6Ii8+PHBhdGggZmlsbD0iIzQyMGQwMCIgZD0iTTQyMy45IDIzMC41TDU0NiAyOTEuN2wtNDMuMS0xMDcgODAuNy0yNTcuNHoiLz48cGF0aCBmaWxsPSIjNTY0MTI1IiBkPSJNNDg1LjEgNTY0LjVMNTQ0IDYwMGwyMTcgMTk5LjQtMzAzLjcgMzg3eiIvPjxwYXRoIGZpbGw9IiNkY2JhYTIiIGQ9Ik02MDguNyAzMTkuNEwzNjUgMzEzLjNsNDYwLjMtODIuOEw1NDkgMTY3Ljd6Ii8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTUyMi4yLTcyLjdsLTU3LjQgMzEuNEwzNTQuNyA2Ny4zbC0xNC4zIDg0Ljl6Ii8+PHBhdGggZmlsbD0iIzE2MTkxMCIgZD0iTTcwNC40IDE0MS45bDY4LjQtMTE3LTMzNy05Ny42TDc2NiAxMjQuNXoiLz48cGF0aCBmaWxsPSIjOWE5MTdkIiBkPSJNMjQ3IDEwMC4ybDEwOCAxNzkuNEwyNTUuNyA1MjkgMzQ0LTUwLjV6Ii8+PHBhdGggZmlsbD0iIzlhNzM1MCIgZD0iTTU0Ni41IDE4OC43TDEwMTItNzIuNyA3NDguNCAxNTkuNSA1MDcuMiA0Ni44eiIvPjxwYXRoIGZpbGw9IiNhNTg3NjciIGQ9Ik05NjQuNSAyNTcuOEw4OTAuOC00MC4xbC0yNyAzMTRMNzgyIDcyNy4yeiIvPjxwYXRoIGZpbGw9IiNkZGVhZTgiIGQ9Ik0yNjYuNiAxMTM1LjdsLTE2LjUgMzUuOEw3NC42IDEyNDVsNDAzLjctMTM0eiIvPjxwYXRoIGZpbGw9IiMxYzE2MDAiIGQ9Ik0tNzIuNyA1NzAuNGwxMDYgMjk0LjIgOTYuMy01NiAzNS42LTEwNS40eiIvPjxwYXRoIGZpbGw9IiNhMTg5NWEiIGQ9Ik00NjUuMSA3ODcuNGwtNTUuOC05MyA3NC0yOTMuNCA1My45LTE0Ljd6Ii8+PC9nPjwvc3ZnPg==")'}         title="PROJECT_01"         id={1}         isInForeground={false}         intersections={[0]}         distanceFromIntersection={{ base: 8, small: 6, large: 13 }}     >
     function create_default_slot$2(ctx) {
-    	let div;
     	let imageloader;
     	let current;
 
     	imageloader = new ImageLoader({
     			props: {
-    				sizes: "39.6vmax, (min-width: 1024px) 25.8vmax",
-    				srcset: "https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/" + slug + " 960w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_840,f_auto/" + slug + " 840w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_720,f_auto/" + slug + " 720w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_600,f_auto/" + slug + " 600w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_480,f_auto/" + slug + " 480w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_360,f_auto/" + slug + " 360w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_240,f_auto/" + slug + " 240w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_120,f_auto/" + slug + " 120w,",
+    				sizes: "291px, (min-width: 640px) 463px",
+    				srcset: "https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/" + slug + " 463w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto/" + slug + " 291w,",
     				src: "https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/" + slug,
     				alt: "Con Corazón is embracing artisans from countries at war"
     			},
@@ -2518,14 +2571,10 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			div = element("div");
     			create_component(imageloader.$$.fragment);
-    			attr_dev(div, "class", "svelte-1n9ckqy");
-    			add_location(div, file$5, 24, 4, 613);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			mount_component(imageloader, div, null);
+    			mount_component(imageloader, target, anchor);
     			current = true;
     		},
     		p: noop,
@@ -2539,8 +2588,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			destroy_component(imageloader);
+    			destroy_component(imageloader, detaching);
     		}
     	};
 
@@ -2548,7 +2596,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$2.name,
     		type: "slot",
-    		source: "(8:0) <WindowElement     gridColumnStart={80}     gridColumnEnd={120}     gridRowStart={125}     gridRowEnd={175}     largeGridColumnStart={105}     largeGridColumnEnd={131}     largeGridRowStart={120}     largeGridRowEnd={153}     title=\\\"PROJECT_01\\\"     id={1}     isInForeground={false}     intersections={[0]}     intersectingSide=\\\"right\\\"     distanceFromIntersection={15}     largeDistanceFromIntersection={6} >",
+    		source: "(9:4) <WindowElement         width={{ base: 293, small: 465 }}         height={{ base: 388, small: 616 }}         background={'url(\\\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NjAgMTIwMCI+PHBhdGggZmlsbD0iIzgwNzI1ZiIgZD0iTTAgMGg5NTZ2MTIwMEgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0tMzkuNSAxMjcyLjdsNDQ2LTEzMzEgNTMuOSA2NjMuOS0yMjcuNiA2Njd6Ii8+PHBhdGggZD0iTS03Mi43IDkyMlYtLjVsMzY4LjggMy4yTDE2Mi40IDgwN3oiLz48cGF0aCBmaWxsPSIjMWExZjEzIiBkPSJNOTU5IDU0MS41TDQyOC40IDcyOCAzMjMgMTA5Mi4xbDYzMC43IDE4MC42eiIvPjxwYXRoIGZpbGw9IiNmZWRjYmUiIGQ9Ik0xMzQuNiA4MjlsMTY1LjEtNDA3LjIgNjA0LjctNDM2LTIxLjEgNDgxLjh6Ii8+PHBhdGggZD0iTS03Mi43IDk5Mi43bDIzOC4yLTI5M0wyNjAuOC02MSAxLjgtNzIuN3oiLz48cGF0aCBmaWxsPSJpdm9yeSIgZD0iTTM2NSA4NDkuOUw0NDEgMzYybC01MTMuNyA3NDYuOCA3NSAxMjQuNXoiLz48cGF0aCBmaWxsPSIjNjgzYjFjIiBkPSJNODk0LTcyLjdMMzg2IDcwLjdsMjMxLjQgMTIwMi0xNS4yLTExMjJ6Ii8+PHBhdGggZmlsbD0iI2ZmY2ZiMyIgZD0iTTQ0OCA5MS4zbC03OC40IDM1MEwyNzYuNi0xbDI5MC4yLTcxLjZ6Ii8+PHBhdGggZmlsbD0iI2NmZThlOSIgZD0iTTQ1My44IDEwODkuOGwtMjcxIDg5LjQtMzAuNiA5My41TDU1MyAxMDg5Ljl6Ii8+PHBhdGggZmlsbD0iI2QzYjhhMCIgZD0iTTU0Ny42IDIwOC4yTDc0OC41IDcwOWwxOTItNTAxLjZMNjM0LjEgODkuMXoiLz48cGF0aCBmaWxsPSIjMTMyNzI5IiBkPSJNNzI4LjQgNzg3LjJsMjA2LjMgMzgzLjItNzMwLjYgMTAyLjMgMzQ3LjctMTQxLjR6Ii8+PHBhdGggZmlsbD0iIzE1MGIwMiIgZD0iTTU0Mi43LTcyLjdsMzI0LjcgMjIuMUw0MDQgMjYwLjNsMTU0LjItMTAuOXoiLz48cGF0aCBmaWxsPSIjNTM4MzkwIiBkPSJNMTAyOSAxMDk5LjhsLTI5Ny41LTI4MiAxMDcuNS05MCAxNzEuNyA0NC4yeiIvPjxwYXRoIGZpbGw9IiNhOTgzNGEiIGQ9Ik0zMDUuNCA5NzQuN2wtMjY2IDI0Ni45IDI3OS04NC41IDIwMi40LTcwNC40eiIvPjxwYXRoIGZpbGw9IiM5OTZjMzMiIGQ9Ik0xMDUgODA1bDIwMC4zLTU3NS40TDE0NCA4OTQuOS03Mi43IDk5Ny44eiIvPjxwYXRoIGZpbGw9IiNmZmZhZjAiIGQ9Ik0yMzAuNiAxMDIzbDI1Ny45LTY0Ni0xNDUuOC0xMS4yLTEzMCAyODkuM3oiLz48cGF0aCBmaWxsPSIjYzlhODg3IiBkPSJNNTE1LjkgMzkwLjFMMzg1LjMgMjEzLjZsNDAuMyAzMzEuN0w4NDIgNjIzLjV6Ii8+PHBhdGggZmlsbD0iIzAwMGEwNyIgZD0iTTMxOC4xIDI0Ny44bC0zOTAuOCA0MjYgMjExLTc0Ni41IDE1Ni4xIDQ5My44eiIvPjxwYXRoIGZpbGw9IiM2ZjUwMmEiIGQ9Ik0xMDI5IDcxMS43TDM4NyA4MTMuNmw1MzUuNi0zMjIuMUw5NDQtMzcuM3oiLz48cGF0aCBmaWxsPSIjZmZlMGJmIiBkPSJNLTcyLjcgOTg2bDM4LjggMjg2LjcgMzUwLjgtMzM1IDgwLTE3My42eiIvPjxwYXRoIGZpbGw9IiNkZjNhMDAiIGQ9Ik01MTkuMSA1Ni4ybC05Mi4zIDU0LjYtNjUuNCA4Mi41IDYwLjUtMTU0Ljd6Ii8+PHBhdGggZmlsbD0iIzQyMGQwMCIgZD0iTTQyMy45IDIzMC41TDU0NiAyOTEuN2wtNDMuMS0xMDcgODAuNy0yNTcuNHoiLz48cGF0aCBmaWxsPSIjNTY0MTI1IiBkPSJNNDg1LjEgNTY0LjVMNTQ0IDYwMGwyMTcgMTk5LjQtMzAzLjcgMzg3eiIvPjxwYXRoIGZpbGw9IiNkY2JhYTIiIGQ9Ik02MDguNyAzMTkuNEwzNjUgMzEzLjNsNDYwLjMtODIuOEw1NDkgMTY3Ljd6Ii8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTUyMi4yLTcyLjdsLTU3LjQgMzEuNEwzNTQuNyA2Ny4zbC0xNC4zIDg0Ljl6Ii8+PHBhdGggZmlsbD0iIzE2MTkxMCIgZD0iTTcwNC40IDE0MS45bDY4LjQtMTE3LTMzNy05Ny42TDc2NiAxMjQuNXoiLz48cGF0aCBmaWxsPSIjOWE5MTdkIiBkPSJNMjQ3IDEwMC4ybDEwOCAxNzkuNEwyNTUuNyA1MjkgMzQ0LTUwLjV6Ii8+PHBhdGggZmlsbD0iIzlhNzM1MCIgZD0iTTU0Ni41IDE4OC43TDEwMTItNzIuNyA3NDguNCAxNTkuNSA1MDcuMiA0Ni44eiIvPjxwYXRoIGZpbGw9IiNhNTg3NjciIGQ9Ik05NjQuNSAyNTcuOEw4OTAuOC00MC4xbC0yNyAzMTRMNzgyIDcyNy4yeiIvPjxwYXRoIGZpbGw9IiNkZGVhZTgiIGQ9Ik0yNjYuNiAxMTM1LjdsLTE2LjUgMzUuOEw3NC42IDEyNDVsNDAzLjctMTM0eiIvPjxwYXRoIGZpbGw9IiMxYzE2MDAiIGQ9Ik0tNzIuNyA1NzAuNGwxMDYgMjk0LjIgOTYuMy01NiAzNS42LTEwNS40eiIvPjxwYXRoIGZpbGw9IiNhMTg5NWEiIGQ9Ik00NjUuMSA3ODcuNGwtNTUuOC05MyA3NC0yOTMuNCA1My45LTE0Ljd6Ii8+PC9nPjwvc3ZnPg==\\\")'}         title=\\\"PROJECT_01\\\"         id={1}         isInForeground={false}         intersections={[0]}         distanceFromIntersection={{ base: 8, small: 6, large: 13 }}     >",
     		ctx
     	});
 
@@ -2556,26 +2604,20 @@ var app = (function () {
     }
 
     function create_fragment$6(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 80,
-    				gridColumnEnd: 120,
-    				gridRowStart: 125,
-    				gridRowEnd: 175,
-    				largeGridColumnStart: 105,
-    				largeGridColumnEnd: 131,
-    				largeGridRowStart: 120,
-    				largeGridRowEnd: 153,
+    				width: { base: 293, small: 465 },
+    				height: { base: 388, small: 616 },
+    				background: "url(\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NjAgMTIwMCI+PHBhdGggZmlsbD0iIzgwNzI1ZiIgZD0iTTAgMGg5NTZ2MTIwMEgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0tMzkuNSAxMjcyLjdsNDQ2LTEzMzEgNTMuOSA2NjMuOS0yMjcuNiA2Njd6Ii8+PHBhdGggZD0iTS03Mi43IDkyMlYtLjVsMzY4LjggMy4yTDE2Mi40IDgwN3oiLz48cGF0aCBmaWxsPSIjMWExZjEzIiBkPSJNOTU5IDU0MS41TDQyOC40IDcyOCAzMjMgMTA5Mi4xbDYzMC43IDE4MC42eiIvPjxwYXRoIGZpbGw9IiNmZWRjYmUiIGQ9Ik0xMzQuNiA4MjlsMTY1LjEtNDA3LjIgNjA0LjctNDM2LTIxLjEgNDgxLjh6Ii8+PHBhdGggZD0iTS03Mi43IDk5Mi43bDIzOC4yLTI5M0wyNjAuOC02MSAxLjgtNzIuN3oiLz48cGF0aCBmaWxsPSJpdm9yeSIgZD0iTTM2NSA4NDkuOUw0NDEgMzYybC01MTMuNyA3NDYuOCA3NSAxMjQuNXoiLz48cGF0aCBmaWxsPSIjNjgzYjFjIiBkPSJNODk0LTcyLjdMMzg2IDcwLjdsMjMxLjQgMTIwMi0xNS4yLTExMjJ6Ii8+PHBhdGggZmlsbD0iI2ZmY2ZiMyIgZD0iTTQ0OCA5MS4zbC03OC40IDM1MEwyNzYuNi0xbDI5MC4yLTcxLjZ6Ii8+PHBhdGggZmlsbD0iI2NmZThlOSIgZD0iTTQ1My44IDEwODkuOGwtMjcxIDg5LjQtMzAuNiA5My41TDU1MyAxMDg5Ljl6Ii8+PHBhdGggZmlsbD0iI2QzYjhhMCIgZD0iTTU0Ny42IDIwOC4yTDc0OC41IDcwOWwxOTItNTAxLjZMNjM0LjEgODkuMXoiLz48cGF0aCBmaWxsPSIjMTMyNzI5IiBkPSJNNzI4LjQgNzg3LjJsMjA2LjMgMzgzLjItNzMwLjYgMTAyLjMgMzQ3LjctMTQxLjR6Ii8+PHBhdGggZmlsbD0iIzE1MGIwMiIgZD0iTTU0Mi43LTcyLjdsMzI0LjcgMjIuMUw0MDQgMjYwLjNsMTU0LjItMTAuOXoiLz48cGF0aCBmaWxsPSIjNTM4MzkwIiBkPSJNMTAyOSAxMDk5LjhsLTI5Ny41LTI4MiAxMDcuNS05MCAxNzEuNyA0NC4yeiIvPjxwYXRoIGZpbGw9IiNhOTgzNGEiIGQ9Ik0zMDUuNCA5NzQuN2wtMjY2IDI0Ni45IDI3OS04NC41IDIwMi40LTcwNC40eiIvPjxwYXRoIGZpbGw9IiM5OTZjMzMiIGQ9Ik0xMDUgODA1bDIwMC4zLTU3NS40TDE0NCA4OTQuOS03Mi43IDk5Ny44eiIvPjxwYXRoIGZpbGw9IiNmZmZhZjAiIGQ9Ik0yMzAuNiAxMDIzbDI1Ny45LTY0Ni0xNDUuOC0xMS4yLTEzMCAyODkuM3oiLz48cGF0aCBmaWxsPSIjYzlhODg3IiBkPSJNNTE1LjkgMzkwLjFMMzg1LjMgMjEzLjZsNDAuMyAzMzEuN0w4NDIgNjIzLjV6Ii8+PHBhdGggZmlsbD0iIzAwMGEwNyIgZD0iTTMxOC4xIDI0Ny44bC0zOTAuOCA0MjYgMjExLTc0Ni41IDE1Ni4xIDQ5My44eiIvPjxwYXRoIGZpbGw9IiM2ZjUwMmEiIGQ9Ik0xMDI5IDcxMS43TDM4NyA4MTMuNmw1MzUuNi0zMjIuMUw5NDQtMzcuM3oiLz48cGF0aCBmaWxsPSIjZmZlMGJmIiBkPSJNLTcyLjcgOTg2bDM4LjggMjg2LjcgMzUwLjgtMzM1IDgwLTE3My42eiIvPjxwYXRoIGZpbGw9IiNkZjNhMDAiIGQ9Ik01MTkuMSA1Ni4ybC05Mi4zIDU0LjYtNjUuNCA4Mi41IDYwLjUtMTU0Ljd6Ii8+PHBhdGggZmlsbD0iIzQyMGQwMCIgZD0iTTQyMy45IDIzMC41TDU0NiAyOTEuN2wtNDMuMS0xMDcgODAuNy0yNTcuNHoiLz48cGF0aCBmaWxsPSIjNTY0MTI1IiBkPSJNNDg1LjEgNTY0LjVMNTQ0IDYwMGwyMTcgMTk5LjQtMzAzLjcgMzg3eiIvPjxwYXRoIGZpbGw9IiNkY2JhYTIiIGQ9Ik02MDguNyAzMTkuNEwzNjUgMzEzLjNsNDYwLjMtODIuOEw1NDkgMTY3Ljd6Ii8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTUyMi4yLTcyLjdsLTU3LjQgMzEuNEwzNTQuNyA2Ny4zbC0xNC4zIDg0Ljl6Ii8+PHBhdGggZmlsbD0iIzE2MTkxMCIgZD0iTTcwNC40IDE0MS45bDY4LjQtMTE3LTMzNy05Ny42TDc2NiAxMjQuNXoiLz48cGF0aCBmaWxsPSIjOWE5MTdkIiBkPSJNMjQ3IDEwMC4ybDEwOCAxNzkuNEwyNTUuNyA1MjkgMzQ0LTUwLjV6Ii8+PHBhdGggZmlsbD0iIzlhNzM1MCIgZD0iTTU0Ni41IDE4OC43TDEwMTItNzIuNyA3NDguNCAxNTkuNSA1MDcuMiA0Ni44eiIvPjxwYXRoIGZpbGw9IiNhNTg3NjciIGQ9Ik05NjQuNSAyNTcuOEw4OTAuOC00MC4xbC0yNyAzMTRMNzgyIDcyNy4yeiIvPjxwYXRoIGZpbGw9IiNkZGVhZTgiIGQ9Ik0yNjYuNiAxMTM1LjdsLTE2LjUgMzUuOEw3NC42IDEyNDVsNDAzLjctMTM0eiIvPjxwYXRoIGZpbGw9IiMxYzE2MDAiIGQ9Ik0tNzIuNyA1NzAuNGwxMDYgMjk0LjIgOTYuMy01NiAzNS42LTEwNS40eiIvPjxwYXRoIGZpbGw9IiNhMTg5NWEiIGQ9Ik00NjUuMSA3ODcuNGwtNTUuOC05MyA3NC0yOTMuNCA1My45LTE0Ljd6Ii8+PC9nPjwvc3ZnPg==\")",
     				title: "PROJECT_01",
     				id: 1,
     				isInForeground: false,
     				intersections: [0],
-    				intersectingSide: "right",
-    				distanceFromIntersection: 15,
-    				largeDistanceFromIntersection: 6,
+    				distanceFromIntersection: { base: 8, small: 6, large: 13 },
     				$$slots: { default: [create_default_slot$2] },
     				$$scope: { ctx }
     			},
@@ -2584,13 +2626,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-1hywgb3");
+    			add_location(div, file$5, 7, 0, 204);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -2612,7 +2658,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -2638,7 +2685,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ProjectCorazon> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ WindowElement, ImageLoader, slug });
+    	$$self.$capture_state = () => ({ WindowElement: FixedWindowElement, ImageLoader, slug });
     	return [];
     }
 
@@ -2659,16 +2706,15 @@ var app = (function () {
     /* src/Windows/ProjectRaceworx.svelte generated by Svelte v3.32.1 */
     const file$6 = "src/Windows/ProjectRaceworx.svelte";
 
-    // (8:0) <WindowElement     gridColumnStart={20}     gridColumnEnd={70}     gridRowStart={140}     gridRowEnd={175}     largeGridColumnStart={30}     largeGridColumnEnd={66}     largeGridRowStart={150}     largeGridRowEnd={173}     title="PROJECT_02"     id={2}     isInForeground={false}     intersections={[7]}     intersectingSide="left"     distanceFromIntersection={15}     largeDistanceFromIntersection={0} >
+    // (9:4) <WindowElement         width={{ base: 314, small: 499 }}         height={{ base: 247, small: 392 }}         background={'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjgwIDg5NiI+PHBhdGggZmlsbD0iIzdiNzY3NSIgZD0iTTAgMGgxMjgwdjg5NUgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiMwYjAwMDAiIGQ9Ik05NjYgODA5LjZsLS40LTYzMy44TDYyMCAxNTYuNGwtMjkuNSA1OTcuMnoiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMjAzLjItNzcuNUwxMzU3LjUgOC42bC0yOTQuNyA4MTMuNSAxNy42LTY0MC4zeiIvPjxwYXRoIGZpbGw9IiMwMDAzMGMiIGQ9Ik0xMzAuNCA4NC43bC0xNi42IDQ2NCAyMjcuNCA2IDExNi42LTM2My4xeiIvPjxwYXRoIGZpbGw9IiNmY2ZmZjciIGQ9Ik0tNDIuOSA1NjQuMWwyNTEuMyA0OS4xIDM5Mi45IDI0LjIgOC4xLTEwNC40eiIvPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik04NjQuOSAzNS40bDQ5Mi42IDI4Ni41Vi0xNS45TDk4OC03Ny41eiIvPjxwYXRoIGZpbGw9IiNkMWM5YmIiIGQ9Ik0xOS42IDQ5NC42bC05Ny4xIDM4MkwxMjI5LjMgODQyIDE1MyA3MjkuNXoiLz48cGF0aCBmaWxsPSIjYmFiOWIyIiBkPSJNMTM1Ny41IDc3Ny45bC0zMzEuMi02MS41TDk5Mi44IDU0NCAxMjc1IDM2N3oiLz48cGF0aCBmaWxsPSIjZDZlMmUzIiBkPSJNNTk5LjYgMzYxbDUuNCAxMzEuM0w0MjQuMiA1MTFsMTMuMy0xNDAuM3oiLz48cGF0aCBkPSJNNjIuMiA2MTQuNmw0ODEuOCAxOSA0MDkuOSA1NS03NDQuMi0zNi45eiIvPjxwYXRoIGZpbGw9IiM2MDYxNjUiIGQ9Ik03MjkuNS0yNC41bDMwNC45IDI4Mi4zIDQxLjIgNzkuNSAyODEuOSA2eiIvPjxwYXRoIGZpbGw9IiM0MTE4MTkiIGQ9Ik01NDIuNyA5Ny41bDQzMS45IDYxNy4yTDEzNTcuNSA4MTZsLTY2OS44LTI5LjR6Ii8+PHBhdGggZD0iTTEzMy43IDIxNy42bDUxLjQgOTQuOEwxNTEuMyA3MzVsLTI0LjctNi4yeiIvPjxwYXRoIGZpbGw9IiNiN2I1YjgiIGQ9Ik00ODIuNyA2OC4zbDE0My43LTUyLjUgNDAyIDEyOS44TDY1NCAxNzh6Ii8+PHBhdGggZmlsbD0iIzQxNDc0ZSIgZD0iTTEyMzMuOCA1NDYuMmwxMC42LTQ5LjEtMzkyLTQ4LjQgMjU3LjUgMTA3LjJ6Ii8+PHBhdGggZmlsbD0iIzUzNTI1OCIgZD0iTTE3My4zIDM3LjdsLTI1MC44IDI2MiAxOTEuMiAzTDkwMyAyMjIuMnoiLz48cGF0aCBmaWxsPSIjZDlkZWQwIiBkPSJNNTg2LjEgNzExLjZsLTMzNS05LjJMMTUxIDY1MC4ybDQ3MCAzMHoiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMTE5MS4xIDQ4NGwtMTI1LTkuOCAxNi44LTEyMy4zIDEzMCA0eiIvPjxwYXRoIGZpbGw9IiNmOGY5ZWIiIGQ9Ik0xMzU3LjUgOTcyLjVWODQ0LjdMMzUxLjIgNzY5LjNsOTQ2LjQgMTA0eiIvPjxwYXRoIGZpbGw9IiM4MDE3MTciIGQ9Ik04OTIuNiA2MDEuNmwtMi40LTI1NC40LTE1Ny0xMi43LTU3LjYgMzUxeiIvPjxwYXRoIGZpbGw9IiMyODIzMmEiIGQ9Ik03NSA1MDNMNDAuNyAyNTguNCAzNi44IDU0NyA3NTUgMzg1LjR6Ii8+PHBhdGggZmlsbD0iIzA1MDQwYiIgZD0iTTUzNS45IDIyOC45TDc4NS4xIDE4OGwtMTE1LTEwLjQtNDgwLjcgNDAuMnoiLz48cGF0aCBmaWxsPSIjZGFkNWNmIiBkPSJNMTI5LjMgNTU4LjZsLTIwNi44LTMzLjVMLTQ4IDc4OS44bDE3MC0xMjF6Ii8+PHBhdGggZmlsbD0iI2U3ZjNlYyIgZD0iTTk2NSA0MTguN2wyNS42LTI3Ny4zLS4yIDI4Ni4yLTEzLjUgOTAuN3oiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMTM1Ny41LTQxLjRMODk1LjMtNzcuNWwtOS41IDEzOC42TDEzMjguNiAyNTF6Ii8+PHBhdGggZmlsbD0iIzg5OGQ4ZCIgZD0iTTM5OS4yIDUzNy41bDYuNi0yNzAgMzg0LjYtNTItNDU5IDI1LjN6Ii8+PHBhdGggZmlsbD0iIzAxMDAwOCIgZD0iTTIzOS42IDI0OS42TDI1NSA2MC43bC02Ni4zLTQuMyA2LjUgMTc5LjJ6Ii8+PHBhdGggZmlsbD0iIzE0MTQxOCIgZD0iTTgxMC40IDc1Ny44bDM1MC4zIDEzLjgtMTg1IDMwLjktNDkuMS01NzguOHoiLz48cGF0aCBmaWxsPSIjMTgyMTI3IiBkPSJNMjEzIDI2MC45bDIxNy4yIDI3MC44LTIyMi42IDI3LjZMMjI2LjQgNzczeiIvPjxwYXRoIGZpbGw9IiM4Zjg2N2QiIGQ9Ik0xNS40IDk3Mi41bDEzNDIuMS05NC42LTczMi42LTcyLjdMLTIwIDc0Mi42eiIvPjxwYXRoIGZpbGw9IiMxYzI0MmEiIGQ9Ik01MzUuOSA1NDEuMmw5OS42IDE0LjYtMzYtNjQuOC02OS41LTUuNnoiLz48cGF0aCBmaWxsPSIjYjNiMmFjIiBkPSJNOTk1LjUgMTkwbDEwMi4xIDM0MiAyNTkuOSAxNDkuMi0zMzkuNCAxMnoiLz48cGF0aCBmaWxsPSIjYmFiZGMzIiBkPSJNMjUgMTA5TDkuMyAxNzkuNSAyMTEtNzcuNWw3OCA4NC40eiIvPjwvZz48L3N2Zz4=")'}         title="PROJECT_02"         id={2}         isInForeground={true}     >
     function create_default_slot$3(ctx) {
-    	let div;
     	let imageloader;
     	let current;
 
     	imageloader = new ImageLoader({
     			props: {
-    				sizes: "49.6vmax, (min-width: 1024px) 32.8vmax",
-    				srcset: "https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/" + slug$1 + " 1280w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/" + slug$1 + " 960w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_800,f_auto/" + slug$1 + " 800w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_640,f_auto/" + slug$1 + " 640w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_480,f_auto/" + slug$1 + " 480w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_320,f_auto/" + slug$1 + " 320w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_160,f_auto/" + slug$1 + " 160w,",
+    				sizes: "312px, (min-width: 640px) 497px",
+    				srcset: "https://res.cloudinary.com/thdrstnr/image/upload/w_497,f_auto/" + slug$1 + " 497w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_312,f_auto/" + slug$1 + " 312w,",
     				alt: "Raceworx",
     				src: "https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/" + slug$1
     			},
@@ -2677,14 +2723,10 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			div = element("div");
     			create_component(imageloader.$$.fragment);
-    			attr_dev(div, "class", "svelte-51g49l");
-    			add_location(div, file$6, 24, 4, 607);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			mount_component(imageloader, div, null);
+    			mount_component(imageloader, target, anchor);
     			current = true;
     		},
     		p: noop,
@@ -2698,8 +2740,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			destroy_component(imageloader);
+    			destroy_component(imageloader, detaching);
     		}
     	};
 
@@ -2707,7 +2748,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$3.name,
     		type: "slot",
-    		source: "(8:0) <WindowElement     gridColumnStart={20}     gridColumnEnd={70}     gridRowStart={140}     gridRowEnd={175}     largeGridColumnStart={30}     largeGridColumnEnd={66}     largeGridRowStart={150}     largeGridRowEnd={173}     title=\\\"PROJECT_02\\\"     id={2}     isInForeground={false}     intersections={[7]}     intersectingSide=\\\"left\\\"     distanceFromIntersection={15}     largeDistanceFromIntersection={0} >",
+    		source: "(9:4) <WindowElement         width={{ base: 314, small: 499 }}         height={{ base: 247, small: 392 }}         background={'url(\\\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjgwIDg5NiI+PHBhdGggZmlsbD0iIzdiNzY3NSIgZD0iTTAgMGgxMjgwdjg5NUgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiMwYjAwMDAiIGQ9Ik05NjYgODA5LjZsLS40LTYzMy44TDYyMCAxNTYuNGwtMjkuNSA1OTcuMnoiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMjAzLjItNzcuNUwxMzU3LjUgOC42bC0yOTQuNyA4MTMuNSAxNy42LTY0MC4zeiIvPjxwYXRoIGZpbGw9IiMwMDAzMGMiIGQ9Ik0xMzAuNCA4NC43bC0xNi42IDQ2NCAyMjcuNCA2IDExNi42LTM2My4xeiIvPjxwYXRoIGZpbGw9IiNmY2ZmZjciIGQ9Ik0tNDIuOSA1NjQuMWwyNTEuMyA0OS4xIDM5Mi45IDI0LjIgOC4xLTEwNC40eiIvPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik04NjQuOSAzNS40bDQ5Mi42IDI4Ni41Vi0xNS45TDk4OC03Ny41eiIvPjxwYXRoIGZpbGw9IiNkMWM5YmIiIGQ9Ik0xOS42IDQ5NC42bC05Ny4xIDM4MkwxMjI5LjMgODQyIDE1MyA3MjkuNXoiLz48cGF0aCBmaWxsPSIjYmFiOWIyIiBkPSJNMTM1Ny41IDc3Ny45bC0zMzEuMi02MS41TDk5Mi44IDU0NCAxMjc1IDM2N3oiLz48cGF0aCBmaWxsPSIjZDZlMmUzIiBkPSJNNTk5LjYgMzYxbDUuNCAxMzEuM0w0MjQuMiA1MTFsMTMuMy0xNDAuM3oiLz48cGF0aCBkPSJNNjIuMiA2MTQuNmw0ODEuOCAxOSA0MDkuOSA1NS03NDQuMi0zNi45eiIvPjxwYXRoIGZpbGw9IiM2MDYxNjUiIGQ9Ik03MjkuNS0yNC41bDMwNC45IDI4Mi4zIDQxLjIgNzkuNSAyODEuOSA2eiIvPjxwYXRoIGZpbGw9IiM0MTE4MTkiIGQ9Ik01NDIuNyA5Ny41bDQzMS45IDYxNy4yTDEzNTcuNSA4MTZsLTY2OS44LTI5LjR6Ii8+PHBhdGggZD0iTTEzMy43IDIxNy42bDUxLjQgOTQuOEwxNTEuMyA3MzVsLTI0LjctNi4yeiIvPjxwYXRoIGZpbGw9IiNiN2I1YjgiIGQ9Ik00ODIuNyA2OC4zbDE0My43LTUyLjUgNDAyIDEyOS44TDY1NCAxNzh6Ii8+PHBhdGggZmlsbD0iIzQxNDc0ZSIgZD0iTTEyMzMuOCA1NDYuMmwxMC42LTQ5LjEtMzkyLTQ4LjQgMjU3LjUgMTA3LjJ6Ii8+PHBhdGggZmlsbD0iIzUzNTI1OCIgZD0iTTE3My4zIDM3LjdsLTI1MC44IDI2MiAxOTEuMiAzTDkwMyAyMjIuMnoiLz48cGF0aCBmaWxsPSIjZDlkZWQwIiBkPSJNNTg2LjEgNzExLjZsLTMzNS05LjJMMTUxIDY1MC4ybDQ3MCAzMHoiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMTE5MS4xIDQ4NGwtMTI1LTkuOCAxNi44LTEyMy4zIDEzMCA0eiIvPjxwYXRoIGZpbGw9IiNmOGY5ZWIiIGQ9Ik0xMzU3LjUgOTcyLjVWODQ0LjdMMzUxLjIgNzY5LjNsOTQ2LjQgMTA0eiIvPjxwYXRoIGZpbGw9IiM4MDE3MTciIGQ9Ik04OTIuNiA2MDEuNmwtMi40LTI1NC40LTE1Ny0xMi43LTU3LjYgMzUxeiIvPjxwYXRoIGZpbGw9IiMyODIzMmEiIGQ9Ik03NSA1MDNMNDAuNyAyNTguNCAzNi44IDU0NyA3NTUgMzg1LjR6Ii8+PHBhdGggZmlsbD0iIzA1MDQwYiIgZD0iTTUzNS45IDIyOC45TDc4NS4xIDE4OGwtMTE1LTEwLjQtNDgwLjcgNDAuMnoiLz48cGF0aCBmaWxsPSIjZGFkNWNmIiBkPSJNMTI5LjMgNTU4LjZsLTIwNi44LTMzLjVMLTQ4IDc4OS44bDE3MC0xMjF6Ii8+PHBhdGggZmlsbD0iI2U3ZjNlYyIgZD0iTTk2NSA0MTguN2wyNS42LTI3Ny4zLS4yIDI4Ni4yLTEzLjUgOTAuN3oiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMTM1Ny41LTQxLjRMODk1LjMtNzcuNWwtOS41IDEzOC42TDEzMjguNiAyNTF6Ii8+PHBhdGggZmlsbD0iIzg5OGQ4ZCIgZD0iTTM5OS4yIDUzNy41bDYuNi0yNzAgMzg0LjYtNTItNDU5IDI1LjN6Ii8+PHBhdGggZmlsbD0iIzAxMDAwOCIgZD0iTTIzOS42IDI0OS42TDI1NSA2MC43bC02Ni4zLTQuMyA2LjUgMTc5LjJ6Ii8+PHBhdGggZmlsbD0iIzE0MTQxOCIgZD0iTTgxMC40IDc1Ny44bDM1MC4zIDEzLjgtMTg1IDMwLjktNDkuMS01NzguOHoiLz48cGF0aCBmaWxsPSIjMTgyMTI3IiBkPSJNMjEzIDI2MC45bDIxNy4yIDI3MC44LTIyMi42IDI3LjZMMjI2LjQgNzczeiIvPjxwYXRoIGZpbGw9IiM4Zjg2N2QiIGQ9Ik0xNS40IDk3Mi41bDEzNDIuMS05NC42LTczMi42LTcyLjdMLTIwIDc0Mi42eiIvPjxwYXRoIGZpbGw9IiMxYzI0MmEiIGQ9Ik01MzUuOSA1NDEuMmw5OS42IDE0LjYtMzYtNjQuOC02OS41LTUuNnoiLz48cGF0aCBmaWxsPSIjYjNiMmFjIiBkPSJNOTk1LjUgMTkwbDEwMi4xIDM0MiAyNTkuOSAxNDkuMi0zMzkuNCAxMnoiLz48cGF0aCBmaWxsPSIjYmFiZGMzIiBkPSJNMjUgMTA5TDkuMyAxNzkuNSAyMTEtNzcuNWw3OCA4NC40eiIvPjwvZz48L3N2Zz4=\\\")'}         title=\\\"PROJECT_02\\\"         id={2}         isInForeground={true}     >",
     		ctx
     	});
 
@@ -2715,26 +2756,18 @@ var app = (function () {
     }
 
     function create_fragment$7(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 20,
-    				gridColumnEnd: 70,
-    				gridRowStart: 140,
-    				gridRowEnd: 175,
-    				largeGridColumnStart: 30,
-    				largeGridColumnEnd: 66,
-    				largeGridRowStart: 150,
-    				largeGridRowEnd: 173,
+    				width: { base: 314, small: 499 },
+    				height: { base: 247, small: 392 },
+    				background: "url(\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjgwIDg5NiI+PHBhdGggZmlsbD0iIzdiNzY3NSIgZD0iTTAgMGgxMjgwdjg5NUgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiMwYjAwMDAiIGQ9Ik05NjYgODA5LjZsLS40LTYzMy44TDYyMCAxNTYuNGwtMjkuNSA1OTcuMnoiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMjAzLjItNzcuNUwxMzU3LjUgOC42bC0yOTQuNyA4MTMuNSAxNy42LTY0MC4zeiIvPjxwYXRoIGZpbGw9IiMwMDAzMGMiIGQ9Ik0xMzAuNCA4NC43bC0xNi42IDQ2NCAyMjcuNCA2IDExNi42LTM2My4xeiIvPjxwYXRoIGZpbGw9IiNmY2ZmZjciIGQ9Ik0tNDIuOSA1NjQuMWwyNTEuMyA0OS4xIDM5Mi45IDI0LjIgOC4xLTEwNC40eiIvPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik04NjQuOSAzNS40bDQ5Mi42IDI4Ni41Vi0xNS45TDk4OC03Ny41eiIvPjxwYXRoIGZpbGw9IiNkMWM5YmIiIGQ9Ik0xOS42IDQ5NC42bC05Ny4xIDM4MkwxMjI5LjMgODQyIDE1MyA3MjkuNXoiLz48cGF0aCBmaWxsPSIjYmFiOWIyIiBkPSJNMTM1Ny41IDc3Ny45bC0zMzEuMi02MS41TDk5Mi44IDU0NCAxMjc1IDM2N3oiLz48cGF0aCBmaWxsPSIjZDZlMmUzIiBkPSJNNTk5LjYgMzYxbDUuNCAxMzEuM0w0MjQuMiA1MTFsMTMuMy0xNDAuM3oiLz48cGF0aCBkPSJNNjIuMiA2MTQuNmw0ODEuOCAxOSA0MDkuOSA1NS03NDQuMi0zNi45eiIvPjxwYXRoIGZpbGw9IiM2MDYxNjUiIGQ9Ik03MjkuNS0yNC41bDMwNC45IDI4Mi4zIDQxLjIgNzkuNSAyODEuOSA2eiIvPjxwYXRoIGZpbGw9IiM0MTE4MTkiIGQ9Ik01NDIuNyA5Ny41bDQzMS45IDYxNy4yTDEzNTcuNSA4MTZsLTY2OS44LTI5LjR6Ii8+PHBhdGggZD0iTTEzMy43IDIxNy42bDUxLjQgOTQuOEwxNTEuMyA3MzVsLTI0LjctNi4yeiIvPjxwYXRoIGZpbGw9IiNiN2I1YjgiIGQ9Ik00ODIuNyA2OC4zbDE0My43LTUyLjUgNDAyIDEyOS44TDY1NCAxNzh6Ii8+PHBhdGggZmlsbD0iIzQxNDc0ZSIgZD0iTTEyMzMuOCA1NDYuMmwxMC42LTQ5LjEtMzkyLTQ4LjQgMjU3LjUgMTA3LjJ6Ii8+PHBhdGggZmlsbD0iIzUzNTI1OCIgZD0iTTE3My4zIDM3LjdsLTI1MC44IDI2MiAxOTEuMiAzTDkwMyAyMjIuMnoiLz48cGF0aCBmaWxsPSIjZDlkZWQwIiBkPSJNNTg2LjEgNzExLjZsLTMzNS05LjJMMTUxIDY1MC4ybDQ3MCAzMHoiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMTE5MS4xIDQ4NGwtMTI1LTkuOCAxNi44LTEyMy4zIDEzMCA0eiIvPjxwYXRoIGZpbGw9IiNmOGY5ZWIiIGQ9Ik0xMzU3LjUgOTcyLjVWODQ0LjdMMzUxLjIgNzY5LjNsOTQ2LjQgMTA0eiIvPjxwYXRoIGZpbGw9IiM4MDE3MTciIGQ9Ik04OTIuNiA2MDEuNmwtMi40LTI1NC40LTE1Ny0xMi43LTU3LjYgMzUxeiIvPjxwYXRoIGZpbGw9IiMyODIzMmEiIGQ9Ik03NSA1MDNMNDAuNyAyNTguNCAzNi44IDU0NyA3NTUgMzg1LjR6Ii8+PHBhdGggZmlsbD0iIzA1MDQwYiIgZD0iTTUzNS45IDIyOC45TDc4NS4xIDE4OGwtMTE1LTEwLjQtNDgwLjcgNDAuMnoiLz48cGF0aCBmaWxsPSIjZGFkNWNmIiBkPSJNMTI5LjMgNTU4LjZsLTIwNi44LTMzLjVMLTQ4IDc4OS44bDE3MC0xMjF6Ii8+PHBhdGggZmlsbD0iI2U3ZjNlYyIgZD0iTTk2NSA0MTguN2wyNS42LTI3Ny4zLS4yIDI4Ni4yLTEzLjUgOTAuN3oiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMTM1Ny41LTQxLjRMODk1LjMtNzcuNWwtOS41IDEzOC42TDEzMjguNiAyNTF6Ii8+PHBhdGggZmlsbD0iIzg5OGQ4ZCIgZD0iTTM5OS4yIDUzNy41bDYuNi0yNzAgMzg0LjYtNTItNDU5IDI1LjN6Ii8+PHBhdGggZmlsbD0iIzAxMDAwOCIgZD0iTTIzOS42IDI0OS42TDI1NSA2MC43bC02Ni4zLTQuMyA2LjUgMTc5LjJ6Ii8+PHBhdGggZmlsbD0iIzE0MTQxOCIgZD0iTTgxMC40IDc1Ny44bDM1MC4zIDEzLjgtMTg1IDMwLjktNDkuMS01NzguOHoiLz48cGF0aCBmaWxsPSIjMTgyMTI3IiBkPSJNMjEzIDI2MC45bDIxNy4yIDI3MC44LTIyMi42IDI3LjZMMjI2LjQgNzczeiIvPjxwYXRoIGZpbGw9IiM4Zjg2N2QiIGQ9Ik0xNS40IDk3Mi41bDEzNDIuMS05NC42LTczMi42LTcyLjdMLTIwIDc0Mi42eiIvPjxwYXRoIGZpbGw9IiMxYzI0MmEiIGQ9Ik01MzUuOSA1NDEuMmw5OS42IDE0LjYtMzYtNjQuOC02OS41LTUuNnoiLz48cGF0aCBmaWxsPSIjYjNiMmFjIiBkPSJNOTk1LjUgMTkwbDEwMi4xIDM0MiAyNTkuOSAxNDkuMi0zMzkuNCAxMnoiLz48cGF0aCBmaWxsPSIjYmFiZGMzIiBkPSJNMjUgMTA5TDkuMyAxNzkuNSAyMTEtNzcuNWw3OCA4NC40eiIvPjwvZz48L3N2Zz4=\")",
     				title: "PROJECT_02",
     				id: 2,
-    				isInForeground: false,
-    				intersections: [7],
-    				intersectingSide: "left",
-    				distanceFromIntersection: 15,
-    				largeDistanceFromIntersection: 0,
+    				isInForeground: true,
     				$$slots: { default: [create_default_slot$3] },
     				$$scope: { ctx }
     			},
@@ -2743,13 +2776,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-1br9c6o");
+    			add_location(div, file$6, 7, 0, 202);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -2771,7 +2808,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -2797,7 +2835,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ProjectRaceworx> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ WindowElement, ImageLoader, slug: slug$1 });
+    	$$self.$capture_state = () => ({ WindowElement: FixedWindowElement, ImageLoader, slug: slug$1 });
     	return [];
     }
 
@@ -2818,16 +2856,15 @@ var app = (function () {
     /* src/Windows/ProjectMueller.svelte generated by Svelte v3.32.1 */
     const file$7 = "src/Windows/ProjectMueller.svelte";
 
-    // (8:0) <WindowElement     gridColumnStart={50}     gridColumnEnd={90}     gridRowStart={10}     gridRowEnd={50}     largeGridColumnStart={65}     largeGridColumnEnd={91}     largeGridRowStart={51}     largeGridRowEnd={77}     title="PROJECT_03"     id={3}     isInForeground={true}     intersections={[10]}     intersectingSide="left"     distanceFromIntersection={10}     largeDistanceFromIntersection={5} >
+    // (9:4) <WindowElement         width={{ base: 293, small: 465 }}         height={{ base: 312, small: 497 }}         background={'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NjAgOTYwIj48cGF0aCBmaWxsPSIjMTcxNjE2IiBkPSJNMCAwaDk2MHY5NjBIMHoiLz48ZyBmaWxsLW9wYWNpdHk9Ii41Ij48cGF0aCBmaWxsPSIjNTM1MTRmIiBkPSJNMy4yIDMzNy41bDQyNy43IDIxNi44IDQzMS4zLTc3LjQgNjcuMy04NnoiLz48cGF0aCBmaWxsPSIjNWY1YzVhIiBkPSJNOTg3LjUgODMuM0w2MDIgMTg5LjJsLTY4LjMtMTI4IDM4MS0xMDguNnoiLz48cGF0aCBmaWxsPSIjNjQ2MTVmIiBkPSJNMjIxLjgtNTguMWwyODEuNSAyMjIuNS00OC45IDEwMi40TDE1Mi4zIDYxLjJ6Ii8+PHBhdGggZD0iTS01OC4xIDQ1Mi4zbDU3OS42IDQxMC4xIDI4MS44IDcuNC0xOTYuNy0yODR6TTc3OCA0MDBMLTU4IDI4OSAxMS4yLTU4IDI1NCAxMzcuNHoiLz48cGF0aCBmaWxsPSIjNGM0YzQ5IiBkPSJNNTk3LjYgODUzLjZsLTkxLjggMTY0LjVMODQxIDkzNGwxMi4zLTQxLjV6Ii8+PHBhdGggZD0iTTUyMC45IDE2Mi42TDEwMTggMTM1IDU4NC42IDM0MiAzNzUgMzU0LjV6TTE0NC40IDczMS43bDk2LjYgNDIuOEw2IDEwMTguMWwtMzMuMi03MzkuNXoiLz48L2c+PC9zdmc+")'}         title="PROJECT_03"         id={3}         isInForeground={true}         intersections={[10]}         intersectingSide="left"         distanceFromIntersection={{ base: 25, small: 8 }}     >
     function create_default_slot$4(ctx) {
-    	let div;
     	let imageloader;
     	let current;
 
     	imageloader = new ImageLoader({
     			props: {
-    				sizes: "39.6vmax, (min-width: 1024px) 25.8vmax",
-    				srcset: "https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/" + slug$2 + " 960w,\n            https://res.cloudinary.com/thdrstnr/image/upload/w_840,f_auto/" + slug$2 + " 840w,\n            https://res.cloudinary.com/thdrstnr/image/upload/w_720,f_auto/" + slug$2 + " 720w,\n            https://res.cloudinary.com/thdrstnr/image/upload/w_600,f_auto/" + slug$2 + " 600w,\n            https://res.cloudinary.com/thdrstnr/image/upload/w_480,f_auto/" + slug$2 + " 480w,\n            https://res.cloudinary.com/thdrstnr/image/upload/w_360,f_auto/" + slug$2 + " 360w,\n            https://res.cloudinary.com/thdrstnr/image/upload/w_240,f_auto/" + slug$2 + " 240w,\n            https://res.cloudinary.com/thdrstnr/image/upload/w_120,f_auto/" + slug$2 + " 120w,",
+    				sizes: "291px, (min-width: 640px) 463px",
+    				srcset: "https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto/" + slug$2 + " 463w,\n            https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto/" + slug$2 + " 291w,",
     				src: "https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/" + slug$2,
     				alt: "Eberhard Müller develops sophisticated textile interiors at the highest level"
     			},
@@ -2836,14 +2873,10 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			div = element("div");
     			create_component(imageloader.$$.fragment);
-    			attr_dev(div, "class", "svelte-pa8g7g");
-    			add_location(div, file$7, 24, 4, 610);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			mount_component(imageloader, div, null);
+    			mount_component(imageloader, target, anchor);
     			current = true;
     		},
     		p: noop,
@@ -2857,8 +2890,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			destroy_component(imageloader);
+    			destroy_component(imageloader, detaching);
     		}
     	};
 
@@ -2866,7 +2898,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$4.name,
     		type: "slot",
-    		source: "(8:0) <WindowElement     gridColumnStart={50}     gridColumnEnd={90}     gridRowStart={10}     gridRowEnd={50}     largeGridColumnStart={65}     largeGridColumnEnd={91}     largeGridRowStart={51}     largeGridRowEnd={77}     title=\\\"PROJECT_03\\\"     id={3}     isInForeground={true}     intersections={[10]}     intersectingSide=\\\"left\\\"     distanceFromIntersection={10}     largeDistanceFromIntersection={5} >",
+    		source: "(9:4) <WindowElement         width={{ base: 293, small: 465 }}         height={{ base: 312, small: 497 }}         background={'url(\\\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NjAgOTYwIj48cGF0aCBmaWxsPSIjMTcxNjE2IiBkPSJNMCAwaDk2MHY5NjBIMHoiLz48ZyBmaWxsLW9wYWNpdHk9Ii41Ij48cGF0aCBmaWxsPSIjNTM1MTRmIiBkPSJNMy4yIDMzNy41bDQyNy43IDIxNi44IDQzMS4zLTc3LjQgNjcuMy04NnoiLz48cGF0aCBmaWxsPSIjNWY1YzVhIiBkPSJNOTg3LjUgODMuM0w2MDIgMTg5LjJsLTY4LjMtMTI4IDM4MS0xMDguNnoiLz48cGF0aCBmaWxsPSIjNjQ2MTVmIiBkPSJNMjIxLjgtNTguMWwyODEuNSAyMjIuNS00OC45IDEwMi40TDE1Mi4zIDYxLjJ6Ii8+PHBhdGggZD0iTS01OC4xIDQ1Mi4zbDU3OS42IDQxMC4xIDI4MS44IDcuNC0xOTYuNy0yODR6TTc3OCA0MDBMLTU4IDI4OSAxMS4yLTU4IDI1NCAxMzcuNHoiLz48cGF0aCBmaWxsPSIjNGM0YzQ5IiBkPSJNNTk3LjYgODUzLjZsLTkxLjggMTY0LjVMODQxIDkzNGwxMi4zLTQxLjV6Ii8+PHBhdGggZD0iTTUyMC45IDE2Mi42TDEwMTggMTM1IDU4NC42IDM0MiAzNzUgMzU0LjV6TTE0NC40IDczMS43bDk2LjYgNDIuOEw2IDEwMTguMWwtMzMuMi03MzkuNXoiLz48L2c+PC9zdmc+\\\")'}         title=\\\"PROJECT_03\\\"         id={3}         isInForeground={true}         intersections={[10]}         intersectingSide=\\\"left\\\"         distanceFromIntersection={{ base: 25, small: 8 }}     >",
     		ctx
     	});
 
@@ -2874,26 +2906,21 @@ var app = (function () {
     }
 
     function create_fragment$8(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 50,
-    				gridColumnEnd: 90,
-    				gridRowStart: 10,
-    				gridRowEnd: 50,
-    				largeGridColumnStart: 65,
-    				largeGridColumnEnd: 91,
-    				largeGridRowStart: 51,
-    				largeGridRowEnd: 77,
+    				width: { base: 293, small: 465 },
+    				height: { base: 312, small: 497 },
+    				background: "url(\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NjAgOTYwIj48cGF0aCBmaWxsPSIjMTcxNjE2IiBkPSJNMCAwaDk2MHY5NjBIMHoiLz48ZyBmaWxsLW9wYWNpdHk9Ii41Ij48cGF0aCBmaWxsPSIjNTM1MTRmIiBkPSJNMy4yIDMzNy41bDQyNy43IDIxNi44IDQzMS4zLTc3LjQgNjcuMy04NnoiLz48cGF0aCBmaWxsPSIjNWY1YzVhIiBkPSJNOTg3LjUgODMuM0w2MDIgMTg5LjJsLTY4LjMtMTI4IDM4MS0xMDguNnoiLz48cGF0aCBmaWxsPSIjNjQ2MTVmIiBkPSJNMjIxLjgtNTguMWwyODEuNSAyMjIuNS00OC45IDEwMi40TDE1Mi4zIDYxLjJ6Ii8+PHBhdGggZD0iTS01OC4xIDQ1Mi4zbDU3OS42IDQxMC4xIDI4MS44IDcuNC0xOTYuNy0yODR6TTc3OCA0MDBMLTU4IDI4OSAxMS4yLTU4IDI1NCAxMzcuNHoiLz48cGF0aCBmaWxsPSIjNGM0YzQ5IiBkPSJNNTk3LjYgODUzLjZsLTkxLjggMTY0LjVMODQxIDkzNGwxMi4zLTQxLjV6Ii8+PHBhdGggZD0iTTUyMC45IDE2Mi42TDEwMTggMTM1IDU4NC42IDM0MiAzNzUgMzU0LjV6TTE0NC40IDczMS43bDk2LjYgNDIuOEw2IDEwMTguMWwtMzMuMi03MzkuNXoiLz48L2c+PC9zdmc+\")",
     				title: "PROJECT_03",
     				id: 3,
     				isInForeground: true,
     				intersections: [10],
     				intersectingSide: "left",
-    				distanceFromIntersection: 10,
-    				largeDistanceFromIntersection: 5,
+    				distanceFromIntersection: { base: 25, small: 8 },
     				$$slots: { default: [create_default_slot$4] },
     				$$scope: { ctx }
     			},
@@ -2902,13 +2929,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-1n88ea1");
+    			add_location(div, file$7, 7, 0, 209);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -2930,7 +2961,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -2956,7 +2988,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ProjectMueller> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ WindowElement, ImageLoader, slug: slug$2 });
+    	$$self.$capture_state = () => ({ WindowElement: FixedWindowElement, ImageLoader, slug: slug$2 });
     	return [];
     }
 
@@ -2977,28 +3009,41 @@ var app = (function () {
     /* src/Windows/CookieWindow.svelte generated by Svelte v3.32.1 */
     const file$8 = "src/Windows/CookieWindow.svelte";
 
-    // (5:0) <WindowElement     gridColumnStart={50}     gridColumnEnd={80}     gridRowStart={65}     gridRowEnd={90}     largeGridColumnStart={40}     largeGridColumnEnd={60}     largeGridRowStart={95}     largeGridRowEnd={112}     backgroundColor="#5E4B1B"     title="COOKIES"     enlargeable={false}     id={9}     isInForeground={true}     intersections={[8]}     intersectingSide="left"     distanceFromIntersection={11}     largeDistanceFromIntersection={6} >
+    // (6:4) <WindowElement         width={{ base: 218, small: 300 }}         height={{ base: 119, small: 164 }}         background="#5E4B1B"         title="COOKIES"         enlargeable={false}         id={9}         isInForeground={true}     >
     function create_default_slot$5(ctx) {
     	let p;
-    	let t0;
-    	let br;
+    	let span;
     	let t1;
+    	let br0;
+    	let t2;
+    	let br1;
+    	let t3;
 
     	const block = {
     		c: function create() {
     			p = element("p");
-    			t0 = text("We use necessary cookies to ensure visitors have the best possible\n        experience on our site. Your privacy is important to us, therefore we\n        don’t use any tracking services by third-parties. ");
-    			br = element("br");
-    			t1 = text(" Please read our\n        Privacy Policy for more info on this!");
-    			add_location(br, file$8, 26, 58, 752);
-    			attr_dev(p, "class", "svelte-1rxx2zk");
-    			add_location(p, file$8, 23, 4, 537);
+    			span = element("span");
+    			span.textContent = "We use necessary Cookies to ensure visitors have the best\n                possible experience on our site.";
+    			t1 = space();
+    			br0 = element("br");
+    			t2 = text("Your privacy is important to us, therefore we don’t use any\n            tracking services by third-parties. ");
+    			br1 = element("br");
+    			t3 = text(" Please read our Privacy Policy\n            for more info on this subject!");
+    			attr_dev(span, "class", "svelte-1spq1ux");
+    			add_location(span, file$8, 15, 12, 351);
+    			add_location(br0, file$8, 19, 12, 513);
+    			add_location(br1, file$8, 20, 48, 627);
+    			attr_dev(p, "class", "svelte-1spq1ux");
+    			add_location(p, file$8, 14, 8, 335);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
-    			append_dev(p, t0);
-    			append_dev(p, br);
+    			append_dev(p, span);
     			append_dev(p, t1);
+    			append_dev(p, br0);
+    			append_dev(p, t2);
+    			append_dev(p, br1);
+    			append_dev(p, t3);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(p);
@@ -3009,7 +3054,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$5.name,
     		type: "slot",
-    		source: "(5:0) <WindowElement     gridColumnStart={50}     gridColumnEnd={80}     gridRowStart={65}     gridRowEnd={90}     largeGridColumnStart={40}     largeGridColumnEnd={60}     largeGridRowStart={95}     largeGridRowEnd={112}     backgroundColor=\\\"#5E4B1B\\\"     title=\\\"COOKIES\\\"     enlargeable={false}     id={9}     isInForeground={true}     intersections={[8]}     intersectingSide=\\\"left\\\"     distanceFromIntersection={11}     largeDistanceFromIntersection={6} >",
+    		source: "(6:4) <WindowElement         width={{ base: 218, small: 300 }}         height={{ base: 119, small: 164 }}         background=\\\"#5E4B1B\\\"         title=\\\"COOKIES\\\"         enlargeable={false}         id={9}         isInForeground={true}     >",
     		ctx
     	});
 
@@ -3017,28 +3062,19 @@ var app = (function () {
     }
 
     function create_fragment$9(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 50,
-    				gridColumnEnd: 80,
-    				gridRowStart: 65,
-    				gridRowEnd: 90,
-    				largeGridColumnStart: 40,
-    				largeGridColumnEnd: 60,
-    				largeGridRowStart: 95,
-    				largeGridRowEnd: 112,
-    				backgroundColor: "#5E4B1B",
+    				width: { base: 218, small: 300 },
+    				height: { base: 119, small: 164 },
+    				background: "#5E4B1B",
     				title: "COOKIES",
     				enlargeable: false,
     				id: 9,
     				isInForeground: true,
-    				intersections: [8],
-    				intersectingSide: "left",
-    				distanceFromIntersection: 11,
-    				largeDistanceFromIntersection: 6,
     				$$slots: { default: [create_default_slot$5] },
     				$$scope: { ctx }
     			},
@@ -3047,13 +3083,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-1spq1ux");
+    			add_location(div, file$8, 4, 0, 85);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -3075,7 +3115,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -3099,7 +3140,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<CookieWindow> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ WindowElement });
+    	$$self.$capture_state = () => ({ WindowElement: FixedWindowElement });
     	return [];
     }
 
@@ -3120,7 +3161,7 @@ var app = (function () {
     /* src/windows/LegalWindow.svelte generated by Svelte v3.32.1 */
     const file$9 = "src/windows/LegalWindow.svelte";
 
-    // (5:0) <WindowElement     gridColumnStart={5}     gridColumnEnd={45}     gridRowStart={165}     gridRowEnd={185}     largeGridColumnStart={8}     largeGridColumnEnd={34}     largeGridRowStart={185}     largeGridRowEnd={198}     backgroundColor="#1C6370"     title="LEGAL NOTICE"     id={7}     isInForeground={true}     intersections={[2]}     intersectingSide="right"     distanceFromIntersection={15}     largeDistanceFromIntersection={0} >
+    // (6:4) <WindowElement         width={{ base: 268, small: 268 }}         height={{ base: 158, small: 158 }}         background="#1C6370"         title="LEGAL NOTICE"         id={7}         isInForeground={true}     >
     function create_default_slot$6(ctx) {
     	let p;
     	let t0;
@@ -3134,11 +3175,11 @@ var app = (function () {
     			t0 = text("You like boring legal texts and bureaucracy? ");
     			br0 = element("br");
     			br1 = element("br");
-    			t1 = text(" We've got you covered!");
-    			add_location(br0, file$9, 23, 53, 577);
-    			add_location(br1, file$9, 23, 59, 583);
-    			attr_dev(p, "class", "svelte-140mtsd");
-    			add_location(p, file$9, 22, 4, 520);
+    			t1 = text(" We've got you\n            covered!");
+    			add_location(br0, file$9, 14, 57, 373);
+    			add_location(br1, file$9, 14, 63, 379);
+    			attr_dev(p, "class", "svelte-mumur5");
+    			add_location(p, file$9, 13, 8, 312);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -3156,7 +3197,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$6.name,
     		type: "slot",
-    		source: "(5:0) <WindowElement     gridColumnStart={5}     gridColumnEnd={45}     gridRowStart={165}     gridRowEnd={185}     largeGridColumnStart={8}     largeGridColumnEnd={34}     largeGridRowStart={185}     largeGridRowEnd={198}     backgroundColor=\\\"#1C6370\\\"     title=\\\"LEGAL NOTICE\\\"     id={7}     isInForeground={true}     intersections={[2]}     intersectingSide=\\\"right\\\"     distanceFromIntersection={15}     largeDistanceFromIntersection={0} >",
+    		source: "(6:4) <WindowElement         width={{ base: 268, small: 268 }}         height={{ base: 158, small: 158 }}         background=\\\"#1C6370\\\"         title=\\\"LEGAL NOTICE\\\"         id={7}         isInForeground={true}     >",
     		ctx
     	});
 
@@ -3164,27 +3205,18 @@ var app = (function () {
     }
 
     function create_fragment$a(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 5,
-    				gridColumnEnd: 45,
-    				gridRowStart: 165,
-    				gridRowEnd: 185,
-    				largeGridColumnStart: 8,
-    				largeGridColumnEnd: 34,
-    				largeGridRowStart: 185,
-    				largeGridRowEnd: 198,
-    				backgroundColor: "#1C6370",
+    				width: { base: 268, small: 268 },
+    				height: { base: 158, small: 158 },
+    				background: "#1C6370",
     				title: "LEGAL NOTICE",
     				id: 7,
     				isInForeground: true,
-    				intersections: [2],
-    				intersectingSide: "right",
-    				distanceFromIntersection: 15,
-    				largeDistanceFromIntersection: 0,
     				$$slots: { default: [create_default_slot$6] },
     				$$scope: { ctx }
     			},
@@ -3193,13 +3225,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-mumur5");
+    			add_location(div, file$9, 4, 0, 85);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -3221,7 +3257,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -3245,7 +3282,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<LegalWindow> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ WindowElement });
+    	$$self.$capture_state = () => ({ WindowElement: FixedWindowElement });
     	return [];
     }
 
@@ -3266,7 +3303,7 @@ var app = (function () {
     /* src/Windows/PrivacyWindow.svelte generated by Svelte v3.32.1 */
     const file$a = "src/Windows/PrivacyWindow.svelte";
 
-    // (5:0) <WindowElement     gridColumnStart={158}     gridColumnEnd={198}     gridRowStart={173}     gridRowEnd={198}     largeGridColumnStart={172}     largeGridColumnEnd={198}     largeGridRowStart={182}     largeGridRowEnd={198}     backgroundColor="#FEC7A3"     title="PRIVACY POLICY"     id={5}     isInForeground={true} >
+    // (6:4) <WindowElement         width={{ base: 255, small: 288 }}         height={{ base: 183, small: 207 }}         background="#FEC7A3"         title="PRIVACY POLICY"         id={5}         isInForeground={true}     >
     function create_default_slot$7(ctx) {
     	let p;
     	let t0;
@@ -3283,10 +3320,10 @@ var app = (function () {
     			t1 = space();
     			br1 = element("br");
     			t2 = text(" Surely this is just your cup of tea...");
-    			add_location(br0, file$a, 19, 70, 477);
-    			add_location(br1, file$a, 20, 8, 492);
-    			attr_dev(p, "class", "svelte-140mtsd");
-    			add_location(p, file$a, 18, 4, 403);
+    			add_location(br0, file$a, 14, 74, 392);
+    			add_location(br1, file$a, 15, 12, 411);
+    			attr_dev(p, "class", "svelte-44x58p");
+    			add_location(p, file$a, 13, 8, 314);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -3305,7 +3342,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$7.name,
     		type: "slot",
-    		source: "(5:0) <WindowElement     gridColumnStart={158}     gridColumnEnd={198}     gridRowStart={173}     gridRowEnd={198}     largeGridColumnStart={172}     largeGridColumnEnd={198}     largeGridRowStart={182}     largeGridRowEnd={198}     backgroundColor=\\\"#FEC7A3\\\"     title=\\\"PRIVACY POLICY\\\"     id={5}     isInForeground={true} >",
+    		source: "(6:4) <WindowElement         width={{ base: 255, small: 288 }}         height={{ base: 183, small: 207 }}         background=\\\"#FEC7A3\\\"         title=\\\"PRIVACY POLICY\\\"         id={5}         isInForeground={true}     >",
     		ctx
     	});
 
@@ -3313,20 +3350,15 @@ var app = (function () {
     }
 
     function create_fragment$b(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 158,
-    				gridColumnEnd: 198,
-    				gridRowStart: 173,
-    				gridRowEnd: 198,
-    				largeGridColumnStart: 172,
-    				largeGridColumnEnd: 198,
-    				largeGridRowStart: 182,
-    				largeGridRowEnd: 198,
-    				backgroundColor: "#FEC7A3",
+    				width: { base: 255, small: 288 },
+    				height: { base: 183, small: 207 },
+    				background: "#FEC7A3",
     				title: "PRIVACY POLICY",
     				id: 5,
     				isInForeground: true,
@@ -3338,13 +3370,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-44x58p");
+    			add_location(div, file$a, 4, 0, 85);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -3366,7 +3402,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -3390,7 +3427,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<PrivacyWindow> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ WindowElement });
+    	$$self.$capture_state = () => ({ WindowElement: FixedWindowElement });
     	return [];
     }
 
@@ -3411,7 +3448,7 @@ var app = (function () {
     /* src/Windows/ReferencesWindow.svelte generated by Svelte v3.32.1 */
     const file$b = "src/Windows/ReferencesWindow.svelte";
 
-    // (5:0) <WindowElement     gridColumnStart={159}     gridColumnEnd={199}     gridRowStart={25}     gridRowEnd={75}     largeGridColumnStart={173}     largeGridColumnEnd={199}     largeGridRowStart={20}     largeGridRowEnd={53}     backgroundColor="#5F583D"     title="References"     enlargeable={false}     id={4}     isInForeground={true}     intersections={[11]}     intersectingSide="left"     distanceFromIntersection={31}     largeDistanceFromIntersection={7} >
+    // (6:4) <WindowElement         width={{ base: 290, small: 347 }}         height={{ base: 262, small: 314 }}         background="#5F583D"         title="References"         enlargeable={false}         id={4}         isInForeground={true}     >
     function create_default_slot$8(ctx) {
     	let ul;
     	let li0;
@@ -3508,72 +3545,72 @@ var app = (function () {
     			a12 = element("a");
     			a12.textContent = "Zoeva";
     			attr_dev(a0, "href", "www.reference.com");
-    			attr_dev(a0, "class", "svelte-wr62k6");
-    			add_location(a0, file$b, 24, 12, 561);
-    			attr_dev(li0, "class", "svelte-wr62k6");
-    			add_location(li0, file$b, 24, 8, 557);
+    			attr_dev(a0, "class", "svelte-n7r9ol");
+    			add_location(a0, file$b, 15, 16, 359);
+    			attr_dev(li0, "class", "svelte-n7r9ol");
+    			add_location(li0, file$b, 15, 12, 355);
     			attr_dev(a1, "href", "www.reference.com");
-    			attr_dev(a1, "class", "svelte-wr62k6");
-    			add_location(a1, file$b, 25, 12, 632);
-    			attr_dev(li1, "class", "svelte-wr62k6");
-    			add_location(li1, file$b, 25, 8, 628);
+    			attr_dev(a1, "class", "svelte-n7r9ol");
+    			add_location(a1, file$b, 16, 16, 434);
+    			attr_dev(li1, "class", "svelte-n7r9ol");
+    			add_location(li1, file$b, 16, 12, 430);
     			attr_dev(a2, "href", "www.reference.com");
-    			attr_dev(a2, "class", "svelte-wr62k6");
-    			add_location(a2, file$b, 26, 12, 690);
-    			attr_dev(li2, "class", "svelte-wr62k6");
-    			add_location(li2, file$b, 26, 8, 686);
+    			attr_dev(a2, "class", "svelte-n7r9ol");
+    			add_location(a2, file$b, 17, 16, 496);
+    			attr_dev(li2, "class", "svelte-n7r9ol");
+    			add_location(li2, file$b, 17, 12, 492);
     			attr_dev(a3, "href", "www.reference.com");
-    			attr_dev(a3, "class", "svelte-wr62k6");
-    			add_location(a3, file$b, 28, 12, 764);
-    			attr_dev(li3, "class", "svelte-wr62k6");
-    			add_location(li3, file$b, 27, 8, 747);
+    			attr_dev(a3, "class", "svelte-n7r9ol");
+    			add_location(a3, file$b, 19, 16, 578);
+    			attr_dev(li3, "class", "svelte-n7r9ol");
+    			add_location(li3, file$b, 18, 12, 557);
     			attr_dev(a4, "href", "www.reference.com");
-    			attr_dev(a4, "class", "svelte-wr62k6");
-    			add_location(a4, file$b, 30, 12, 850);
-    			attr_dev(li4, "class", "svelte-wr62k6");
-    			add_location(li4, file$b, 30, 8, 846);
+    			attr_dev(a4, "class", "svelte-n7r9ol");
+    			add_location(a4, file$b, 21, 16, 672);
+    			attr_dev(li4, "class", "svelte-n7r9ol");
+    			add_location(li4, file$b, 21, 12, 668);
     			attr_dev(a5, "href", "www.reference.com");
-    			attr_dev(a5, "class", "svelte-wr62k6");
-    			add_location(a5, file$b, 31, 12, 926);
-    			attr_dev(li5, "class", "svelte-wr62k6");
-    			add_location(li5, file$b, 31, 8, 922);
+    			attr_dev(a5, "class", "svelte-n7r9ol");
+    			add_location(a5, file$b, 22, 16, 752);
+    			attr_dev(li5, "class", "svelte-n7r9ol");
+    			add_location(li5, file$b, 22, 12, 748);
     			attr_dev(a6, "href", "www.reference.com");
-    			attr_dev(a6, "class", "svelte-wr62k6");
-    			add_location(a6, file$b, 32, 12, 981);
-    			attr_dev(li6, "class", "svelte-wr62k6");
-    			add_location(li6, file$b, 32, 8, 977);
+    			attr_dev(a6, "class", "svelte-n7r9ol");
+    			add_location(a6, file$b, 23, 16, 811);
+    			attr_dev(li6, "class", "svelte-n7r9ol");
+    			add_location(li6, file$b, 23, 12, 807);
     			attr_dev(a7, "href", "www.reference.com");
-    			attr_dev(a7, "class", "svelte-wr62k6");
-    			add_location(a7, file$b, 33, 12, 1045);
-    			attr_dev(li7, "class", "svelte-wr62k6");
-    			add_location(li7, file$b, 33, 8, 1041);
+    			attr_dev(a7, "class", "svelte-n7r9ol");
+    			add_location(a7, file$b, 24, 16, 879);
+    			attr_dev(li7, "class", "svelte-n7r9ol");
+    			add_location(li7, file$b, 24, 12, 875);
     			attr_dev(a8, "href", "www.reference.com");
-    			attr_dev(a8, "class", "svelte-wr62k6");
-    			add_location(a8, file$b, 34, 12, 1107);
-    			attr_dev(li8, "class", "svelte-wr62k6");
-    			add_location(li8, file$b, 34, 8, 1103);
+    			attr_dev(a8, "class", "svelte-n7r9ol");
+    			add_location(a8, file$b, 25, 16, 945);
+    			attr_dev(li8, "class", "svelte-n7r9ol");
+    			add_location(li8, file$b, 25, 12, 941);
     			attr_dev(a9, "href", "www.reference.com");
-    			attr_dev(a9, "class", "svelte-wr62k6");
-    			add_location(a9, file$b, 36, 12, 1180);
-    			attr_dev(li9, "class", "svelte-wr62k6");
-    			add_location(li9, file$b, 35, 8, 1163);
+    			attr_dev(a9, "class", "svelte-n7r9ol");
+    			add_location(a9, file$b, 27, 16, 1026);
+    			attr_dev(li9, "class", "svelte-n7r9ol");
+    			add_location(li9, file$b, 26, 12, 1005);
     			attr_dev(a10, "href", "www.reference.com");
-    			attr_dev(a10, "class", "svelte-wr62k6");
-    			add_location(a10, file$b, 38, 12, 1267);
-    			attr_dev(li10, "class", "svelte-wr62k6");
-    			add_location(li10, file$b, 38, 8, 1263);
+    			attr_dev(a10, "class", "svelte-n7r9ol");
+    			add_location(a10, file$b, 29, 16, 1121);
+    			attr_dev(li10, "class", "svelte-n7r9ol");
+    			add_location(li10, file$b, 29, 12, 1117);
     			attr_dev(a11, "href", "www.reference.com");
-    			attr_dev(a11, "class", "svelte-wr62k6");
-    			add_location(a11, file$b, 39, 12, 1333);
-    			attr_dev(li11, "class", "svelte-wr62k6");
-    			add_location(li11, file$b, 39, 8, 1329);
+    			attr_dev(a11, "class", "svelte-n7r9ol");
+    			add_location(a11, file$b, 30, 16, 1191);
+    			attr_dev(li11, "class", "svelte-n7r9ol");
+    			add_location(li11, file$b, 30, 12, 1187);
     			attr_dev(a12, "href", "www.reference.com");
-    			attr_dev(a12, "class", "svelte-wr62k6");
-    			add_location(a12, file$b, 40, 12, 1391);
-    			attr_dev(li12, "class", "svelte-wr62k6");
-    			add_location(li12, file$b, 40, 8, 1387);
-    			attr_dev(ul, "class", "svelte-wr62k6");
-    			add_location(ul, file$b, 23, 4, 544);
+    			attr_dev(a12, "class", "svelte-n7r9ol");
+    			add_location(a12, file$b, 31, 16, 1253);
+    			attr_dev(li12, "class", "svelte-n7r9ol");
+    			add_location(li12, file$b, 31, 12, 1249);
+    			attr_dev(ul, "class", "svelte-n7r9ol");
+    			add_location(ul, file$b, 14, 8, 338);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -3625,7 +3662,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$8.name,
     		type: "slot",
-    		source: "(5:0) <WindowElement     gridColumnStart={159}     gridColumnEnd={199}     gridRowStart={25}     gridRowEnd={75}     largeGridColumnStart={173}     largeGridColumnEnd={199}     largeGridRowStart={20}     largeGridRowEnd={53}     backgroundColor=\\\"#5F583D\\\"     title=\\\"References\\\"     enlargeable={false}     id={4}     isInForeground={true}     intersections={[11]}     intersectingSide=\\\"left\\\"     distanceFromIntersection={31}     largeDistanceFromIntersection={7} >",
+    		source: "(6:4) <WindowElement         width={{ base: 290, small: 347 }}         height={{ base: 262, small: 314 }}         background=\\\"#5F583D\\\"         title=\\\"References\\\"         enlargeable={false}         id={4}         isInForeground={true}     >",
     		ctx
     	});
 
@@ -3633,28 +3670,19 @@ var app = (function () {
     }
 
     function create_fragment$c(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 159,
-    				gridColumnEnd: 199,
-    				gridRowStart: 25,
-    				gridRowEnd: 75,
-    				largeGridColumnStart: 173,
-    				largeGridColumnEnd: 199,
-    				largeGridRowStart: 20,
-    				largeGridRowEnd: 53,
-    				backgroundColor: "#5F583D",
+    				width: { base: 290, small: 347 },
+    				height: { base: 262, small: 314 },
+    				background: "#5F583D",
     				title: "References",
     				enlargeable: false,
     				id: 4,
     				isInForeground: true,
-    				intersections: [11],
-    				intersectingSide: "left",
-    				distanceFromIntersection: 31,
-    				largeDistanceFromIntersection: 7,
     				$$slots: { default: [create_default_slot$8] },
     				$$scope: { ctx }
     			},
@@ -3663,13 +3691,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-n7r9ol");
+    			add_location(div, file$b, 4, 0, 85);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -3691,7 +3723,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -3715,7 +3748,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ReferencesWindow> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ WindowElement });
+    	$$self.$capture_state = () => ({ WindowElement: FixedWindowElement });
     	return [];
     }
 
@@ -3736,17 +3769,16 @@ var app = (function () {
     /* src/Windows/GermanyJPG.svelte generated by Svelte v3.32.1 */
     const file$c = "src/Windows/GermanyJPG.svelte";
 
-    // (17:0) <WindowElement     gridColumnStart={130}     gridColumnEnd={190}     gridRowStart={1}     gridRowEnd={41}     largeGridColumnStart={140}     largeGridColumnEnd={180}     largeGridRowStart={1}     largeGridRowEnd={27}     title={deGallery[randomIndex].name}     id={11}     isInForeground={false}     intersections={[4]}     intersectingSide="right"     distanceFromIntersection={31}     largeDistanceFromIntersection={7} >
+    // (18:4) <WindowElement         width={{ base: 378, small: 600 }}         height={{ base: 274, small: 436 }}         background={deGallery[randomIndex].svg}         title={deGallery[randomIndex].name}         id={11}         isInForeground={true}     >
     function create_default_slot$9(ctx) {
-    	let div;
     	let imageloader;
     	let current;
 
     	imageloader = new ImageLoader({
     			props: {
-    				srcset: "https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/" + /*slug*/ ctx[2] + " 1280w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/" + /*slug*/ ctx[2] + " 960w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_800,f_auto/" + /*slug*/ ctx[2] + " 800w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_640,f_auto/" + /*slug*/ ctx[2] + " 640w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_480,f_auto/" + /*slug*/ ctx[2] + " 480w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_320,f_auto/" + /*slug*/ ctx[2] + " 320w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_160,f_auto/" + /*slug*/ ctx[2] + " 160w,",
+    				srcset: "https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/" + /*slug*/ ctx[2] + " 598w,\n    https://res.cloudinary.com/thdrstnr/image/upload/w_376,f_auto/" + /*slug*/ ctx[2] + " 376w,",
     				src: "https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/" + /*slug*/ ctx[2],
-    				sizes: "60vmax, (min-width: 1024px) 39.8vmax",
+    				sizes: "376px, (min-width: 640px) 598px",
     				alt: /*deGallery*/ ctx[0][/*randomIndex*/ ctx[1]].alt
     			},
     			$$inline: true
@@ -3754,15 +3786,10 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			div = element("div");
     			create_component(imageloader.$$.fragment);
-    			set_style(div, "background-image", "url(data:image/svg+xml;base64," + /*deGallery*/ ctx[0][/*randomIndex*/ ctx[1]].svg + ")");
-    			attr_dev(div, "class", "svelte-dki62i");
-    			add_location(div, file$c, 33, 4, 3943);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			mount_component(imageloader, div, null);
+    			mount_component(imageloader, target, anchor);
     			current = true;
     		},
     		p: noop,
@@ -3776,8 +3803,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			destroy_component(imageloader);
+    			destroy_component(imageloader, detaching);
     		}
     	};
 
@@ -3785,7 +3811,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$9.name,
     		type: "slot",
-    		source: "(17:0) <WindowElement     gridColumnStart={130}     gridColumnEnd={190}     gridRowStart={1}     gridRowEnd={41}     largeGridColumnStart={140}     largeGridColumnEnd={180}     largeGridRowStart={1}     largeGridRowEnd={27}     title={deGallery[randomIndex].name}     id={11}     isInForeground={false}     intersections={[4]}     intersectingSide=\\\"right\\\"     distanceFromIntersection={31}     largeDistanceFromIntersection={7} >",
+    		source: "(18:4) <WindowElement         width={{ base: 378, small: 600 }}         height={{ base: 274, small: 436 }}         background={deGallery[randomIndex].svg}         title={deGallery[randomIndex].name}         id={11}         isInForeground={true}     >",
     		ctx
     	});
 
@@ -3793,26 +3819,18 @@ var app = (function () {
     }
 
     function create_fragment$d(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 130,
-    				gridColumnEnd: 190,
-    				gridRowStart: 1,
-    				gridRowEnd: 41,
-    				largeGridColumnStart: 140,
-    				largeGridColumnEnd: 180,
-    				largeGridRowStart: 1,
-    				largeGridRowEnd: 27,
+    				width: { base: 378, small: 600 },
+    				height: { base: 274, small: 436 },
+    				background: /*deGallery*/ ctx[0][/*randomIndex*/ ctx[1]].svg,
     				title: /*deGallery*/ ctx[0][/*randomIndex*/ ctx[1]].name,
     				id: 11,
-    				isInForeground: false,
-    				intersections: [4],
-    				intersectingSide: "right",
-    				distanceFromIntersection: 31,
-    				largeDistanceFromIntersection: 7,
+    				isInForeground: true,
     				$$slots: { default: [create_default_slot$9] },
     				$$scope: { ctx }
     			},
@@ -3821,13 +3839,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-1rctn58");
+    			add_location(div, file$c, 16, 0, 3554);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -3849,7 +3871,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -3873,7 +3896,7 @@ var app = (function () {
     			name: "OBERHAFEN.JPG",
     			src: "/MortimerBaltus/deGallery/Oberhafen_c5hvmx",
     			alt: "Oberhafen, Hamburg (DE)",
-    			svg: "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjgwIDg1MyI+PHBhdGggZmlsbD0iIzFkMjYyOSIgZD0iTTAgMGgxMjgwdjg1MEgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiM1ODY4NmUiIGQ9Ik00MjkuNyA1MDAuMUwxNS42IDkyNy41bC05My4xLTYyNS4xIDE0MzUgMTczLjV6Ii8+PHBhdGggZD0iTTg5NC4yIDM0Ni44bDQ2My4zLTM0MUwtNzcuNS0xNGw0NjcuMyA0NTguOHoiLz48cGF0aCBmaWxsPSIjNTI2MzZiIiBkPSJNMTAzMC4yIDQ5OS4zbDMyMiA0MjguMi01Ni4zLTc0Mi4xLTU4NyAyNDIuNHoiLz48cGF0aCBmaWxsPSIjYzNjY2UwIiBkPSJNMzcuNyAyNTEuOWw2LjItMzggNjUuOCAxNDguNkwxMjYuOSA1MzV6Ii8+PHBhdGggZmlsbD0iI2UzZTdmYSIgZD0iTS03Ny41IDY3OC4xdi01Ni42bDIwMS4zLTkuMiAzMi40IDE5LjR6Ii8+PHBhdGggZD0iTTEzNDcuNiA1MjYuNmwtMzI5LjgtNDMuOC0yNjMtNDEuNyA2MDIuNyAxNjcuN3oiLz48cGF0aCBmaWxsPSIjYmJjN2Q3IiBkPSJNMTM1Ny41IDY4NS4zbC0yMTEtNTMuMy0yOC0xOCAxODUuNy03LjV6Ii8+PHBhdGggZD0iTTMwOC45LTc3LjVsLTEzNCA1NjktODcuNS0xNzYuM0wxMzU3LjUgMTA1eiIvPjxwYXRoIGZpbGw9IiNhZWFhYTkiIGQ9Ik0yNjUuNiA0ODRsNDQzLTcxLjdMMjM0LjggNDgxIDI1MiAyMzIuNXoiLz48cGF0aCBmaWxsPSIjYjVhZmIzIiBkPSJNMTEzOS40IDQ2OC4zbDg5LTI5Ni02OS43IDMzMi43LTcyLjItMjEuMnoiLz48cGF0aCBmaWxsPSIjMDAwMDAxIiBkPSJNMTE0MC4yIDQzNi4zbDcyLjQtMTg0LjMtMTkuOC0zMjkuNS04OC44IDQ5OC4yeiIvPjxwYXRoIGZpbGw9IiNlOWUzZjYiIGQ9Ik0xMjE2IDQ2MS4zbC0zLjItMzA4LjcgMTAuNCAxMTguMi00LjcgMTc2LjJ6Ii8+PHBhdGggZmlsbD0iIzg3OTc5YiIgZD0iTTEwMzguNCAzNDcuNWwtOS40IDEyMS4zLTkwLjctMi4zIDY3LjMtMTc0LjV6Ii8+PHBhdGggZmlsbD0iIzAyMDYwMCIgZD0iTTU3OS44IDQzNi45bC0xMTYuOSAyOS01NDAuNCAxMjguNCA4Ny40LTcxeiIvPjxwYXRoIGZpbGw9IiNmNGYzZmYiIGQ9Ik01NSAzNjQuN2wuMi0xMDIuOC0xMi40LTM0IC43IDEzNy4zeiIvPjxwYXRoIGZpbGw9IiM1YzY4NmYiIGQ9Ik0xMzIuMiAyOUwxNTkgMzcwbC0yMi40LTEyMkw4MS41LTR6Ii8+PHBhdGggZmlsbD0iIzBkMTUxOCIgZD0iTTk2Mi42IDkyNy41SDM5Ni44TDI4Ni42IDU1MC43bDY2Ni43LTIyeiIvPjxwYXRoIGZpbGw9IiNhMzlmOWQiIGQ9Ik0xMDkuMyA0OTMuMmwtMTg1LjYgNDBMMTk0IDQ5Ni44IDcyLjIgMzg5LjJ6Ii8+PHBhdGggZmlsbD0iIzczODg5NSIgZD0iTTEyNDcuNiA1MDUuNGwxLjktMjgwLjcgMjEuMy01OS4xIDcyLjQgMzY4LjV6Ii8+PHBhdGggZmlsbD0iIzUwNWY2NCIgZD0iTTExMzgtMzZsNjQtMzktNzggMzQwLTEtMjguOHoiLz48cGF0aCBmaWxsPSIjYjRjMmQwIiBkPSJNMTAwNC4xIDYzOC45bC0xMS4zLTIyIDItNCA3MS45LTEuM3oiLz48cGF0aCBmaWxsPSIjMDAwMTA2IiBkPSJNLTc3LjUtNTYuNmwxMjggMjcyLjJMNjIgMzM5LjRsNzUuMy0yODEuN3oiLz48cGF0aCBmaWxsPSIjNjU2ZTc1IiBkPSJNLTcyLjIgNTk0LjZMNzQwIDQwNS43IDI1MC40IDU2NiAzMC43IDYyOXoiLz48cGF0aCBmaWxsPSIjMDAwMjA2IiBkPSJNMTI2Mi45IDQ4Mi40bC0xMC4xLTEwLTE0LjYtMzkyLTIxLjIgNDI2LjJ6Ii8+PHBhdGggZmlsbD0iIzAxMDEwMCIgZD0iTTU4OC44IDQyNy43TDEwMzcuNyAyNDcgMTAyOSAuMyA5NC0xNC40eiIvPjxwYXRoIGZpbGw9IiM0ODUyNTYiIGQ9Ik0yMDggMTg4LjNsOS43LTExMi44IDMxLjYgNTEuNS01MS42IDE5OXoiLz48cGF0aCBmaWxsPSIjMWUzMjNiIiBkPSJNLTYxLjEgNzc2TDc4LjMgNjUxLjIgNDkzIDYyOS44IDc5IDkyNy41eiIvPjxwYXRoIGZpbGw9IiMwZDE1MTUiIGQ9Ik04MzcgNDg3LjhsLTE4OS00OC41LTE3NC44IDE4OSA0OTAuNyAxMy4xeiIvPjxwYXRoIGZpbGw9IiMwMDA4MTYiIGQ9Ik0xOC44IDQ3NC4zbDkuNi01MDkgMTcgNDcwLjYgNi43IDY2LjJ6Ii8+PHBhdGggZmlsbD0iI2U5ZTZmOSIgZD0iTTc0LjIgMzY1LjZsMjUuOCAxM0w3Mi4zIDI0OGw1LjggMTI0LjZ6Ii8+PHBhdGggZmlsbD0iIzAwMDIwNSIgZD0iTTExNjMgODMuNGw5Ni42IDcwLjQtNTMuOSAyLjhMMTIwOSA0NDF6Ii8+PHBhdGggZmlsbD0iIzc5N2I3OCIgZD0iTTY2NS43IDQxMWwtNTQ5LjMgNTYuNiA4NTYuMi0yOS40IDIyLjcgMzkuNnoiLz48L2c+PC9zdmc+"
+    			svg: "url(\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjgwIDg1MyI+PHBhdGggZmlsbD0iIzFkMjYyOSIgZD0iTTAgMGgxMjgwdjg1MEgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiM1ODY4NmUiIGQ9Ik00MjkuNyA1MDAuMUwxNS42IDkyNy41bC05My4xLTYyNS4xIDE0MzUgMTczLjV6Ii8+PHBhdGggZD0iTTg5NC4yIDM0Ni44bDQ2My4zLTM0MUwtNzcuNS0xNGw0NjcuMyA0NTguOHoiLz48cGF0aCBmaWxsPSIjNTI2MzZiIiBkPSJNMTAzMC4yIDQ5OS4zbDMyMiA0MjguMi01Ni4zLTc0Mi4xLTU4NyAyNDIuNHoiLz48cGF0aCBmaWxsPSIjYzNjY2UwIiBkPSJNMzcuNyAyNTEuOWw2LjItMzggNjUuOCAxNDguNkwxMjYuOSA1MzV6Ii8+PHBhdGggZmlsbD0iI2UzZTdmYSIgZD0iTS03Ny41IDY3OC4xdi01Ni42bDIwMS4zLTkuMiAzMi40IDE5LjR6Ii8+PHBhdGggZD0iTTEzNDcuNiA1MjYuNmwtMzI5LjgtNDMuOC0yNjMtNDEuNyA2MDIuNyAxNjcuN3oiLz48cGF0aCBmaWxsPSIjYmJjN2Q3IiBkPSJNMTM1Ny41IDY4NS4zbC0yMTEtNTMuMy0yOC0xOCAxODUuNy03LjV6Ii8+PHBhdGggZD0iTTMwOC45LTc3LjVsLTEzNCA1NjktODcuNS0xNzYuM0wxMzU3LjUgMTA1eiIvPjxwYXRoIGZpbGw9IiNhZWFhYTkiIGQ9Ik0yNjUuNiA0ODRsNDQzLTcxLjdMMjM0LjggNDgxIDI1MiAyMzIuNXoiLz48cGF0aCBmaWxsPSIjYjVhZmIzIiBkPSJNMTEzOS40IDQ2OC4zbDg5LTI5Ni02OS43IDMzMi43LTcyLjItMjEuMnoiLz48cGF0aCBmaWxsPSIjMDAwMDAxIiBkPSJNMTE0MC4yIDQzNi4zbDcyLjQtMTg0LjMtMTkuOC0zMjkuNS04OC44IDQ5OC4yeiIvPjxwYXRoIGZpbGw9IiNlOWUzZjYiIGQ9Ik0xMjE2IDQ2MS4zbC0zLjItMzA4LjcgMTAuNCAxMTguMi00LjcgMTc2LjJ6Ii8+PHBhdGggZmlsbD0iIzg3OTc5YiIgZD0iTTEwMzguNCAzNDcuNWwtOS40IDEyMS4zLTkwLjctMi4zIDY3LjMtMTc0LjV6Ii8+PHBhdGggZmlsbD0iIzAyMDYwMCIgZD0iTTU3OS44IDQzNi45bC0xMTYuOSAyOS01NDAuNCAxMjguNCA4Ny40LTcxeiIvPjxwYXRoIGZpbGw9IiNmNGYzZmYiIGQ9Ik01NSAzNjQuN2wuMi0xMDIuOC0xMi40LTM0IC43IDEzNy4zeiIvPjxwYXRoIGZpbGw9IiM1YzY4NmYiIGQ9Ik0xMzIuMiAyOUwxNTkgMzcwbC0yMi40LTEyMkw4MS41LTR6Ii8+PHBhdGggZmlsbD0iIzBkMTUxOCIgZD0iTTk2Mi42IDkyNy41SDM5Ni44TDI4Ni42IDU1MC43bDY2Ni43LTIyeiIvPjxwYXRoIGZpbGw9IiNhMzlmOWQiIGQ9Ik0xMDkuMyA0OTMuMmwtMTg1LjYgNDBMMTk0IDQ5Ni44IDcyLjIgMzg5LjJ6Ii8+PHBhdGggZmlsbD0iIzczODg5NSIgZD0iTTEyNDcuNiA1MDUuNGwxLjktMjgwLjcgMjEuMy01OS4xIDcyLjQgMzY4LjV6Ii8+PHBhdGggZmlsbD0iIzUwNWY2NCIgZD0iTTExMzgtMzZsNjQtMzktNzggMzQwLTEtMjguOHoiLz48cGF0aCBmaWxsPSIjYjRjMmQwIiBkPSJNMTAwNC4xIDYzOC45bC0xMS4zLTIyIDItNCA3MS45LTEuM3oiLz48cGF0aCBmaWxsPSIjMDAwMTA2IiBkPSJNLTc3LjUtNTYuNmwxMjggMjcyLjJMNjIgMzM5LjRsNzUuMy0yODEuN3oiLz48cGF0aCBmaWxsPSIjNjU2ZTc1IiBkPSJNLTcyLjIgNTk0LjZMNzQwIDQwNS43IDI1MC40IDU2NiAzMC43IDYyOXoiLz48cGF0aCBmaWxsPSIjMDAwMjA2IiBkPSJNMTI2Mi45IDQ4Mi40bC0xMC4xLTEwLTE0LjYtMzkyLTIxLjIgNDI2LjJ6Ii8+PHBhdGggZmlsbD0iIzAxMDEwMCIgZD0iTTU4OC44IDQyNy43TDEwMzcuNyAyNDcgMTAyOSAuMyA5NC0xNC40eiIvPjxwYXRoIGZpbGw9IiM0ODUyNTYiIGQ9Ik0yMDggMTg4LjNsOS43LTExMi44IDMxLjYgNTEuNS01MS42IDE5OXoiLz48cGF0aCBmaWxsPSIjMWUzMjNiIiBkPSJNLTYxLjEgNzc2TDc4LjMgNjUxLjIgNDkzIDYyOS44IDc5IDkyNy41eiIvPjxwYXRoIGZpbGw9IiMwZDE1MTUiIGQ9Ik04MzcgNDg3LjhsLTE4OS00OC41LTE3NC44IDE4OSA0OTAuNyAxMy4xeiIvPjxwYXRoIGZpbGw9IiMwMDA4MTYiIGQ9Ik0xOC44IDQ3NC4zbDkuNi01MDkgMTcgNDcwLjYgNi43IDY2LjJ6Ii8+PHBhdGggZmlsbD0iI2U5ZTZmOSIgZD0iTTc0LjIgMzY1LjZsMjUuOCAxM0w3Mi4zIDI0OGw1LjggMTI0LjZ6Ii8+PHBhdGggZmlsbD0iIzAwMDIwNSIgZD0iTTExNjMgODMuNGw5Ni42IDcwLjQtNTMuOSAyLjhMMTIwOSA0NDF6Ii8+PHBhdGggZmlsbD0iIzc5N2I3OCIgZD0iTTY2NS43IDQxMWwtNTQ5LjMgNTYuNiA4NTYuMi0yOS40IDIyLjcgMzkuNnoiLz48L2c+PC9zdmc+\")"
     		}
     	];
 
@@ -3886,7 +3909,7 @@ var app = (function () {
     	});
 
     	$$self.$capture_state = () => ({
-    		WindowElement,
+    		WindowElement: FixedWindowElement,
     		ImageLoader,
     		deGallery,
     		randomIndex,
@@ -3921,16 +3944,15 @@ var app = (function () {
     /* src/Windows/JapanJPG.svelte generated by Svelte v3.32.1 */
     const file$d = "src/Windows/JapanJPG.svelte";
 
-    // (31:0) <WindowElement     gridColumnStart={1}     gridColumnEnd={61}     gridRowStart={75}     gridRowEnd={115}     largeGridColumnStart={5}     largeGridColumnEnd={46}     largeGridRowStart={80}     largeGridRowEnd={106}     title={jpGallery[randomIndex].name}     id={8}     isInForeground={false}     intersections={[9]}     intersectingSide="right"     distanceFromIntersection={21}     largeDistanceFromIntersection={6} >
+    // (32:4) <WindowElement         width={{ base: 378, small: 600 }}         height={{ base: 274, small: 436 }}         background={jpGallery[randomIndex].svg}         title={jpGallery[randomIndex].name}         id={8}         isInForeground={true}     >
     function create_default_slot$a(ctx) {
-    	let div;
     	let imageloader;
     	let current;
 
     	imageloader = new ImageLoader({
     			props: {
-    				sizes: "59.6vmax, (min-width: 1024px) 40.8vmax",
-    				srcset: "https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/" + /*slug*/ ctx[2] + " 1280w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/" + /*slug*/ ctx[2] + " 960w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_800,f_auto/" + /*slug*/ ctx[2] + " 800w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_640,f_auto/" + /*slug*/ ctx[2] + " 640w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_480,f_auto/" + /*slug*/ ctx[2] + " 480w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_320,f_auto/" + /*slug*/ ctx[2] + " 320w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_160,f_auto/" + /*slug*/ ctx[2] + " 160w,",
+    				sizes: "376px, (min-width: 640px) 598px",
+    				srcset: "https://res.cloudinary.com/thdrstnr/image/upload/w_598,f_auto/" + /*slug*/ ctx[2] + " 598w,\n        https://res.cloudinary.com/thdrstnr/image/upload/w_376,f_auto/" + /*slug*/ ctx[2] + " 376w,",
     				src: "https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/" + /*slug*/ ctx[2],
     				alt: /*jpGallery*/ ctx[0][/*randomIndex*/ ctx[1]].alt
     			},
@@ -3939,15 +3961,10 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			div = element("div");
     			create_component(imageloader.$$.fragment);
-    			set_style(div, "background-image", "url(data:image/svg+xml;base64," + /*jpGallery*/ ctx[0][/*randomIndex*/ ctx[1]].svg + ")");
-    			attr_dev(div, "class", "svelte-1ctar2d");
-    			add_location(div, file$d, 47, 4, 10511);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			mount_component(imageloader, div, null);
+    			mount_component(imageloader, target, anchor);
     			current = true;
     		},
     		p: noop,
@@ -3961,8 +3978,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			destroy_component(imageloader);
+    			destroy_component(imageloader, detaching);
     		}
     	};
 
@@ -3970,7 +3986,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$a.name,
     		type: "slot",
-    		source: "(31:0) <WindowElement     gridColumnStart={1}     gridColumnEnd={61}     gridRowStart={75}     gridRowEnd={115}     largeGridColumnStart={5}     largeGridColumnEnd={46}     largeGridRowStart={80}     largeGridRowEnd={106}     title={jpGallery[randomIndex].name}     id={8}     isInForeground={false}     intersections={[9]}     intersectingSide=\\\"right\\\"     distanceFromIntersection={21}     largeDistanceFromIntersection={6} >",
+    		source: "(32:4) <WindowElement         width={{ base: 378, small: 600 }}         height={{ base: 274, small: 436 }}         background={jpGallery[randomIndex].svg}         title={jpGallery[randomIndex].name}         id={8}         isInForeground={true}     >",
     		ctx
     	});
 
@@ -3978,26 +3994,18 @@ var app = (function () {
     }
 
     function create_fragment$e(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 1,
-    				gridColumnEnd: 61,
-    				gridRowStart: 75,
-    				gridRowEnd: 115,
-    				largeGridColumnStart: 5,
-    				largeGridColumnEnd: 46,
-    				largeGridRowStart: 80,
-    				largeGridRowEnd: 106,
+    				width: { base: 378, small: 600 },
+    				height: { base: 274, small: 436 },
+    				background: /*jpGallery*/ ctx[0][/*randomIndex*/ ctx[1]].svg,
     				title: /*jpGallery*/ ctx[0][/*randomIndex*/ ctx[1]].name,
     				id: 8,
-    				isInForeground: false,
-    				intersections: [9],
-    				intersectingSide: "right",
-    				distanceFromIntersection: 21,
-    				largeDistanceFromIntersection: 6,
+    				isInForeground: true,
     				$$slots: { default: [create_default_slot$a] },
     				$$scope: { ctx }
     			},
@@ -4006,13 +4014,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-16o06je");
+    			add_location(div, file$d, 30, 0, 10191);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -4034,7 +4046,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -4056,21 +4069,21 @@ var app = (function () {
     	const jpGallery = [
     		{
     			name: "SHINJUKU.JPG",
-    			src: "/MortimerBaltus/jpGallery/TokyoTaxi_zbokhg",
+    			src: "/MortimerBaltus/jpGallery/ShinjukuSakura_dgdj2h",
     			alt: "Shinjuku, Tokyo (JP)",
-    			svg: "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjgwIDg1MyI+PHBhdGggZmlsbD0iIzg4ODY4YSIgZD0iTTAgMGgxMjgwdjg1MEgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xMzU3LjUgMTAuM0w1NDIgMzk0LjlsLTI4IDE1Ny43TDI3MS41LTc3LjV6Ii8+PHBhdGggZD0iTTMgNDAyLjhMLTIzIDYwMmwxMzgwLjUtMTkuNy02Ny42LTIzOHoiLz48cGF0aCBmaWxsPSIjMDAxOTI0IiBkPSJNLTc3LjUgNzQyLjNsNDUxLTE0LjMgMTcuMS02MDAuNi0zNzctMjA0Ljl6Ii8+PHBhdGggZmlsbD0iI2Y1ZGRlMiIgZD0iTTkwOS41IDkyNy41bC05ODctOTIuNSA4MDgtMjYzLjEgNTg3LjggNTV6Ii8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTQ1MSA1MTUuM0wzNDguOC03Ny41aDc3NC41bC00NzYgNTQ2eiIvPjxwYXRoIGZpbGw9IiMwNDA5MDYiIGQ9Ik0xMTYyLjQgMTQ1LjhsLTE0NS44IDI5MS41LTM3OSA0Mi40IDcxOS45IDE1Ni44eiIvPjxwYXRoIGZpbGw9IiM3MzZlNmQiIGQ9Ik01NjIuMiA1MDRsLTMyLjMtMTIzLjQgNzg3LjMtMTc1LjgtMjE3LjMgMjA2eiIvPjxwYXRoIGZpbGw9IiM0ZTY5NzQiIGQ9Ik01MjMuMSA2NzAuNUwzMjguNyA1NzAuMy03Ny41IDY5Ny45IDQ4Ny4zIDc1MHoiLz48cGF0aCBmaWxsPSIjZWFkNWRiIiBkPSJNNDI3IDU4MC44bDQyMy42IDguNi0xNTQgMjIyLTI0MS0xODguNHoiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNNzU4IDM4OC4zTDMzNi4yIDEwNiAyODMuNC0zNS40IDkyMi03Ny41eiIvPjxwYXRoIGQ9Ik04NTcuMSAyMDguMmwxNy4xIDU2LjctNjIuOCAxNS4zIDkuMS01OS42eiIvPjxwYXRoIGZpbGw9IiM2YjY2NjciIGQ9Ik0xMDY1LjIgNDUuM2wyMDIuNiAxMDIuNSA4OS43IDMyMy40LTMyNS4xLTMzMC40eiIvPjxwYXRoIGZpbGw9IiMwMDEwMWQiIGQ9Ik03ODAgMzkzLjJsLTExMCAyNi4yLTEzOS43LTEyIDEzNi4zLTQ3Ljl6Ii8+PHBhdGggZmlsbD0iI2ZmZmVmZiIgZD0iTTY4OC4yIDU0N2wxNC42LTM5LjUgNjMuNSA5MS44IDMyLjYtNTR6Ii8+PHBhdGggZmlsbD0iI2IwYjViOSIgZD0iTTUwLjQgNDI1TC0xNyA0NDcuNWwtNjAuNS0xNzguMiAxMjgtMTIuNXoiLz48cGF0aCBmaWxsPSIjMGUxMzE4IiBkPSJNNzkuMyA2MjguN2w1My41LTMwNy40LTUuNC0yNzMuNyAyNjUuOCA1MjQuN3oiLz48cGF0aCBmaWxsPSIjYTg5Yjk4IiBkPSJNOTMxLjUgMTkyLjdMNzYzLjMgMzk5bC0xODIuMSA4NSAzMjEuMy01MnoiLz48cGF0aCBmaWxsPSIjNzc3NTc5IiBkPSJNMjgxLjYgMzAzLjdMNTIzIDU4NmwtNzcuMy0yNjAtMjUxLTM1Ni45eiIvPjxwYXRoIGZpbGw9IiNlMWNiY2YiIGQ9Ik0tNzcuNSA5MDIuOGw2NDItMTYwLTIzMiAxLjEtNDEwLTZ6Ii8+PHBhdGggZmlsbD0iIzAwMDAwNCIgZD0iTTYxLjcgMTE3LjJsLTgwLjggMTA0LjUgNjMuNCA1MSA2Mi42IDI2Ny43eiIvPjxwYXRoIGZpbGw9IiNmZmYyZjkiIGQ9Ik02MTIuMSAyODcuOWwtMjgzLjYgNDYuOUw2ODcuOC03Ny41aDY2OS43eiIvPjxwYXRoIGZpbGw9IiMwODBjMGMiIGQ9Ik0xMjUyIDI3NUw5MzcuMSA1NzlsMjU3LjUgMjUuOCA3MC40LTU0LjN6Ii8+PHBhdGggZmlsbD0iIzA4MGEwYyIgZD0iTTMzMS41IDM3MGwxMDUuMSAxOTguOC0xNjUuNC02MC4yTDQ1OCAzMTkuNHoiLz48cGF0aCBmaWxsPSIjZmFlZGY0IiBkPSJNMTM1Ny41IDEzMC43TDc0Mi42LTc3LjVsMTM2LjYgMzExTDExMzcuNC0zOXoiLz48cGF0aCBmaWxsPSIjYTc5Y2EyIiBkPSJNMTM1Ny41IDU3Mi40bC0xNjQgMzMxLjEtNTA2LjEgMy40IDQ2Mi40LTI4Ni4zeiIvPjxwYXRoIGZpbGw9IiM0NTQzNDIiIGQ9Ik0xMDgyLjcgMjg2LjVsMjUwLjQgMi40LTQ2NC4yIDEwNC44IDkuNy02NS45eiIvPjxwYXRoIGZpbGw9IiNmZmY5ZmUiIGQ9Ik0xMjM1LjkgMzU3LjNsMTIxLjYgNTR2NTUuOGwtMzcuNC0xNzEuNnoiLz48cGF0aCBmaWxsPSIjNTg2YTc0IiBkPSJNLTc3LjUgNjQybDM2Ny44LTQ1LjYgMjgxLjEgMTU3LjQtMzM2LjMtMzd6Ii8+PHBhdGggZmlsbD0iI2FhYWRiNCIgZD0iTTI3Ny41IDE2Ni4xTDI0NC40LTMxLjYgMjM0IDIyMi4zbDE1LjggMTAuM3oiLz48cGF0aCBmaWxsPSIjYTA5OTlmIiBkPSJNMTM1LjUgMjA2LjJsLTU4LjgtOCA4Ny4xIDE3Mi4yLTc0LjYtNTZ6Ii8+PHBhdGggZmlsbD0iIzA5MWMyOSIgZD0iTTExMC43IDMwMC44bDYwLjQtMzc4LjMgNjIuMyAyMzMtNC4yLTE2MHoiLz48cGF0aCBmaWxsPSIjZjFlMmU3IiBkPSJNNjY3LjcgNTgxLjFMNjU2LjMgNTM3bC0xNy44IDYuNEw2NDMgNTg3eiIvPjwvZz48L3N2Zz4="
+    			svg: "url(\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjgwIDg1MyI+PHBhdGggZmlsbD0iIzg4ODY4YSIgZD0iTTAgMGgxMjgwdjg1MEgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0xMzU3LjUgMTAuM0w1NDIgMzk0LjlsLTI4IDE1Ny43TDI3MS41LTc3LjV6Ii8+PHBhdGggZD0iTTMgNDAyLjhMLTIzIDYwMmwxMzgwLjUtMTkuNy02Ny42LTIzOHoiLz48cGF0aCBmaWxsPSIjMDAxOTI0IiBkPSJNLTc3LjUgNzQyLjNsNDUxLTE0LjMgMTcuMS02MDAuNi0zNzctMjA0Ljl6Ii8+PHBhdGggZmlsbD0iI2Y1ZGRlMiIgZD0iTTkwOS41IDkyNy41bC05ODctOTIuNSA4MDgtMjYzLjEgNTg3LjggNTV6Ii8+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTQ1MSA1MTUuM0wzNDguOC03Ny41aDc3NC41bC00NzYgNTQ2eiIvPjxwYXRoIGZpbGw9IiMwNDA5MDYiIGQ9Ik0xMTYyLjQgMTQ1LjhsLTE0NS44IDI5MS41LTM3OSA0Mi40IDcxOS45IDE1Ni44eiIvPjxwYXRoIGZpbGw9IiM3MzZlNmQiIGQ9Ik01NjIuMiA1MDRsLTMyLjMtMTIzLjQgNzg3LjMtMTc1LjgtMjE3LjMgMjA2eiIvPjxwYXRoIGZpbGw9IiM0ZTY5NzQiIGQ9Ik01MjMuMSA2NzAuNUwzMjguNyA1NzAuMy03Ny41IDY5Ny45IDQ4Ny4zIDc1MHoiLz48cGF0aCBmaWxsPSIjZWFkNWRiIiBkPSJNNDI3IDU4MC44bDQyMy42IDguNi0xNTQgMjIyLTI0MS0xODguNHoiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNNzU4IDM4OC4zTDMzNi4yIDEwNiAyODMuNC0zNS40IDkyMi03Ny41eiIvPjxwYXRoIGQ9Ik04NTcuMSAyMDguMmwxNy4xIDU2LjctNjIuOCAxNS4zIDkuMS01OS42eiIvPjxwYXRoIGZpbGw9IiM2YjY2NjciIGQ9Ik0xMDY1LjIgNDUuM2wyMDIuNiAxMDIuNSA4OS43IDMyMy40LTMyNS4xLTMzMC40eiIvPjxwYXRoIGZpbGw9IiMwMDEwMWQiIGQ9Ik03ODAgMzkzLjJsLTExMCAyNi4yLTEzOS43LTEyIDEzNi4zLTQ3Ljl6Ii8+PHBhdGggZmlsbD0iI2ZmZmVmZiIgZD0iTTY4OC4yIDU0N2wxNC42LTM5LjUgNjMuNSA5MS44IDMyLjYtNTR6Ii8+PHBhdGggZmlsbD0iI2IwYjViOSIgZD0iTTUwLjQgNDI1TC0xNyA0NDcuNWwtNjAuNS0xNzguMiAxMjgtMTIuNXoiLz48cGF0aCBmaWxsPSIjMGUxMzE4IiBkPSJNNzkuMyA2MjguN2w1My41LTMwNy40LTUuNC0yNzMuNyAyNjUuOCA1MjQuN3oiLz48cGF0aCBmaWxsPSIjYTg5Yjk4IiBkPSJNOTMxLjUgMTkyLjdMNzYzLjMgMzk5bC0xODIuMSA4NSAzMjEuMy01MnoiLz48cGF0aCBmaWxsPSIjNzc3NTc5IiBkPSJNMjgxLjYgMzAzLjdMNTIzIDU4NmwtNzcuMy0yNjAtMjUxLTM1Ni45eiIvPjxwYXRoIGZpbGw9IiNlMWNiY2YiIGQ9Ik0tNzcuNSA5MDIuOGw2NDItMTYwLTIzMiAxLjEtNDEwLTZ6Ii8+PHBhdGggZmlsbD0iIzAwMDAwNCIgZD0iTTYxLjcgMTE3LjJsLTgwLjggMTA0LjUgNjMuNCA1MSA2Mi42IDI2Ny43eiIvPjxwYXRoIGZpbGw9IiNmZmYyZjkiIGQ9Ik02MTIuMSAyODcuOWwtMjgzLjYgNDYuOUw2ODcuOC03Ny41aDY2OS43eiIvPjxwYXRoIGZpbGw9IiMwODBjMGMiIGQ9Ik0xMjUyIDI3NUw5MzcuMSA1NzlsMjU3LjUgMjUuOCA3MC40LTU0LjN6Ii8+PHBhdGggZmlsbD0iIzA4MGEwYyIgZD0iTTMzMS41IDM3MGwxMDUuMSAxOTguOC0xNjUuNC02MC4yTDQ1OCAzMTkuNHoiLz48cGF0aCBmaWxsPSIjZmFlZGY0IiBkPSJNMTM1Ny41IDEzMC43TDc0Mi42LTc3LjVsMTM2LjYgMzExTDExMzcuNC0zOXoiLz48cGF0aCBmaWxsPSIjYTc5Y2EyIiBkPSJNMTM1Ny41IDU3Mi40bC0xNjQgMzMxLjEtNTA2LjEgMy40IDQ2Mi40LTI4Ni4zeiIvPjxwYXRoIGZpbGw9IiM0NTQzNDIiIGQ9Ik0xMDgyLjcgMjg2LjVsMjUwLjQgMi40LTQ2NC4yIDEwNC44IDkuNy02NS45eiIvPjxwYXRoIGZpbGw9IiNmZmY5ZmUiIGQ9Ik0xMjM1LjkgMzU3LjNsMTIxLjYgNTR2NTUuOGwtMzcuNC0xNzEuNnoiLz48cGF0aCBmaWxsPSIjNTg2YTc0IiBkPSJNLTc3LjUgNjQybDM2Ny44LTQ1LjYgMjgxLjEgMTU3LjQtMzM2LjMtMzd6Ii8+PHBhdGggZmlsbD0iI2FhYWRiNCIgZD0iTTI3Ny41IDE2Ni4xTDI0NC40LTMxLjYgMjM0IDIyMi4zbDE1LjggMTAuM3oiLz48cGF0aCBmaWxsPSIjYTA5OTlmIiBkPSJNMTM1LjUgMjA2LjJsLTU4LjgtOCA4Ny4xIDE3Mi4yLTc0LjYtNTZ6Ii8+PHBhdGggZmlsbD0iIzA5MWMyOSIgZD0iTTExMC43IDMwMC44bDYwLjQtMzc4LjMgNjIuMyAyMzMtNC4yLTE2MHoiLz48cGF0aCBmaWxsPSIjZjFlMmU3IiBkPSJNNjY3LjcgNTgxLjFMNjU2LjMgNTM3bC0xNy44IDYuNEw2NDMgNTg3eiIvPjwvZz48L3N2Zz4=\")"
     		},
     		{
     			name: "TAXI.JPG",
-    			src: "/MortimerBaltus/jpGallery/ShinjukuSakura_dgdj2h",
+    			src: "/MortimerBaltus/jpGallery/TokyoTaxi_zbokhg",
     			alt: "A cab in Tokyo (JP)",
-    			svg: "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjgwIDg1MCI+PHBhdGggZmlsbD0iIzZlNjY2MyIgZD0iTTAgMGgxMjgwdjg1MEgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0tNzcuNSA4OTMuOFY3NTUuNmwxNDE1LjktMzA5LjgtMTg2LjggNDgxLjd6Ii8+PHBhdGggZD0iTTEzNTcuNS0zMnYzOTlsLTE0MzUtMTQ1LjNMLTI1LTc3LjV6Ii8+PHBhdGggZmlsbD0iIzAyMDAwMCIgZD0iTTk0NS44IDQ2NUw3MzUuNCA2NDUgMTAuMiA1OTkuMWw0NjkuNi0xMjcuN3oiLz48cGF0aCBmaWxsPSIjZjNlMWNiIiBkPSJNMTM1Ny41IDcyNy4yTC03Ny41IDYwMSAzMS42IDQzMmw5NC44IDQ5NS42eiIvPjxwYXRoIGZpbGw9IiNjM2MwYmQiIGQ9Ik01NzkuNiA0MTBsLTQ2LTE5MiAyOTItNDEtODIuMyAyNDkuMXoiLz48cGF0aCBmaWxsPSIjMDAwMDA2IiBkPSJNNzc5LTE3LjdsNTc4LjUgNDk1LTM4MS0xOS41IDM4MS00NTkuNHoiLz48cGF0aCBmaWxsPSIjZjFlMmQwIiBkPSJNNTYwLjIgODU1LjNsNjI3LjggNzIuMi0yNi42LTQ2NC40TDk1MSA0OTQuNnoiLz48cGF0aCBmaWxsPSIjMDAwNDA4IiBkPSJNMjIwLjEgMjU0LjVsMTA0Mi0yMDguM0wtNzcuNSA1OGwyNDIuMSAzNjh6Ii8+PHBhdGggZD0iTTExNzYuNCA4NjQuMmwxODEuMS04NC4zLTE5NS40LTEyMy40IDE3OC02MC4zeiIvPjxwYXRoIGZpbGw9IiNmZTVkMzgiIGQ9Ik0yNjIuMyA0MDcuNWwxMzggMTAyLjcgNTQwLjEtNzMuOC04Ny43LTQ4Ljd6Ii8+PHBhdGggZmlsbD0iI2MwZDRlOCIgZD0iTTEwMTIgMjQ2LjJsLTQxMy43LTM2LjYgMjg5LjMtMjEuNCAxNzkuMiAyNy4zeiIvPjxwYXRoIGZpbGw9IiMyNjA5MDkiIGQ9Ik01MTUuMiA2NDYuN2wyODYuNy0zMi0zMTQuNC0xNjUtMzQyLjItMjQuNnoiLz48cGF0aCBmaWxsPSIjMDAwNDA2IiBkPSJNMTE3NC4yIDI1NS40bC0zNTIuMy0yNy43LTMxOC40IDQuMyA2MDQuOCA5OC40eiIvPjxwYXRoIGZpbGw9IiNmMGRmYmYiIGQ9Ik02MTMuNiA0MTguN2wyODcuOC0yLjRMNTI0IDI3Ny41bDM4LjctNDV6Ii8+PHBhdGggZmlsbD0iI2JlY2VkZiIgZD0iTTEwNDYgMzQwLjRsNDEuNSA1MjUuNC0zNy4yLTQ3NS42LTM2OS42LTk3LjF6Ii8+PHBhdGggZmlsbD0iI2NlYzdjNyIgZD0iTS03Ny41IDI4My40bDI5MS40IDQ2NS0yOTEuNC0zMTUuMUwxMTEgMzIwLjh6Ii8+PHBhdGggZmlsbD0iIzAwMDQxNCIgZD0iTTkwOS42IDM5NC43bDQwMC43IDkuMi0yOS40LTg3LjUtMzQxLjcgMTYwLjl6Ii8+PHBhdGggZmlsbD0iI2Y4ZWZlNCIgZD0iTTk0MS4zIDQ4My41TDkwOCA1NTBsNDA4LjQtNTUtLjMtMjh6Ii8+PHBhdGggZmlsbD0iIzI5MmUzMyIgZD0iTTM2My45IDEyMi4ybDcuNiAxOTcuNy00MTkgODUuNEw1MzYgMzc5LjF6Ii8+PHBhdGggZmlsbD0iI2E1Y2JlZiIgZD0iTTU0MC40IDE0MC42bDYuNC0yNS44IDU0LjkgMTAuMy00MS42IDUzLjR6Ii8+PHBhdGggZmlsbD0iIzA3MGQxZCIgZD0iTTEyMTkuNSA1MzAuNmwxMzggNjMuMi01LjctOTUuNC0xNTguNyAxNy40eiIvPjxwYXRoIGQ9Ik0xMjYxLjUgNzE0LjdsNjkuMi00MiAyNi44IDIxNi43LTIzMS45IDM4LjF6Ii8+PHBhdGggZmlsbD0iI2U0MTAwMCIgZD0iTTU2NS45IDQwNGwtMTkuNC0xMDcuNy00NiAxMzQuOEw3MzQgNDU2LjJ6Ii8+PHBhdGggZmlsbD0iI2U4ZTFjYSIgZD0iTTc2MS43IDU4M2wtMzcuNC0yOC43LTg2LjcgMTFMNzE0IDU3OHoiLz48cGF0aCBmaWxsPSIjMGEwZTE1IiBkPSJNNzE2IDMwNy4zbC0xMzMuNy0xNEw4MzIuOCAxMjkgNjQ1LjItNzcuNXoiLz48cGF0aCBmaWxsPSIjZDhjY2JmIiBkPSJNNTc5LjEgNjMyLjFMODg4IDkyMC4ybDQyMS40LTM4NS44TDkzMiA2MjMuN3oiLz48cGF0aCBmaWxsPSIjY2RjNmJlIiBkPSJNNTMwIDYyM2wtMjE5LjUtMTJMMjYuMiA5MjcuNSA4OC44IDYzM3oiLz48cGF0aCBmaWxsPSIjYTVjMGQ0IiBkPSJNMTIwLjYgNDAwLjZsMzc1LjcgMjYuNiAxODYgMzkuMi0yMTYuMS0xOS42eiIvPjxwYXRoIGZpbGw9IiMzODQ3NjMiIGQ9Ik0zMjguNyA2MjIuNGwtMzk5LjItMjI4TDMwNSA0MzEuOCA0LjggNjA0LjV6Ii8+PHBhdGggZmlsbD0iIzExMTIxMyIgZD0iTTYwOS40IDEwbC01MzkgMjkyLTg3LjMtLjMgNDEtMjAxLjZ6Ii8+PHBhdGggZmlsbD0iI2MwMjEwZSIgZD0iTTQ0OS42IDUzNy40TDI3OSA0MzIuOCA0OTkgNDU1bC0xNi4yIDc1Ljd6Ii8+PHBhdGggZmlsbD0iIzczOWNiOSIgZD0iTTExNzguMyAyNzYuM2wxMS41LTY4IDU1LjcgMTM5LjYgNDIuMS01OHoiLz48L2c+PC9zdmc+"
+    			svg: "url(\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjgwIDg1MCI+PHBhdGggZmlsbD0iIzZlNjY2MyIgZD0iTTAgMGgxMjgwdjg1MEgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0tNzcuNSA4OTMuOFY3NTUuNmwxNDE1LjktMzA5LjgtMTg2LjggNDgxLjd6Ii8+PHBhdGggZD0iTTEzNTcuNS0zMnYzOTlsLTE0MzUtMTQ1LjNMLTI1LTc3LjV6Ii8+PHBhdGggZmlsbD0iIzAyMDAwMCIgZD0iTTk0NS44IDQ2NUw3MzUuNCA2NDUgMTAuMiA1OTkuMWw0NjkuNi0xMjcuN3oiLz48cGF0aCBmaWxsPSIjZjNlMWNiIiBkPSJNMTM1Ny41IDcyNy4yTC03Ny41IDYwMSAzMS42IDQzMmw5NC44IDQ5NS42eiIvPjxwYXRoIGZpbGw9IiNjM2MwYmQiIGQ9Ik01NzkuNiA0MTBsLTQ2LTE5MiAyOTItNDEtODIuMyAyNDkuMXoiLz48cGF0aCBmaWxsPSIjMDAwMDA2IiBkPSJNNzc5LTE3LjdsNTc4LjUgNDk1LTM4MS0xOS41IDM4MS00NTkuNHoiLz48cGF0aCBmaWxsPSIjZjFlMmQwIiBkPSJNNTYwLjIgODU1LjNsNjI3LjggNzIuMi0yNi42LTQ2NC40TDk1MSA0OTQuNnoiLz48cGF0aCBmaWxsPSIjMDAwNDA4IiBkPSJNMjIwLjEgMjU0LjVsMTA0Mi0yMDguM0wtNzcuNSA1OGwyNDIuMSAzNjh6Ii8+PHBhdGggZD0iTTExNzYuNCA4NjQuMmwxODEuMS04NC4zLTE5NS40LTEyMy40IDE3OC02MC4zeiIvPjxwYXRoIGZpbGw9IiNmZTVkMzgiIGQ9Ik0yNjIuMyA0MDcuNWwxMzggMTAyLjcgNTQwLjEtNzMuOC04Ny43LTQ4Ljd6Ii8+PHBhdGggZmlsbD0iI2MwZDRlOCIgZD0iTTEwMTIgMjQ2LjJsLTQxMy43LTM2LjYgMjg5LjMtMjEuNCAxNzkuMiAyNy4zeiIvPjxwYXRoIGZpbGw9IiMyNjA5MDkiIGQ9Ik01MTUuMiA2NDYuN2wyODYuNy0zMi0zMTQuNC0xNjUtMzQyLjItMjQuNnoiLz48cGF0aCBmaWxsPSIjMDAwNDA2IiBkPSJNMTE3NC4yIDI1NS40bC0zNTIuMy0yNy43LTMxOC40IDQuMyA2MDQuOCA5OC40eiIvPjxwYXRoIGZpbGw9IiNmMGRmYmYiIGQ9Ik02MTMuNiA0MTguN2wyODcuOC0yLjRMNTI0IDI3Ny41bDM4LjctNDV6Ii8+PHBhdGggZmlsbD0iI2JlY2VkZiIgZD0iTTEwNDYgMzQwLjRsNDEuNSA1MjUuNC0zNy4yLTQ3NS42LTM2OS42LTk3LjF6Ii8+PHBhdGggZmlsbD0iI2NlYzdjNyIgZD0iTS03Ny41IDI4My40bDI5MS40IDQ2NS0yOTEuNC0zMTUuMUwxMTEgMzIwLjh6Ii8+PHBhdGggZmlsbD0iIzAwMDQxNCIgZD0iTTkwOS42IDM5NC43bDQwMC43IDkuMi0yOS40LTg3LjUtMzQxLjcgMTYwLjl6Ii8+PHBhdGggZmlsbD0iI2Y4ZWZlNCIgZD0iTTk0MS4zIDQ4My41TDkwOCA1NTBsNDA4LjQtNTUtLjMtMjh6Ii8+PHBhdGggZmlsbD0iIzI5MmUzMyIgZD0iTTM2My45IDEyMi4ybDcuNiAxOTcuNy00MTkgODUuNEw1MzYgMzc5LjF6Ii8+PHBhdGggZmlsbD0iI2E1Y2JlZiIgZD0iTTU0MC40IDE0MC42bDYuNC0yNS44IDU0LjkgMTAuMy00MS42IDUzLjR6Ii8+PHBhdGggZmlsbD0iIzA3MGQxZCIgZD0iTTEyMTkuNSA1MzAuNmwxMzggNjMuMi01LjctOTUuNC0xNTguNyAxNy40eiIvPjxwYXRoIGQ9Ik0xMjYxLjUgNzE0LjdsNjkuMi00MiAyNi44IDIxNi43LTIzMS45IDM4LjF6Ii8+PHBhdGggZmlsbD0iI2U0MTAwMCIgZD0iTTU2NS45IDQwNGwtMTkuNC0xMDcuNy00NiAxMzQuOEw3MzQgNDU2LjJ6Ii8+PHBhdGggZmlsbD0iI2U4ZTFjYSIgZD0iTTc2MS43IDU4M2wtMzcuNC0yOC43LTg2LjcgMTFMNzE0IDU3OHoiLz48cGF0aCBmaWxsPSIjMGEwZTE1IiBkPSJNNzE2IDMwNy4zbC0xMzMuNy0xNEw4MzIuOCAxMjkgNjQ1LjItNzcuNXoiLz48cGF0aCBmaWxsPSIjZDhjY2JmIiBkPSJNNTc5LjEgNjMyLjFMODg4IDkyMC4ybDQyMS40LTM4NS44TDkzMiA2MjMuN3oiLz48cGF0aCBmaWxsPSIjY2RjNmJlIiBkPSJNNTMwIDYyM2wtMjE5LjUtMTJMMjYuMiA5MjcuNSA4OC44IDYzM3oiLz48cGF0aCBmaWxsPSIjYTVjMGQ0IiBkPSJNMTIwLjYgNDAwLjZsMzc1LjcgMjYuNiAxODYgMzkuMi0yMTYuMS0xOS42eiIvPjxwYXRoIGZpbGw9IiMzODQ3NjMiIGQ9Ik0zMjguNyA2MjIuNGwtMzk5LjItMjI4TDMwNSA0MzEuOCA0LjggNjA0LjV6Ii8+PHBhdGggZmlsbD0iIzExMTIxMyIgZD0iTTYwOS40IDEwbC01MzkgMjkyLTg3LjMtLjMgNDEtMjAxLjZ6Ii8+PHBhdGggZmlsbD0iI2MwMjEwZSIgZD0iTTQ0OS42IDUzNy40TDI3OSA0MzIuOCA0OTkgNDU1bC0xNi4yIDc1Ljd6Ii8+PHBhdGggZmlsbD0iIzczOWNiOSIgZD0iTTExNzguMyAyNzYuM2wxMS41LTY4IDU1LjcgMTM5LjYgNDIuMS01OHoiLz48L2c+PC9zdmc+\")"
     		},
     		{
     			name: "TRAINSTATION.JPG",
     			src: "/MortimerBaltus/jpGallery/TokyoTrainstation_sovh7s",
     			alt: "A Trainstation in Tokyo",
-    			svg: "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjgwIDg1MyI+PHBhdGggZmlsbD0iIzg4OCIgZD0iTTAgMGgxMjgwdjg1MEgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGQ9Ik01NTEuOCA1NjUuNEwtMjMuOSAyNzEuMmwzNy43IDYwOEwxMjc5IDkyNy40eiIvPjxwYXRoIGZpbGw9IiNlMGUwZTAiIGQ9Ik00ODAuNSA1MjkuOGwtNTU3LjItMzI3IDE0MzQuMi01NS45TDEyMjYgODc5eiIvPjxwYXRoIGZpbGw9IiMyYjJiMmIiIGQ9Ik0xMDAyLjYgMzI4LjdsLTYwLTMxMi4zLTM0NS44IDcgNC45IDI4OS40eiIvPjxwYXRoIGZpbGw9IiNlY2VjZWMiIGQ9Ik01OTAuNCAxODguN2w4LTE5OS4xLTY3NS45LTY3LjF2MjczLjJ6Ii8+PHBhdGggZD0iTS01Mi4yIDM0Ni4xbDEwNzcgNTgxLjRINTc0LjNMLjIgNTg3Ljd6Ii8+PHBhdGggZmlsbD0iI2RmZGZkZiIgZD0iTTk1NC03Ny41bDUwLjggOTIuNCAzMDYuNCAxMTlMOTY4LjEgNDIzeiIvPjxwYXRoIGQ9Ik0xMzU3LjUgMTUzLjVMMTI3Mi44IDkgOTU5LTM5LjRsLTUzLjggNC42eiIvPjxwYXRoIGZpbGw9IiNkYWRhZGEiIGQ9Ik03NTUuNSAxNzEuNWwxNDMuMS0xLjctNi4zIDkzLjEtMzE1LjgtODQuNXoiLz48cGF0aCBmaWxsPSIjMDIwMjAyIiBkPSJNODYxIDk3LjVsNTcuNyAyMjEgNTAuMy02Mi4zLTM3LjctMTUzLjZ6Ii8+PHBhdGggZmlsbD0iIzg3ODc4NyIgZD0iTTI0LjMgOTI3LjVMMjcgNjgyLjNsMTYwLjUgMjcuNSA1OC4zIDc2LjZ6Ii8+PHBhdGggZmlsbD0iI2ZiZmJmYiIgZD0iTTc4Mi44IDIxLjNsMjQwLjcuOC0zNDguOC05OS42LTEwMS45IDk1Ljd6Ii8+PHBhdGggZmlsbD0iI2NhY2FjYSIgZD0iTTEyNzAuMyA4ODEuNGwtMTM4LjktNTc0LjgtOTYyLjUgMjggNDExLjIgMjExLjh6Ii8+PHBhdGggZmlsbD0iIzE1MTUxNSIgZD0iTTcxMS4xIDIxN2wtNzUgMTQuNkw2MDUuOS0xNWwtMTEuNyAzNTAuN3oiLz48cGF0aCBmaWxsPSIjOWU5ZTllIiBkPSJNNjY4LjEgMTA0LjdsLTU4LjQtNTYuMUw4MjcgNTguOWwzNi41IDQyLjZ6Ii8+PHBhdGggZmlsbD0iIzFjMWMxYyIgZD0iTTc1MS42IDgwNy44TDM1OS40IDQ2NGwyMTIuOCAxMTAuMyAyMzMuNSAxMTcuNXoiLz48cGF0aCBmaWxsPSIjMTIxMjEyIiBkPSJNOTYwLjggMjYuM2wtNDU2LjggMyA0MzguNyAzMS4yIDExLjYgMzYuOHoiLz48cGF0aCBmaWxsPSIjM2UzZTNlIiBkPSJNNzYxIDMzNWwtLjktMjIzLjMgMjEuMi00NyAxMSAxOTd6Ii8+PHBhdGggZmlsbD0iI2M3YzdjNyIgZD0iTTU5NS44LTI5LjRsLTUzOCAzNDUgMzYyLjUgMTU0LjggMTc5LjItMjU5LjJ6Ii8+PHBhdGggZmlsbD0iI2M2YzZjNiIgZD0iTTk5NyAuMmwtNDEuMyAyOTEuOSAyODAuNyAzMDMtMjYtNDk2LjV6Ii8+PHBhdGggZmlsbD0iIzdkN2Q3ZCIgZD0iTTk0NiA4MjlsMzMuMi0yMi4yLTEwMC4zLTcwLjZMNzU4IDc0OXoiLz48cGF0aCBmaWxsPSIjZDdkN2Q3IiBkPSJNNzA3LjcgMTY2LjVsLTc3LjUgMTguMyAxMjkgNzUuNy0yMy4zLTgwLjh6Ii8+PHBhdGggZmlsbD0iIzFhMWExYSIgZD0iTTgyOC42IDMwNC40TDg5MyAyODBsMTEtMTAyLjNMOTc1LjQgMzE3eiIvPjxwYXRoIGZpbGw9IiM5Njk2OTYiIGQ9Ik0xMjQwLjEgNjM2LjdsLTE1LjktNTE5LjQgMTMzLjMgMTY2LjUtMTEwIDY0My43eiIvPjxwYXRoIGZpbGw9IiM4YzhjOGMiIGQ9Ik0xMDUuNCAzMzkuM2wxNS44LTQxMUw3NC0xOS42bC0uNSAzMzF6Ii8+PHBhdGggZmlsbD0iIzBkMGQwZCIgZD0iTTUzNiA1NjIuNWwtNjA0LjItMzEwLTkuMyAzNTkuMUw3NC42IDM0OC44eiIvPjxwYXRoIGZpbGw9IiNjM2MzYzMiIGQ9Ik04OTkuMiAxNzRsLTI2IDgxLjQtOTQuNiAxOUw4MDAgMTc1eiIvPjxwYXRoIGZpbGw9IiMyNDI0MjQiIGQ9Ik02ODQuOCAyMDJsLTMxLjIgNSAyMi45IDExNy44IDI5LjgtNjB6Ii8+PHBhdGggZmlsbD0iIzZiNmI2YiIgZD0iTTYyLjEgMzg1LjFsMzguMy0yOS44IDEyMy43IDE1NCAxMTYtMTl6Ii8+PHBhdGggZmlsbD0iIzJjMmMyYyIgZD0iTTYzNS4yIDMyNC41bDQtMTkyLjcgNDI0LjggMzguNy00NjEuOS02LjV6Ii8+PHBhdGggZmlsbD0iIzQ3NDc0NyIgZD0iTTM5OS40IDg3OWwtMS4yIDQ0LjctNDQtMTcyLjhMNzIuNiA2MTF6Ii8+PHBhdGggZmlsbD0iIzE1MTUxNSIgZD0iTTQyNi4xIDczNi40bDQzMS4xIDE5MS4xTDM4MCA4NjguOGwtNjgtNDQ5eiIvPjxwYXRoIGZpbGw9IiNhNmE2YTYiIGQ9Ik0xMDA5LjYgMzg1LjlsLTE5IDMzMy42LTI5LTM5Ni41LTUuMy0yMTYuOXoiLz48L2c+PC9zdmc+"
+    			svg: "url(\"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjgwIDg1MyI+PHBhdGggZmlsbD0iIzg4OCIgZD0iTTAgMGgxMjgwdjg1MEgweiIvPjxnIGZpbGwtb3BhY2l0eT0iLjUiPjxwYXRoIGQ9Ik01NTEuOCA1NjUuNEwtMjMuOSAyNzEuMmwzNy43IDYwOEwxMjc5IDkyNy40eiIvPjxwYXRoIGZpbGw9IiNlMGUwZTAiIGQ9Ik00ODAuNSA1MjkuOGwtNTU3LjItMzI3IDE0MzQuMi01NS45TDEyMjYgODc5eiIvPjxwYXRoIGZpbGw9IiMyYjJiMmIiIGQ9Ik0xMDAyLjYgMzI4LjdsLTYwLTMxMi4zLTM0NS44IDcgNC45IDI4OS40eiIvPjxwYXRoIGZpbGw9IiNlY2VjZWMiIGQ9Ik01OTAuNCAxODguN2w4LTE5OS4xLTY3NS45LTY3LjF2MjczLjJ6Ii8+PHBhdGggZD0iTS01Mi4yIDM0Ni4xbDEwNzcgNTgxLjRINTc0LjNMLjIgNTg3Ljd6Ii8+PHBhdGggZmlsbD0iI2RmZGZkZiIgZD0iTTk1NC03Ny41bDUwLjggOTIuNCAzMDYuNCAxMTlMOTY4LjEgNDIzeiIvPjxwYXRoIGQ9Ik0xMzU3LjUgMTUzLjVMMTI3Mi44IDkgOTU5LTM5LjRsLTUzLjggNC42eiIvPjxwYXRoIGZpbGw9IiNkYWRhZGEiIGQ9Ik03NTUuNSAxNzEuNWwxNDMuMS0xLjctNi4zIDkzLjEtMzE1LjgtODQuNXoiLz48cGF0aCBmaWxsPSIjMDIwMjAyIiBkPSJNODYxIDk3LjVsNTcuNyAyMjEgNTAuMy02Mi4zLTM3LjctMTUzLjZ6Ii8+PHBhdGggZmlsbD0iIzg3ODc4NyIgZD0iTTI0LjMgOTI3LjVMMjcgNjgyLjNsMTYwLjUgMjcuNSA1OC4zIDc2LjZ6Ii8+PHBhdGggZmlsbD0iI2ZiZmJmYiIgZD0iTTc4Mi44IDIxLjNsMjQwLjcuOC0zNDguOC05OS42LTEwMS45IDk1Ljd6Ii8+PHBhdGggZmlsbD0iI2NhY2FjYSIgZD0iTTEyNzAuMyA4ODEuNGwtMTM4LjktNTc0LjgtOTYyLjUgMjggNDExLjIgMjExLjh6Ii8+PHBhdGggZmlsbD0iIzE1MTUxNSIgZD0iTTcxMS4xIDIxN2wtNzUgMTQuNkw2MDUuOS0xNWwtMTEuNyAzNTAuN3oiLz48cGF0aCBmaWxsPSIjOWU5ZTllIiBkPSJNNjY4LjEgMTA0LjdsLTU4LjQtNTYuMUw4MjcgNTguOWwzNi41IDQyLjZ6Ii8+PHBhdGggZmlsbD0iIzFjMWMxYyIgZD0iTTc1MS42IDgwNy44TDM1OS40IDQ2NGwyMTIuOCAxMTAuMyAyMzMuNSAxMTcuNXoiLz48cGF0aCBmaWxsPSIjMTIxMjEyIiBkPSJNOTYwLjggMjYuM2wtNDU2LjggMyA0MzguNyAzMS4yIDExLjYgMzYuOHoiLz48cGF0aCBmaWxsPSIjM2UzZTNlIiBkPSJNNzYxIDMzNWwtLjktMjIzLjMgMjEuMi00NyAxMSAxOTd6Ii8+PHBhdGggZmlsbD0iI2M3YzdjNyIgZD0iTTU5NS44LTI5LjRsLTUzOCAzNDUgMzYyLjUgMTU0LjggMTc5LjItMjU5LjJ6Ii8+PHBhdGggZmlsbD0iI2M2YzZjNiIgZD0iTTk5NyAuMmwtNDEuMyAyOTEuOSAyODAuNyAzMDMtMjYtNDk2LjV6Ii8+PHBhdGggZmlsbD0iIzdkN2Q3ZCIgZD0iTTk0NiA4MjlsMzMuMi0yMi4yLTEwMC4zLTcwLjZMNzU4IDc0OXoiLz48cGF0aCBmaWxsPSIjZDdkN2Q3IiBkPSJNNzA3LjcgMTY2LjVsLTc3LjUgMTguMyAxMjkgNzUuNy0yMy4zLTgwLjh6Ii8+PHBhdGggZmlsbD0iIzFhMWExYSIgZD0iTTgyOC42IDMwNC40TDg5MyAyODBsMTEtMTAyLjNMOTc1LjQgMzE3eiIvPjxwYXRoIGZpbGw9IiM5Njk2OTYiIGQ9Ik0xMjQwLjEgNjM2LjdsLTE1LjktNTE5LjQgMTMzLjMgMTY2LjUtMTEwIDY0My43eiIvPjxwYXRoIGZpbGw9IiM4YzhjOGMiIGQ9Ik0xMDUuNCAzMzkuM2wxNS44LTQxMUw3NC0xOS42bC0uNSAzMzF6Ii8+PHBhdGggZmlsbD0iIzBkMGQwZCIgZD0iTTUzNiA1NjIuNWwtNjA0LjItMzEwLTkuMyAzNTkuMUw3NC42IDM0OC44eiIvPjxwYXRoIGZpbGw9IiNjM2MzYzMiIGQ9Ik04OTkuMiAxNzRsLTI2IDgxLjQtOTQuNiAxOUw4MDAgMTc1eiIvPjxwYXRoIGZpbGw9IiMyNDI0MjQiIGQ9Ik02ODQuOCAyMDJsLTMxLjIgNSAyMi45IDExNy44IDI5LjgtNjB6Ii8+PHBhdGggZmlsbD0iIzZiNmI2YiIgZD0iTTYyLjEgMzg1LjFsMzguMy0yOS44IDEyMy43IDE1NCAxMTYtMTl6Ii8+PHBhdGggZmlsbD0iIzJjMmMyYyIgZD0iTTYzNS4yIDMyNC41bDQtMTkyLjcgNDI0LjggMzguNy00NjEuOS02LjV6Ii8+PHBhdGggZmlsbD0iIzQ3NDc0NyIgZD0iTTM5OS40IDg3OWwtMS4yIDQ0LjctNDQtMTcyLjhMNzIuNiA2MTF6Ii8+PHBhdGggZmlsbD0iIzE1MTUxNSIgZD0iTTQyNi4xIDczNi40bDQzMS4xIDE5MS4xTDM4MCA4NjguOGwtNjgtNDQ5eiIvPjxwYXRoIGZpbGw9IiNhNmE2YTYiIGQ9Ik0xMDA5LjYgMzg1LjlsLTE5IDMzMy42LTI5LTM5Ni41LTUuMy0yMTYuOXoiLz48L2c+PC9zdmc+\")"
     		}
     	];
 
@@ -4083,7 +4096,7 @@ var app = (function () {
     	});
 
     	$$self.$capture_state = () => ({
-    		WindowElement,
+    		WindowElement: FixedWindowElement,
     		ImageLoader,
     		jpGallery,
     		randomIndex,
@@ -4118,22 +4131,24 @@ var app = (function () {
     /* src/Windows/CleanCode.svelte generated by Svelte v3.32.1 */
     const file$e = "src/Windows/CleanCode.svelte";
 
-    // (5:0) <WindowElement     gridColumnStart={20}     gridColumnEnd={60}     gridRowStart={2}     gridRowEnd={32}     largeGridColumnStart={44}     largeGridColumnEnd={70}     largeGridRowStart={47}     largeGridRowEnd={67}     backgroundColor="#7d7d7d"     title="CLEAN.CODE"     id={10}     isInForeground={false}     intersections={[3]}     intersectingSide="right"     distanceFromIntersection={10}     largeDistanceFromIntersection={5} >
+    // (6:4) <WindowElement         width={{ base: 238, small: 378 }}         height={{ base: 172, small: 273 }}         background="#7d7d7d"         title="CLEAN.CODE"         id={10}         isInForeground={false}         intersections={[3]}         intersectingSide="right"         distanceFromIntersection={{ base: 25, small: 8 }}     >
     function create_default_slot$b(ctx) {
     	let p0;
     	let t0;
     	let br0;
     	let t1;
-    	let t2;
-    	let p1;
-    	let t3;
     	let br1;
-    	let br2;
+    	let t2;
+    	let t3;
+    	let p1;
     	let t4;
-    	let p2;
-    	let t5;
+    	let br2;
     	let br3;
+    	let t5;
+    	let p2;
     	let t6;
+    	let br4;
+    	let t7;
     	let p3;
 
     	const block = {
@@ -4141,56 +4156,61 @@ var app = (function () {
     			p0 = element("p");
     			t0 = text("I suppose it is tempting, ");
     			br0 = element("br");
-    			t1 = text(" if the only tool you have is a hammer, to\n        treat everything as if it were a nail.");
-    			t2 = space();
-    			p1 = element("p");
-    			t3 = text("- Abraham Maslow ");
+    			t1 = text(" if the only tool you have is a\n            hammer,");
     			br1 = element("br");
+    			t2 = text("\n            to treat everything as if it were a nail.");
+    			t3 = space();
+    			p1 = element("p");
+    			t4 = text("- Abraham Maslow ");
     			br2 = element("br");
-    			t4 = space();
-    			p2 = element("p");
-    			t5 = text("You wouldn't change a lightbulb with a hammer. ");
     			br3 = element("br");
-    			t6 = space();
+    			t5 = space();
+    			p2 = element("p");
+    			t6 = text("You wouldn't change a lightbulb with a hammer. ");
+    			br4 = element("br");
+    			t7 = space();
     			p3 = element("p");
     			p3.textContent = "We won't either.";
-    			add_location(br0, file$e, 23, 34, 555);
-    			attr_dev(p0, "class", "svelte-t1tyb8");
-    			add_location(p0, file$e, 22, 4, 517);
-    			add_location(br1, file$e, 26, 43, 703);
-    			add_location(br2, file$e, 26, 49, 709);
-    			attr_dev(p1, "class", "text-right svelte-t1tyb8");
-    			add_location(p1, file$e, 26, 4, 664);
-    			add_location(br3, file$e, 28, 55, 783);
-    			attr_dev(p2, "class", "svelte-t1tyb8");
-    			add_location(p2, file$e, 27, 4, 724);
-    			attr_dev(p3, "class", "text-right svelte-t1tyb8");
-    			add_location(p3, file$e, 30, 4, 803);
+    			add_location(br0, file$e, 17, 38, 473);
+    			add_location(br1, file$e, 18, 19, 530);
+    			attr_dev(p0, "class", "svelte-1ro8d3g");
+    			add_location(p0, file$e, 16, 8, 431);
+    			add_location(br2, file$e, 21, 47, 651);
+    			add_location(br3, file$e, 21, 53, 657);
+    			attr_dev(p1, "class", "text-right svelte-1ro8d3g");
+    			add_location(p1, file$e, 21, 8, 612);
+    			add_location(br4, file$e, 23, 59, 739);
+    			attr_dev(p2, "class", "svelte-1ro8d3g");
+    			add_location(p2, file$e, 22, 8, 676);
+    			attr_dev(p3, "class", "text-right svelte-1ro8d3g");
+    			add_location(p3, file$e, 25, 8, 767);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p0, anchor);
     			append_dev(p0, t0);
     			append_dev(p0, br0);
     			append_dev(p0, t1);
-    			insert_dev(target, t2, anchor);
+    			append_dev(p0, br1);
+    			append_dev(p0, t2);
+    			insert_dev(target, t3, anchor);
     			insert_dev(target, p1, anchor);
-    			append_dev(p1, t3);
-    			append_dev(p1, br1);
+    			append_dev(p1, t4);
     			append_dev(p1, br2);
-    			insert_dev(target, t4, anchor);
+    			append_dev(p1, br3);
+    			insert_dev(target, t5, anchor);
     			insert_dev(target, p2, anchor);
-    			append_dev(p2, t5);
-    			append_dev(p2, br3);
-    			insert_dev(target, t6, anchor);
+    			append_dev(p2, t6);
+    			append_dev(p2, br4);
+    			insert_dev(target, t7, anchor);
     			insert_dev(target, p3, anchor);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(p0);
-    			if (detaching) detach_dev(t2);
+    			if (detaching) detach_dev(t3);
     			if (detaching) detach_dev(p1);
-    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(t5);
     			if (detaching) detach_dev(p2);
-    			if (detaching) detach_dev(t6);
+    			if (detaching) detach_dev(t7);
     			if (detaching) detach_dev(p3);
     		}
     	};
@@ -4199,7 +4219,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$b.name,
     		type: "slot",
-    		source: "(5:0) <WindowElement     gridColumnStart={20}     gridColumnEnd={60}     gridRowStart={2}     gridRowEnd={32}     largeGridColumnStart={44}     largeGridColumnEnd={70}     largeGridRowStart={47}     largeGridRowEnd={67}     backgroundColor=\\\"#7d7d7d\\\"     title=\\\"CLEAN.CODE\\\"     id={10}     isInForeground={false}     intersections={[3]}     intersectingSide=\\\"right\\\"     distanceFromIntersection={10}     largeDistanceFromIntersection={5} >",
+    		source: "(6:4) <WindowElement         width={{ base: 238, small: 378 }}         height={{ base: 172, small: 273 }}         background=\\\"#7d7d7d\\\"         title=\\\"CLEAN.CODE\\\"         id={10}         isInForeground={false}         intersections={[3]}         intersectingSide=\\\"right\\\"         distanceFromIntersection={{ base: 25, small: 8 }}     >",
     		ctx
     	});
 
@@ -4207,27 +4227,21 @@ var app = (function () {
     }
 
     function create_fragment$f(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 20,
-    				gridColumnEnd: 60,
-    				gridRowStart: 2,
-    				gridRowEnd: 32,
-    				largeGridColumnStart: 44,
-    				largeGridColumnEnd: 70,
-    				largeGridRowStart: 47,
-    				largeGridRowEnd: 67,
-    				backgroundColor: "#7d7d7d",
+    				width: { base: 238, small: 378 },
+    				height: { base: 172, small: 273 },
+    				background: "#7d7d7d",
     				title: "CLEAN.CODE",
     				id: 10,
     				isInForeground: false,
     				intersections: [3],
     				intersectingSide: "right",
-    				distanceFromIntersection: 10,
-    				largeDistanceFromIntersection: 5,
+    				distanceFromIntersection: { base: 25, small: 8 },
     				$$slots: { default: [create_default_slot$b] },
     				$$scope: { ctx }
     			},
@@ -4236,13 +4250,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-1ro8d3g");
+    			add_location(div, file$e, 4, 0, 85);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -4264,7 +4282,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -4288,7 +4307,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<CleanCode> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ WindowElement });
+    	$$self.$capture_state = () => ({ WindowElement: FixedWindowElement });
     	return [];
     }
 
@@ -4309,23 +4328,24 @@ var app = (function () {
     /* src/Windows/Logopedia.svelte generated by Svelte v3.32.1 */
     const file$f = "src/Windows/Logopedia.svelte";
 
-    // (5:0) <WindowElement     gridColumnStart={105}     gridColumnEnd={145}     gridRowStart={38}     gridRowEnd={68}     largeGridColumnStart={129}     largeGridColumnEnd={155}     largeGridRowStart={63}     largeGridRowEnd={83}     title="LOGOPEDIA.MP4"     enlargeable={false}     backgroundColor="#C4BDBD"     id={6}     isInForeground={true} >
+    // (6:4) <WindowElement         width={{ base: 297, small: 472 }}         height={{ base: 217, small: 344 }}         title="LOGOPEDIA.MP4"         enlargeable={false}         background="#C4BDBD"         id={6}         isInForeground={true}     >
     function create_default_slot$c(ctx) {
-    	let div;
+    	let img;
+    	let img_src_value;
 
     	const block = {
     		c: function create() {
-    			div = element("div");
-    			set_style(div, "background-image", "url('images/Logopedia.svg')");
-    			attr_dev(div, "title", "Logo Portfolio");
-    			attr_dev(div, "class", "svelte-ra2uz8");
-    			add_location(div, file$f, 19, 4, 422);
+    			img = element("img");
+    			if (img.src !== (img_src_value = "images/Logopedia.svg")) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "Logo Portfolio");
+    			attr_dev(img, "class", "svelte-35z4ly");
+    			add_location(img, file$f, 14, 8, 341);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
+    			insert_dev(target, img, anchor);
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(img);
     		}
     	};
 
@@ -4333,7 +4353,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$c.name,
     		type: "slot",
-    		source: "(5:0) <WindowElement     gridColumnStart={105}     gridColumnEnd={145}     gridRowStart={38}     gridRowEnd={68}     largeGridColumnStart={129}     largeGridColumnEnd={155}     largeGridRowStart={63}     largeGridRowEnd={83}     title=\\\"LOGOPEDIA.MP4\\\"     enlargeable={false}     backgroundColor=\\\"#C4BDBD\\\"     id={6}     isInForeground={true} >",
+    		source: "(6:4) <WindowElement         width={{ base: 297, small: 472 }}         height={{ base: 217, small: 344 }}         title=\\\"LOGOPEDIA.MP4\\\"         enlargeable={false}         background=\\\"#C4BDBD\\\"         id={6}         isInForeground={true}     >",
     		ctx
     	});
 
@@ -4341,22 +4361,17 @@ var app = (function () {
     }
 
     function create_fragment$g(ctx) {
+    	let div;
     	let windowelement;
     	let current;
 
-    	windowelement = new WindowElement({
+    	windowelement = new FixedWindowElement({
     			props: {
-    				gridColumnStart: 105,
-    				gridColumnEnd: 145,
-    				gridRowStart: 38,
-    				gridRowEnd: 68,
-    				largeGridColumnStart: 129,
-    				largeGridColumnEnd: 155,
-    				largeGridRowStart: 63,
-    				largeGridRowEnd: 83,
+    				width: { base: 297, small: 472 },
+    				height: { base: 217, small: 344 },
     				title: "LOGOPEDIA.MP4",
     				enlargeable: false,
-    				backgroundColor: "#C4BDBD",
+    				background: "#C4BDBD",
     				id: 6,
     				isInForeground: true,
     				$$slots: { default: [create_default_slot$c] },
@@ -4367,13 +4382,17 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			div = element("div");
     			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "svelte-35z4ly");
+    			add_location(div, file$f, 4, 0, 85);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			mount_component(windowelement, target, anchor);
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -4395,7 +4414,8 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_component(windowelement, detaching);
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
     		}
     	};
 
@@ -4419,7 +4439,7 @@ var app = (function () {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Logopedia> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ WindowElement });
+    	$$self.$capture_state = () => ({ WindowElement: FixedWindowElement });
     	return [];
     }
 
@@ -4657,6 +4677,7 @@ var app = (function () {
 
     const app = new App({
     	target: document.body,
+    	intro: true,
     });
 
     return app;

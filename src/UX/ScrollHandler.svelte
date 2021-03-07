@@ -52,8 +52,9 @@
 <style>
     div {
         position: absolute;
-        width: 200vmax;
-        height: 200vmax;
+        width: max(1704px, 300vmax);
+        height: max(1704px, 300vmax);
+
         cursor: grab;
         z-index: 1;
     }
@@ -61,5 +62,23 @@
         cursor: grabbing;
         user-select: none;
         z-index: 9999;
+    }
+    @media only screen and (min-width: 640px) {
+        div {
+            width: max(3080px, 220vmax);
+            height: max(3080px, 220vmax);
+        }
+    }
+    @media only screen and (min-width: 1024px) {
+        div {
+            width: max(2550px, 250vmax);
+            height: max(2550px, 250vmax);
+        }
+    }
+    @media only screen and (min-width: 1440px) {
+        div {
+            width: 200vmax;
+            height: 200vmax;
+        }
     }
 </style>
