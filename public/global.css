@@ -11,7 +11,8 @@ body::-webkit-scrollbar {
   
   /* Hide scrollbar for IE, Edge and Firefox */
 body {
-	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+	overflow: scroll;
 	-ms-overflow-style: none;  /* IE and Edge */
 	scrollbar-width: none;  /* Firefox */
 }
