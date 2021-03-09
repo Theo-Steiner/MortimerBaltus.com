@@ -1,5 +1,5 @@
 <script>
-    import WindowElement from "../UI/FixedWindowElement.svelte";
+    import WindowElement from "../UI/WindowElement.svelte";
     import ImageLoader from "../UX/ImageLoader.svelte";
 
     const slug = "MortimerBaltus/Projects/EberhardMueller_v2tpxi";
@@ -14,13 +14,18 @@
         id={3}
         isInForeground={true}
         intersections={[10]}
-        intersectingSide="left"
-        distanceFromIntersection={{ base: 25, small: 8 }}
+        distanceFromIntersection={{
+            base: -25,
+            small: -8,
+            large: -13,
+            extralarge: -8,
+        }}
     >
         <ImageLoader
-            sizes="291px, (min-width: 640px) 463px"
-            srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto/{slug} 463w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto/{slug} 291w,"
+            sizes="(min-width: 640px) 463px, 291px"
+            srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug} 960w,
+            https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_auto:best/{slug} 463w,
+            https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto,q_auto:best/{slug} 291w,"
             src="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug}"
             alt="Eberhard Müller develops sophisticated textile interiors at the highest level"
         />
@@ -39,6 +44,18 @@
         div {
             grid-column: 71/103;
             grid-row: 31/65;
+        }
+    }
+    @media only screen and (min-width: 1020px) {
+        div {
+            grid-column: 68/106;
+            grid-row: 28/68;
+        }
+    }
+    @media only screen and (min-width: 1440px) {
+        div {
+            grid-column: 69/101;
+            grid-row: 30/64;
         }
     }
 </style>

@@ -1,5 +1,5 @@
 <script>
-    import WindowElement from "../UI/FixedWindowElement.svelte";
+    import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
 <div>
@@ -11,8 +11,12 @@
         id={10}
         isInForeground={false}
         intersections={[3]}
-        intersectingSide="right"
-        distanceFromIntersection={{ base: 25, small: 8 }}
+        distanceFromIntersection={{
+            base: 25,
+            small: 8,
+            large: 13,
+            extralarge: 8,
+        }}
     >
         <p>
             I suppose it is tempting, <br /> if the only tool you have is a
@@ -32,7 +36,7 @@
         grid-column: 47/76;
         grid-row: 46/67;
         display: flex;
-        justify-content: flex-start;
+        justify-content: flex-end;
         align-items: center;
     }
     p {
@@ -52,6 +56,18 @@
         p {
             font-size: 21px;
             padding: 6px;
+        }
+    }
+    @media only screen and (min-width: 1020px) {
+        div {
+            grid-column: 50/81;
+            grid-row: 40/62;
+        }
+    }
+    @media only screen and (min-width: 1440px) {
+        div {
+            grid-column: 51/77;
+            grid-row: 41/60;
         }
     }
 </style>

@@ -1,5 +1,5 @@
 <script>
-    import WindowElement from "../UI/FixedWindowElement.svelte";
+    import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
 <div>
@@ -76,6 +76,12 @@
         }
         li {
             padding-top: 1px;
+        }
+    }
+    @media only screen and (min-width: 1020px) {
+        div {
+            grid-column: 153/181;
+            grid-row: 116/142;
         }
     }
 </style>

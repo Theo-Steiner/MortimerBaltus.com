@@ -1,5 +1,5 @@
 <script>
-    import WindowElement from "../UI/FixedWindowElement.svelte";
+    import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
 <div>
@@ -48,6 +48,12 @@
             font-size: 24px;
             margin: 0px;
             padding: 10px;
+        }
+    }
+    @media only screen and (min-width: 1020px) {
+        div {
+            grid-column: 142/166;
+            grid-row: 175/193;
         }
     }
 </style>

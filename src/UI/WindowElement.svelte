@@ -1,26 +1,17 @@
 <script>
     import { onDestroy } from "svelte";
+    import { scale } from "svelte/transition";
     import windowHandler from "../UX/window-state";
 
-    export let gridColumnStart;
-    export let gridColumnEnd;
-    export let gridRowStart;
-    export let gridRowEnd;
-    export let largeGridColumnStart = 0;
-    export let largeGridColumnEnd = 0;
-    export let largeGridRowStart = 0;
-    export let largeGridRowEnd = 0;
-    export let backgroundColor = "";
+    export let height;
+    export let width;
+    export let background = "";
     export let title;
     export let enlargeable = true;
     export let id;
     export let isInForeground = true;
     export let intersections = [];
-    export let intersectingSide = null;
     export let distanceFromIntersection = 20;
-    export let largeDistanceFromIntersection = 10;
-    distanceFromIntersection = distanceFromIntersection * 1.25;
-    largeDistanceFromIntersection = largeDistanceFromIntersection * 1.25;
 
     let touched = false;
     let zIndex = 5;
@@ -55,16 +46,13 @@
 </script>
 
 <section
-    style="--gridColumnStart: {gridColumnStart}; --gridColumnEnd: {gridColumnEnd}; --gridRowStart: {gridRowStart}; --gridRowEnd: {gridRowEnd};
-     --largeGridColumnStart: {largeGridColumnStart}; --largeGridColumnEnd: {largeGridColumnEnd}; --largeGridRowStart: {largeGridRowStart}; --largeGridRowEnd: {largeGridRowEnd};
-     --shuffledistance: {distanceFromIntersection}vmax; --largeshuffledistance: {largeDistanceFromIntersection}vmax; position: relative; z-index: {zIndex};"
+    in:scale={{
+        duration: 1200,
+    }}
+    style="--baseWindowWidth: {width.base}; --baseWindowHeight: {height.base}; --smallWindowWidth: {width.small}; --smallWindowHeight: {height.small};
+     --baseShuffleDistance: {distanceFromIntersection.base}; --smallShuffleDistance: {distanceFromIntersection.small}; --largeShuffleDistance: {distanceFromIntersection.large}; --extralargeShuffleDistance: {distanceFromIntersection.extralarge}; position: relative; z-index: {zIndex};"
     on:click={handleWindowClick}
-    class:trigger-shuffle-right={!isInForeground &&
-        intersectingSide === "right" &&
-        touched}
-    class:trigger-shuffle-left={!isInForeground &&
-        intersectingSide === "left" &&
-        touched}
+    class:trigger-shuffle={!isInForeground && touched}
 >
     <header>
         <button class="shrink">
@@ -164,27 +152,26 @@
             <button class="disabled" />
         {/if}
     </header>
-    <article
+    <div
         class:no-events={!isInForeground}
-        style="background-color: {backgroundColor};"
+        style="background: {background}; background-size: cover;"
     >
         <slot><p>Content goes here</p></slot>
-    </article>
+    </div>
     <footer />
 </section>
 
 <style>
     section {
-        border: 0.2vmax solid #fefefe;
-        border-radius: 5px;
-        background-color: #fefefe;
+        width: calc(var(--baseWindowWidth) * 1px);
+        height: calc(var(--baseWindowHeight) * 1px);
+        border: 1px solid #fefefe;
+        border-radius: 6px;
         color: #fefefe;
         overflow: hidden;
-        margin: 0;
-        padding: 0;
+        margin: 0px;
+        padding: 0px;
         transition: z-index 0.2s;
-        grid-column: var(--gridColumnStart) / var(--gridColumnEnd);
-        grid-row: var(--gridRowStart) / var(--gridRowEnd);
     }
 
     header {
@@ -192,23 +179,25 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 0.2vmax solid #fefefe;
+        border-bottom: 1px solid #fefefe;
         background-color: #151515;
-        padding: 1vmax;
+        padding: 0px;
         margin: 0px;
     }
     .disabled {
         visibility: hidden;
     }
     button {
-        width: 6.5vmax;
+        width: 54px;
+        height: 15px;
         background: none;
         border: none;
         cursor: pointer;
         display: flex;
         align-items: center;
-        border-radius: 2px;
+        border-radius: 6px;
         padding: 0;
+        margin: 8px;
     }
     button:hover {
         transform: scale(1.05);
@@ -235,94 +224,95 @@
 
     h1 {
         margin: 0;
-        font-size: 2vmax;
+        font-size: 13px;
     }
-    /* Section: Border Top+ Bottom (2* 0.2) 0.4vmax + Header: Padding 2vmax, Text 2vmax, Borderbottom 0.2vmax = 4.6vmax vertikal fehlen und 0.4 horizontal */
-    article {
-        height: 100%;
+    div {
         width: 100%;
+        height: 100%;
+        overflow: hidden;
         padding: 0px;
         margin: 0px;
+        border-radius: 0px 0px 6px 6px;
     }
 
     .no-events {
         pointer-events: none;
     }
 
-    @keyframes shuffle-right {
+    @keyframes shuffle {
         0% {
             right: 0;
         }
         50% {
-            right: var(--shuffledistance);
+            right: calc(
+                (var(--baseShuffleDistance) * max(1704px, 300vmax) / 200 * 1.25)
+            );
         }
         100% {
             right: 0;
         }
     }
 
-    .trigger-shuffle-right {
-        animation-name: shuffle-right;
+    .trigger-shuffle {
+        animation-name: shuffle;
         animation-duration: 0.4s;
         animation-timing-function: ease-in-out;
     }
 
-    @keyframes shuffle-left {
-        0% {
-            left: 0;
-        }
-        50% {
-            left: var(--shuffledistance);
-        }
-        100% {
-            left: 0;
-        }
-    }
-
-    .trigger-shuffle-left {
-        animation-name: shuffle-left;
-        animation-duration: 0.4s;
-        animation-timing-function: ease;
-    }
-    /* 2,96 vmax vertikal und 0,23 horizontal */
-    @media only screen and (min-width: 1024px) {
+    @media only screen and (min-width: 640px) {
         section {
-            grid-column: var(--largeGridColumnStart) / var(--largeGridColumnEnd);
-            grid-row: var(--largeGridRowStart) / var(--largeGridRowEnd);
-            border-width: 0.13vmax;
-        }
-        header {
-            padding: 0.7vmax;
-            border-width: 0.13vmax;
-        }
-        button {
-            width: 4.3vmax;
-        }
-        h1 {
-            font-size: 1.3vmax;
+            width: calc(var(--smallWindowWidth) * 1px);
+            height: calc(var(--smallWindowHeight) * 1px);
         }
 
-        svg {
-            stroke-width: 2;
-        }
-
-        @keyframes shuffle-left {
-            0% {
-                left: 0;
-            }
-            50% {
-                left: var(--largeshuffledistance);
-            }
-            100% {
-                left: 0;
-            }
-        }
-        @keyframes shuffle-right {
+        @keyframes shuffle {
             0% {
                 right: 0;
             }
             50% {
-                right: var(--largeshuffledistance);
+                right: calc(
+                    (
+                        var(--smallShuffleDistance) * max(3080px, 220vmax) / 200 *
+                            1.25
+                    )
+                );
+            }
+            100% {
+                right: 0;
+            }
+        }
+    }
+    @media only screen and (min-width: 1020px) {
+        @keyframes shuffle {
+            0% {
+                right: 0;
+            }
+            50% {
+                right: calc(
+                    (
+                        var(--largeShuffleDistance) * max(2550px, 250vmax) / 200 *
+                            1.25
+                    )
+                );
+            }
+            100% {
+                right: 0;
+            }
+        }
+    }
+
+    @media only screen and (min-width: 1440px) {
+        @keyframes shuffle {
+            0% {
+                right: 0;
+            }
+            50% {
+                right: calc(
+                    (
+                        var(--extralargeShuffleDistance) * min(4000px, 200vmax) /
+                            200 * 1.25
+                    )
+                );
             }
             100% {
                 right: 0;

@@ -69,7 +69,7 @@
             height: max(3080px, 220vmax);
         }
     }
-    @media only screen and (min-width: 1024px) {
+    @media only screen and (min-width: 1020px) {
         div {
             width: max(2550px, 250vmax);
             height: max(2550px, 250vmax);
@@ -77,8 +77,8 @@
     }
     @media only screen and (min-width: 1440px) {
         div {
-            width: 200vmax;
-            height: 200vmax;
+            width: min(4000px, 200vmax);
+            height: min(4000px, 200vmax);
         }
     }
 </style>

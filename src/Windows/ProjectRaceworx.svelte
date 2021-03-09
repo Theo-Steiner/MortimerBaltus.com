@@ -1,5 +1,5 @@
 <script>
-    import WindowElement from "../UI/FixedWindowElement.svelte";
+    import WindowElement from "../UI/WindowElement.svelte";
     import ImageLoader from "../UX/ImageLoader.svelte";
 
     const slug = "MortimerBaltus/Projects/Raceworx_wfjyou";
@@ -15,9 +15,10 @@
         isInForeground={true}
     >
         <ImageLoader
-            sizes="312px, (min-width: 640px) 497px"
-            srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_497,f_auto/{slug} 497w,
-        https://res.cloudinary.com/thdrstnr/image/upload/w_312,f_auto/{slug} 312w,"
+            sizes="(min-width: 640px) 497px, 312px"
+            srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug} 1280w,
+            https://res.cloudinary.com/thdrstnr/image/upload/w_497,f_auto,q_auto:best/{slug} 497w,
+            https://res.cloudinary.com/thdrstnr/image/upload/w_312,f_auto,q_auto:best/{slug} 312w,"
             alt="Raceworx"
             src="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug}"
         />
@@ -36,6 +37,12 @@
         div {
             grid-column: 37/71;
             grid-row: 131/148;
+        }
+    }
+    @media only screen and (min-width: 1020px) {
+        div {
+            grid-column: 34/75;
+            grid-row: 124/156;
         }
     }
 </style>

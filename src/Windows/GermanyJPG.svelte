@@ -1,5 +1,5 @@
 <script>
-    import WindowElement from "../UI/FixedWindowElement.svelte";
+    import WindowElement from "../UI/WindowElement.svelte";
     import ImageLoader from "../UX/ImageLoader.svelte";
     const deGallery = [
         {
@@ -24,10 +24,11 @@
         isInForeground={true}
     >
         <ImageLoader
-            srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug} 598w,
-    https://res.cloudinary.com/thdrstnr/image/upload/w_376,f_auto/{slug} 376w,"
+            srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug} 1280w,
+            https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto,q_auto:best/{slug} 598w,
+            https://res.cloudinary.com/thdrstnr/image/upload/w_376,f_auto,q_auto:best/{slug} 376w,"
             src="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug}"
-            sizes="376px, (min-width: 640px) 598px"
+            sizes="(min-width: 640px) 598px, 376px"
             alt={deGallery[randomIndex].alt}
         />
     </WindowElement>
@@ -45,6 +46,12 @@
         div {
             grid-column: 152/193;
             grid-row: 13/43;
+        }
+    }
+    @media only screen and (min-width: 1020px) {
+        div {
+            grid-column: 145/194;
+            grid-row: 11/47;
         }
     }
 </style>

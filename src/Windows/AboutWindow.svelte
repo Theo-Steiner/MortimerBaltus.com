@@ -1,5 +1,5 @@
 <script>
-    import WindowElement from "../UI/FixedWindowElement.svelte";
+    import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
 <div>
@@ -11,7 +11,12 @@
         id={0}
         isInForeground={true}
         intersections={[1]}
-        distanceFromIntersection={{ base: -8, small: -6, large: -13 }}
+        distanceFromIntersection={{
+            base: -8,
+            small: -6,
+            large: -13,
+            extralarge: 12,
+        }}
     >
         <p>NICE <br /> TO<br /> MEET<br /> YOU</p>
     </WindowElement>
@@ -42,10 +47,16 @@
             grid-row: 107/133;
         }
     }
-    @media only screen and (min-width: 1024px) {
+    @media only screen and (min-width: 1020px) {
         div {
             grid-column: 116/147;
-            grid-row: 102/133;
+            grid-row: 102/134;
+        }
+    }
+    @media only screen and (min-width: 1440px) {
+        div {
+            grid-column: 117/143;
+            grid-row: 102/129;
         }
     }
 </style>

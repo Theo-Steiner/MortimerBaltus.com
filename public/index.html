@@ -24,16 +24,18 @@
 	<link rel="preload" as="image"
 		href="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0"
 		imagesrcset="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 960w,
-		https://res.cloudinary.com/thdrstnr/image/upload/w_840,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 840w,
-		https://res.cloudinary.com/thdrstnr/image/upload/w_720,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 720w,
-		https://res.cloudinary.com/thdrstnr/image/upload/w_600,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 600w,
-		https://res.cloudinary.com/thdrstnr/image/upload/w_480,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 480w,
-		https://res.cloudinary.com/thdrstnr/image/upload/w_360,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 360w,
-		https://res.cloudinary.com/thdrstnr/image/upload/w_240,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 240w,
-		https://res.cloudinary.com/thdrstnr/image/upload/w_120,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 120w,"
-		imagesizes="39.6vmax, (min-width: 1024px) 25.8vmax" />
+		https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_auto:best/MortimerBaltus/Projects/ConCorazon_mksjj0 463w,
+		https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto,q_auto:best/MortimerBaltus/Projects/ConCorazon_mksjj0 291w"
+		imagesizes="(min-width: 640px) 463px, 291px" />
 
+	<link rel="preload" as="image"
+		href="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/MortimerBaltus/Projects/EberhardMueller_v2tpxi"
+		imagesrcset="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/MortimerBaltus/Projects/EberhardMueller_v2tpxi 960w,
+		https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_auto:best/MortimerBaltus/Projects/EberhardMueller_v2tpxi 463w,
+		https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto,q_auto:best/MortimerBaltus/Projects/EberhardMueller_v2tpxi 291w"
+		imagesizes="(min-width: 640px) 463px, 291px" />
 	<style>
+
 		body {
 			width: max(1704px, 300vmax);
 			height: max(1704px, 300vmax);
@@ -93,7 +95,7 @@
 			}
 		}
 
-		@media only screen and (min-width: 1024px) {
+		@media only screen and (min-width: 1020px) {
 			body {
 				width: max(2550px, 250vmax);
 				height: max(2550px, 250vmax);
@@ -101,23 +103,30 @@
 			.mortimer-baltus h1 {
 			font-size: 1.7vh;
 			padding: 0;
-		}
-		.mobile {
-			display: none;
-		}
-		.desktop {
-			display: inline;
-		}
-		.mortimer-baltus svg {
-			margin-top: 43vh;
-			margin-bottom: 2.5vh;
-			width: 40vw;
-		}
-		}
+			}
+			.mobile {
+				display: none;
+			}
+			.desktop {
+				display: inline;
+			}
+			.mortimer-baltus svg {
+				margin-top: 43vh;
+				margin-bottom: 2.5vh;
+				width: 40vw;
+			}
+			}
 		@media only screen and (min-width: 1440px) {
 			body {
-				width: 200vmax;
-				height: 200vmax;
+				width: min(4000px, 200vmax);
+				height: min(4000px, 200vmax);
+			}
+		}
+		@media only screen and (min-width: 2000px) {
+			html {
+				display: flex;
+				justify-content: center;
+				align-items: center;
 			}
 		}
 		/* ALSO ADJUST SCROLLHANDLER SIZE */
@@ -166,15 +175,19 @@
 		let currentBodyDimensions;
 		if (window.matchMedia('(max-width: 639px)').matches) {
 			currentBodyDimensions = Math.max(1704, vmax(300));
-		} else if (window.matchMedia('(max-width: 1023px)').matches) {
+		} else if (window.matchMedia('(max-width: 1019px)').matches) {
 			currentBodyDimensions = Math.max(3080, vmax(220));
 		} else if (window.matchMedia('(max-width: 1439px)').matches) {
 			currentBodyDimensions = Math.max(2550, vmax(250));
 		}else if (window.matchMedia('(min-width: 1439px)').matches) {
-			currentBodyDimensions = Math.max(vmax(200));
+			currentBodyDimensions = Math.min(4000, vmax(200));
 		}
 		console.log(`current body dimensions: ${currentBodyDimensions}`)
+		if (currentBodyDimensions > screen) {
 		return (currentBodyDimensions - screen) / 2;
+		} else {
+			return 0;
+		}
 	}
 	scrollTo(getScrollTo(vw(100)), getScrollTo(vh(100)));
 	console.log(`scrolled to x: ${getScrollTo(vw(100))} and ${getScrollTo(vh(100))}`)

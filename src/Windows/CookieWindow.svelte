@@ -1,5 +1,5 @@
 <script>
-    import WindowElement from "../UI/FixedWindowElement.svelte";
+    import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
 <div>
@@ -15,11 +15,11 @@
         <p>
             <span
                 >We use necessary Cookies to ensure visitors have the best
-                possible experience on our site.</span
+                possible experience on our site. <br /></span
             >
-            <br />Your privacy is important to us, therefore we don’t use any
-            tracking services by third-parties. <br /> Please read our Privacy Policy
-            for more info on this subject!
+            Your privacy is important to us, therefore we don’t use any tracking
+            services by third-parties. <br /> Please read our Privacy Policy for
+            more info on this subject!
         </p>
     </WindowElement>
 </div>
@@ -33,6 +33,8 @@
         align-items: center;
     }
     span {
+        margin: 0px;
+        padding: 0px;
         display: none;
     }
 
@@ -50,11 +52,26 @@
         span {
             display: inline;
         }
+        p {
+            font-size: 15px;
+            padding: 6px;
+        }
     }
-    p {
-        color: #151515;
-        font-size: 14px;
-        margin: 0px;
-        padding: 7px;
+    @media only screen and (min-width: 1020px) {
+        div {
+            grid-column: 61/85;
+            grid-row: 105/119;
+        }
+    }
+
+    @media only screen and (min-width: 1020px) {
+        div {
+            grid-column: 61/85;
+            grid-row: 105/119;
+        }
+        /* WITH MAXIMUM SIZE SO IT DOESN'T SCALE TO INFINITY -> Initiate scroller has to be adjusted */
+        /* ODER INFINITE SCROLL: genau eine breite und höhe "empty space" an der Kante und dann scroll to x bleibt gleich y: 0 oder y bleibt gleich x = 0 */
+        /* PARALLAX Scrolling: the closer windows are to the center of the viewport, the more they are ofset */
+        /* Intersections überarbeiten, damit sie wirklich berechnet werden und nicht per string weitergegeben werden*/
     }
 </style>
