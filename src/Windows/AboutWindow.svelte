@@ -15,7 +15,7 @@
             base: -8,
             small: -6,
             large: -13,
-            extralarge: 12,
+            extralarge: -12,
         }}
     >
         <p>NICE <br /> TO<br /> MEET<br /> YOU</p>

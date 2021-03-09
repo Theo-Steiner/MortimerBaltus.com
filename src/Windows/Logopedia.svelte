@@ -47,4 +47,10 @@
             grid-row: 59/87;
         }
     }
+    @media only screen and (min-width: 1440px) {
+        div {
+            grid-column: 127/159;
+            grid-row: 61/84;
+        }
+    }
 </style>

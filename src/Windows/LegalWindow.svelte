@@ -48,4 +48,10 @@
             grid-row: 173/187;
         }
     }
+    @media only screen and (min-width: 1440px) {
+        div {
+            grid-column: 15/33;
+            grid-row: 172/183;
+        }
+    }
 </style>
