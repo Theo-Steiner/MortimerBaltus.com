@@ -1,5 +1,6 @@
 html {
 	box-sizing: border-box;
+	-webkit-overflow-scrolling: touch;
   }
   *, *::before, *::after {
 	box-sizing: inherit;
@@ -11,8 +12,7 @@ body::-webkit-scrollbar {
   
   /* Hide scrollbar for IE, Edge and Firefox */
 body {
-	-webkit-overflow-scrolling: touch;
-	overflow: scroll;
+	overflow-y: scroll;
 	-ms-overflow-style: none;  /* IE and Edge */
 	scrollbar-width: none;  /* Firefox */
 }
