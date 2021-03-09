@@ -79,5 +79,9 @@
         /* WITH MAXIMUM SIZE SO IT DOESN'T SCALE TO INFINITY -> Initiate scroller has to be adjusted */
         /* ODER INFINITE SCROLL: genau eine breite und höhe "empty space" an der Kante und dann scroll to x bleibt gleich y: 0 oder y bleibt gleich x = 0 */
         /* PARALLAX Scrolling: the closer windows are to the center of the viewport, the more they are ofset */
+
+        /* USER SELECTABLE -> DRAG SAFARI
+        ZOOM SAFARI: 
+        DIAGONAL SCROLLING MOBILE SAFARI;; */
     }
 </style>

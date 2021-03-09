@@ -14,7 +14,7 @@
 	import Logopedia from "./Windows/Logopedia.svelte";
 </script>
 
-<ScrollHandler />
+<!-- <ScrollHandler /> -->
 
 <ProjectCorazon />
 <AboutWindow />
