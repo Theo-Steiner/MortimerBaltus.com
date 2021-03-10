@@ -41,19 +41,21 @@
     on:wheel|nonpassive|preventDefault|stopPropagation={wheelHandler}
 />
 
-<div
-    class="grabbable"
-    class:mousedown={isMousedown}
-    on:mousedown={handleMousedown}
-    on:mouseup={handleMouseup}
-    bind:this={background}
-/>
+{#if !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)}
+    <div
+        class="grabbable"
+        class:mousedown={isMousedown}
+        on:mousedown={handleMousedown}
+        on:mouseup={handleMouseup}
+        bind:this={background}
+    />
+{/if}
 
 <style>
-    div {
-        position: absolute;
-        width: max(1704px, 300vmax);
-        height: max(1704px, 300vmax);
+    .grabbable {
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
 
         cursor: grab;
         z-index: 1;
@@ -62,23 +64,5 @@
         cursor: grabbing;
         user-select: none;
         z-index: 9999;
-    }
-    @media only screen and (min-width: 640px) {
-        div {
-            width: max(3080px, 220vmax);
-            height: max(3080px, 220vmax);
-        }
-    }
-    @media only screen and (min-width: 1020px) {
-        div {
-            width: max(2550px, 250vmax);
-            height: max(2550px, 250vmax);
-        }
-    }
-    @media only screen and (min-width: 1440px) {
-        div {
-            width: min(4000px, 200vmax);
-            height: min(4000px, 200vmax);
-        }
     }
 </style>
