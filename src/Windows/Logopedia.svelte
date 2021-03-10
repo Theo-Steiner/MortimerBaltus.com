@@ -2,43 +2,55 @@
     import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
-<WindowElement
-    gridColumnStart={105}
-    gridColumnEnd={145}
-    gridRowStart={38}
-    gridRowEnd={68}
-    largeGridColumnStart={129}
-    largeGridColumnEnd={155}
-    largeGridRowStart={63}
-    largeGridRowEnd={83}
-    title="LOGOPEDIA.MP4"
-    enlargeable={false}
-    backgroundColor="#C4BDBD"
-    id={6}
-    isInForeground={true}
->
-    <div
-        style="background-image: url('images/Logopedia.svg');"
-        title="Logo Portfolio"
-    />
-</WindowElement>
+<div>
+    <WindowElement
+        width={{ base: 297, small: 472 }}
+        height={{ base: 217, small: 344 }}
+        title="LOGOPEDIA.MP4"
+        enlargeable={false}
+        background="#C4BDBD"
+        id={6}
+        isInForeground={true}
+    >
+        <img src="images/Logopedia.svg" alt="Logo Portfolio" />
+    </WindowElement>
+</div>
 
 <style>
     div {
+        grid-column: 127/163;
+        grid-row: 63/89;
         display: flex;
-        align-items: center;
-        width: 40vmax;
-        height: 26vmax;
         justify-content: center;
-        background-size: 30vmax;
-        background-position: center;
-        background-repeat: no-repeat;
+        align-items: center;
     }
-    @media only screen and (min-width: 1024px) {
+    img {
+        margin-top: 50px;
+        height: 80px;
+        display: block;
+    }
+    @media only screen and (min-width: 640px) {
         div {
-            width: 26vmax;
-            height: 18vmax;
-            background-size: 23vmax;
+            grid-column: 131/163;
+            grid-row: 63/87;
+        }
+
+        img {
+            margin-top: 80px;
+            height: 127px;
+            display: block;
+        }
+    }
+    @media only screen and (min-width: 1020px) {
+        div {
+            grid-column: 125/163;
+            grid-row: 59/87;
+        }
+    }
+    @media only screen and (min-width: 1440px) {
+        div {
+            grid-column: 127/159;
+            grid-row: 61/84;
         }
     }
 </style>

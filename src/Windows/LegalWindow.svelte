@@ -2,40 +2,56 @@
     import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
-<WindowElement
-    gridColumnStart={5}
-    gridColumnEnd={45}
-    gridRowStart={165}
-    gridRowEnd={185}
-    largeGridColumnStart={8}
-    largeGridColumnEnd={34}
-    largeGridRowStart={185}
-    largeGridRowEnd={198}
-    backgroundColor="#1C6370"
-    title="LEGAL NOTICE"
-    id={7}
-    isInForeground={true}
-    intersections={[2]}
-    intersectingSide="right"
-    distanceFromIntersection={15}
-    largeDistanceFromIntersection={0}
->
-    <p>
-        You like boring legal texts and bureaucracy? <br /><br /> We've got you covered!
-    </p>
-</WindowElement>
+<div>
+    <WindowElement
+        width={{ base: 268, small: 268 }}
+        height={{ base: 158, small: 158 }}
+        background="#1C6370"
+        title="LEGAL NOTICE"
+        id={7}
+        isInForeground={true}
+    >
+        <p>
+            You like boring legal texts and bureaucracy? <br /><br /> We've got you
+            covered!
+        </p>
+    </WindowElement>
+</div>
 
 <style>
-    p {
-        color: #151515;
-        font-size: 2.8vmax;
-        margin: 0px;
-        padding: 1.2vmax;
+    div {
+        grid-column: 11/43;
+        grid-row: 165/184;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
-    @media only screen and (min-width: 1024px) {
-        p {
-            font-size: 1.8vmax;
-            padding: 0.8vmax;
+
+    p {
+        display: block;
+        height: 133px;
+        width: 266px;
+        color: #fefefe;
+        font-size: 21px;
+        margin: 0px;
+        padding: 14px 8px 14px 8px;
+    }
+    @media only screen and (min-width: 640px) {
+        div {
+            grid-column: 15/34;
+            grid-row: 180/191;
+        }
+    }
+    @media only screen and (min-width: 1020px) {
+        div {
+            grid-column: 16/38;
+            grid-row: 173/187;
+        }
+    }
+    @media only screen and (min-width: 1440px) {
+        div {
+            grid-column: 15/33;
+            grid-row: 172/183;
         }
     }
 </style>

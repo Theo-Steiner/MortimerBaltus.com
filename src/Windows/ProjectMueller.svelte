@@ -5,52 +5,57 @@
     const slug = "MortimerBaltus/Projects/EberhardMueller_v2tpxi";
 </script>
 
-<WindowElement
-    gridColumnStart={50}
-    gridColumnEnd={90}
-    gridRowStart={10}
-    gridRowEnd={50}
-    largeGridColumnStart={65}
-    largeGridColumnEnd={91}
-    largeGridRowStart={51}
-    largeGridRowEnd={77}
-    title="PROJECT_03"
-    id={3}
-    isInForeground={true}
-    intersections={[10]}
-    intersectingSide="left"
-    distanceFromIntersection={10}
-    largeDistanceFromIntersection={5}
->
-    <div>
+<div>
+    <WindowElement
+        width={{ base: 293, small: 465 }}
+        height={{ base: 312, small: 497 }}
+        background={'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NjAgOTYwIj48cGF0aCBmaWxsPSIjMTcxNjE2IiBkPSJNMCAwaDk2MHY5NjBIMHoiLz48ZyBmaWxsLW9wYWNpdHk9Ii41Ij48cGF0aCBmaWxsPSIjNTM1MTRmIiBkPSJNMy4yIDMzNy41bDQyNy43IDIxNi44IDQzMS4zLTc3LjQgNjcuMy04NnoiLz48cGF0aCBmaWxsPSIjNWY1YzVhIiBkPSJNOTg3LjUgODMuM0w2MDIgMTg5LjJsLTY4LjMtMTI4IDM4MS0xMDguNnoiLz48cGF0aCBmaWxsPSIjNjQ2MTVmIiBkPSJNMjIxLjgtNTguMWwyODEuNSAyMjIuNS00OC45IDEwMi40TDE1Mi4zIDYxLjJ6Ii8+PHBhdGggZD0iTS01OC4xIDQ1Mi4zbDU3OS42IDQxMC4xIDI4MS44IDcuNC0xOTYuNy0yODR6TTc3OCA0MDBMLTU4IDI4OSAxMS4yLTU4IDI1NCAxMzcuNHoiLz48cGF0aCBmaWxsPSIjNGM0YzQ5IiBkPSJNNTk3LjYgODUzLjZsLTkxLjggMTY0LjVMODQxIDkzNGwxMi4zLTQxLjV6Ii8+PHBhdGggZD0iTTUyMC45IDE2Mi42TDEwMTggMTM1IDU4NC42IDM0MiAzNzUgMzU0LjV6TTE0NC40IDczMS43bDk2LjYgNDIuOEw2IDEwMTguMWwtMzMuMi03MzkuNXoiLz48L2c+PC9zdmc+")'}
+        title="PROJECT_03"
+        id={3}
+        isInForeground={true}
+        intersections={[10]}
+        distanceFromIntersection={{
+            base: -25,
+            small: -8,
+            large: -13,
+            extralarge: -8,
+        }}
+    >
         <ImageLoader
-            sizes="39.6vmax, (min-width: 1024px) 25.8vmax"
+            sizes="(min-width: 640px) 463px, 291px"
             srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug} 960w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_840,f_auto/{slug} 840w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_720,f_auto/{slug} 720w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_600,f_auto/{slug} 600w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_480,f_auto/{slug} 480w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_360,f_auto/{slug} 360w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_240,f_auto/{slug} 240w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_120,f_auto/{slug} 120w,"
+            https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_auto:best/{slug} 463w,
+            https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto,q_auto:best/{slug} 291w,"
             src="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug}"
             alt="Eberhard Müller develops sophisticated textile interiors at the highest level"
         />
-    </div>
-</WindowElement>
+    </WindowElement>
+</div>
 
 <style>
     div {
-        width: 39.6vmax;
-        height: 35.4vmax;
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NjAgOTYwIj48cGF0aCBmaWxsPSIjMTcxNjE2IiBkPSJNMCAwaDk2MHY5NjBIMHoiLz48ZyBmaWxsLW9wYWNpdHk9Ii41Ij48cGF0aCBmaWxsPSIjNTM1MTRmIiBkPSJNMy4yIDMzNy41bDQyNy43IDIxNi44IDQzMS4zLTc3LjQgNjcuMy04NnoiLz48cGF0aCBmaWxsPSIjNWY1YzVhIiBkPSJNOTg3LjUgODMuM0w2MDIgMTg5LjJsLTY4LjMtMTI4IDM4MS0xMDguNnoiLz48cGF0aCBmaWxsPSIjNjQ2MTVmIiBkPSJNMjIxLjgtNTguMWwyODEuNSAyMjIuNS00OC45IDEwMi40TDE1Mi4zIDYxLjJ6Ii8+PHBhdGggZD0iTS01OC4xIDQ1Mi4zbDU3OS42IDQxMC4xIDI4MS44IDcuNC0xOTYuNy0yODR6TTc3OCA0MDBMLTU4IDI4OSAxMS4yLTU4IDI1NCAxMzcuNHoiLz48cGF0aCBmaWxsPSIjNGM0YzQ5IiBkPSJNNTk3LjYgODUzLjZsLTkxLjggMTY0LjVMODQxIDkzNGwxMi4zLTQxLjV6Ii8+PHBhdGggZD0iTTUyMC45IDE2Mi42TDEwMTggMTM1IDU4NC42IDM0MiAzNzUgMzU0LjV6TTE0NC40IDczMS43bDk2LjYgNDIuOEw2IDEwMTguMWwtMzMuMi03MzkuNXoiLz48L2c+PC9zdmc+");
+        grid-column: 68/101;
+        grid-row: 34/71;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
     }
-    @media only screen and (min-width: 1024px) {
+    @media only screen and (min-width: 640px) {
         div {
-            width: 25.8vmax;
-            height: 23vmax;
+            grid-column: 71/103;
+            grid-row: 31/65;
+        }
+    }
+    @media only screen and (min-width: 1020px) {
+        div {
+            grid-column: 68/106;
+            grid-row: 28/68;
+        }
+    }
+    @media only screen and (min-width: 1440px) {
+        div {
+            grid-column: 69/101;
+            grid-row: 30/64;
         }
     }
 </style>
