@@ -75,16 +75,24 @@
 
 <style>
     .grabbable {
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
+        position: absolute;
+        width: max(2550px, 250vmax);
+        height: max(2550px, 250vmax);
+        top: 0;
+        left: 0;
 
         cursor: grab;
-        z-index: 1;
+        z-index: 0;
     }
     .mousedown {
         cursor: grabbing;
         user-select: none;
         z-index: 9999;
+    }
+    @media only screen and (min-width: 1440px) {
+        .grabbable {
+            width: min(4000px, 200vmax);
+            height: min(4000px, 200vmax);
+        }
     }
 </style>

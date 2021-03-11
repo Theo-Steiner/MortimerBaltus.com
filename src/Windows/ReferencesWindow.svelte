@@ -6,6 +6,7 @@
     <WindowElement
         width={347}
         height={314}
+        parallax="transform: translateZ(-0.6px) scale(1.6) translate(200%, -100%);"
         background="#5F583D"
         title="References"
         enlargeable={false}

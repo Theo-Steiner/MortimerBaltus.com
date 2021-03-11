@@ -36,19 +36,34 @@
 		https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto,q_auto:best/MortimerBaltus/Projects/EberhardMueller_v2tpxi 291w"
 		imagesizes="463px" />
 	<style>
+		* {
+			padding: 0;
+			margin: 0;
+		}
+
 		body {
 			font-family: 'MabryPro';
 			background-color: #151515;
-			margin: 0;
 		}
 
 		main {
 			height: 100vh;
 			width: 100%;
-			overflow: scroll;
 		}
 
 		.container {
+			width: 100%;
+			height: 100%;
+		}
+
+		.scroller {
+			height: 100vh;
+			width: 100%;
+			overflow: scroll;
+			perspective: 0.5px;
+		}
+
+		.grid-box {
 			width: max(2550px, 250vmax);
 			height: max(2550px, 250vmax);
 			display: grid;
@@ -89,12 +104,10 @@
 		}
 
 		.mortimer-baltus {
+			transform: translateZ(0);
 			pointer-events: none;
 			position: fixed;
 			z-index: 0;
-			top: 0;
-			top: 0;
-			left: 0;
 			display: flex;
 			flex-direction: column;
 			justify-content: flex-start;
@@ -126,7 +139,7 @@
 		}
 
 		@media only screen and (min-width: 1440px) {
-			.container {
+			.grid-box {
 				width: min(4000px, 200vmax);
 				height: min(4000px, 200vmax);
 			}
@@ -162,6 +175,11 @@
 						class="desktop"><br /></span>c/o MORITZ MORTIMER MÜLLER (DE), <span
 						class="mobile"><br /></span>THEODOR
 					BALTUS STEINER (JP)</h1>
+			</div>
+			<div class="scroller">
+
+				<div class="grid-box">
+				</div>
 			</div>
 		</div>
 	</main>
@@ -202,7 +220,7 @@
 			return 0;
 		}
 	}
-	const main = document.querySelector("main");
+	const main = document.querySelector(".scroller");
 	main.scrollTop = getScrollTo(vh(100));
 	main.scrollLeft = getScrollTo(vw(100));
 	// scrollTo(getScrollTo(vw(100)), getScrollTo(vh(100)));

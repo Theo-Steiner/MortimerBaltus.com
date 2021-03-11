@@ -5,6 +5,7 @@
 
     export let height;
     export let width;
+    export let parallax = "transform: translateZ(-0.5px) scale(1.5);";
     export let background = "";
     export let title;
     export let enlargeable = true;
@@ -49,7 +50,7 @@
     in:scale={{
         duration: 1200,
     }}
-    style="--windowWidth: {width}; --windowHeight: {height};
+    style="--windowWidth: {width}; --windowHeight: {height}; {parallax}
     --baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large};
     position: relative; z-index: {zIndex};"
     on:click={handleWindowClick}
