@@ -15,9 +15,8 @@
         isInForeground={true}
         intersections={[10]}
         distanceFromIntersection={{
-            base: -8,
-            large: -13,
-            extralarge: -8,
+            base: -13,
+            large: -8,
         }}
     >
         <ImageLoader
@@ -33,17 +32,11 @@
 
 <style>
     div {
-        grid-column: 71/103;
-        grid-row: 31/65;
+        grid-column: 68/106;
+        grid-row: 28/68;
         display: flex;
         justify-content: flex-start;
         align-items: center;
-    }
-    @media only screen and (min-width: 1020px) {
-        div {
-            grid-column: 68/106;
-            grid-row: 28/68;
-        }
     }
     @media only screen and (min-width: 1440px) {
         div {

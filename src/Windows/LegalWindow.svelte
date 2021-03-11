@@ -20,8 +20,8 @@
 
 <style>
     div {
-        grid-column: 15/34;
-        grid-row: 180/191;
+        grid-column: 16/38;
+        grid-row: 173/187;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -37,12 +37,6 @@
         padding: 14px 8px 14px 8px;
     }
 
-    @media only screen and (min-width: 1020px) {
-        div {
-            grid-column: 16/38;
-            grid-row: 173/187;
-        }
-    }
     @media only screen and (min-width: 1440px) {
         div {
             grid-column: 15/33;

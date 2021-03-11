@@ -36,19 +36,13 @@
 
 <style>
     div {
-        grid-column: 152/193;
-        grid-row: 13/43;
+        grid-column: 145/194;
+        grid-row: 11/47;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    @media only screen and (min-width: 1020px) {
-        div {
-            grid-column: 145/194;
-            grid-row: 11/47;
-        }
-    }
     @media only screen and (min-width: 1440px) {
         div {
             grid-column: 148/189;

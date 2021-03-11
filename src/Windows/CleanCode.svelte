@@ -12,9 +12,8 @@
         isInForeground={false}
         intersections={[3]}
         distanceFromIntersection={{
-            base: 8,
-            large: 13,
-            extralarge: 8,
+            base: 13,
+            large: 8,
         }}
     >
         <p>
@@ -32,8 +31,8 @@
 
 <style>
     div {
-        grid-column: 53/79;
-        grid-row: 41/59;
+        grid-column: 50/81;
+        grid-row: 40/62;
         display: flex;
         justify-content: flex-end;
         align-items: center;
@@ -48,12 +47,6 @@
         text-align: right;
     }
 
-    @media only screen and (min-width: 1020px) {
-        div {
-            grid-column: 50/81;
-            grid-row: 40/62;
-        }
-    }
     @media only screen and (min-width: 1440px) {
         div {
             grid-column: 51/77;

@@ -27,23 +27,11 @@
 
 <style>
     div {
-        grid-column: 31/69;
-        grid-row: 120/149;
+        grid-column: 34/75;
+        grid-row: 124/156;
         display: flex;
         justify-content: center;
         align-items: center;
-    }
-    @media only screen and (min-width: 640px) {
-        div {
-            grid-column: 37/71;
-            grid-row: 131/148;
-        }
-    }
-    @media only screen and (min-width: 1020px) {
-        div {
-            grid-column: 34/75;
-            grid-row: 124/156;
-        }
     }
     @media only screen and (min-width: 1440px) {
         div {

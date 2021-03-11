@@ -49,8 +49,9 @@
     in:scale={{
         duration: 1200,
     }}
-    style="--baseWindowWidth: {width}; --baseWindowHeight: {height};
-    --baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large}; --extralargeShuffleDistance: {distanceFromIntersection.extralarge}; position: relative; z-index: {zIndex};"
+    style="--windowWidth: {width}; --windowHeight: {height};
+    --baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large};
+    position: relative; z-index: {zIndex};"
     on:click={handleWindowClick}
     class:trigger-shuffle={!isInForeground && touched}
 >
@@ -163,8 +164,8 @@
 
 <style>
     section {
-        width: calc(var(--baseWindowWidth) * 1px);
-        height: calc(var(--baseWindowHeight) * 1px);
+        width: calc(var(--windowWidth) * 1px);
+        height: calc(var(--windowHeight) * 1px);
         border: 1px solid #fefefe;
         border-radius: 6px;
         color: #fefefe;
@@ -259,25 +260,6 @@
         animation-timing-function: ease-in-out;
     }
 
-    @media only screen and (min-width: 1020px) {
-        @keyframes shuffle {
-            0% {
-                right: 0;
-            }
-            50% {
-                right: calc(
-                    (
-                        var(--largeShuffleDistance) * max(2550px, 250vmax) / 200 *
-                            1.25
-                    )
-                );
-            }
-            100% {
-                right: 0;
-            }
-        }
-    }
-
     @media only screen and (min-width: 1440px) {
         @keyframes shuffle {
             0% {
@@ -286,8 +268,8 @@
             50% {
                 right: calc(
                     (
-                        var(--extralargeShuffleDistance) * min(4000px, 200vmax) /
-                            200 * 1.25
+                        var(--largeShuffleDistance) * min(4000px, 200vmax) / 200 *
+                            1.25
                     )
                 );
             }

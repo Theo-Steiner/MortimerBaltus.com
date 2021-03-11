@@ -50,8 +50,8 @@
 		}
 
 		.container {
-			width: max(3080px, 220vmax);
-			height: max(3080px, 220vmax);
+			width: max(2550px, 250vmax);
+			height: max(2550px, 250vmax);
 			display: grid;
 			grid-template-columns: repeat(200, 1fr);
 			grid-template-rows: repeat(200, 1fr);
@@ -94,6 +94,7 @@
 			position: fixed;
 			z-index: 0;
 			top: 0;
+			top: 0;
 			left: 0;
 			display: flex;
 			flex-direction: column;
@@ -105,11 +106,6 @@
 
 
 		@media only screen and (min-width: 1020px) {
-			.container {
-				width: max(2550px, 250vmax);
-				height: max(2550px, 250vmax);
-			}
-
 			.mortimer-baltus h1 {
 				font-size: 1.7vh;
 				padding: 0;
@@ -182,12 +178,27 @@
 		window.history.scrollRestoration = "manual";
 	}
 
-	let userAgent = window.navigator.userAgent;
-	if ((/(iPad|iPhone|iPod)/gi).test(userAgent) &&
-		!(/CriOS/).test(userAgent) &&
-		!(/FxiOS/).test(userAgent) &&
-		!(/OPiOS/).test(userAgent) &&
-		!(/mercury/).test(userAgent)) {
+	var hasTouchScreen = false;
+	if ("maxTouchPoints" in navigator) {
+		hasTouchScreen = navigator.maxTouchPoints > 0;
+	} else if ("msMaxTouchPoints" in navigator) {
+		hasTouchScreen = navigator.msMaxTouchPoints > 0;
+	} else {
+		var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
+		if (mQ && mQ.media === "(pointer:coarse)") {
+			hasTouchScreen = !!mQ.matches;
+		} else if ('orientation' in window) {
+			hasTouchScreen = true; // deprecated, but good fallback
+		} else {
+			// Only as a last resort, fall back to user agent sniffing
+			var UA = navigator.userAgent;
+			hasTouchScreen = (
+				/\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+				/\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
+			);
+		}
+	}
+	if (hasTouchScreen) {
 		document.querySelector("main").style.overflow = "scroll";
 		const center = document.querySelector(".center");
 		center.scrollIntoView();
@@ -210,9 +221,7 @@
 
 	function getScrollTo(screen) {
 		let currentBodyDimensions;
-		if (window.matchMedia('(max-width: 1019px)').matches) {
-			currentBodyDimensions = Math.max(3080, vmax(220));
-		} else if (window.matchMedia('(max-width: 1439px)').matches) {
+		if (window.matchMedia('(max-width: 1439px)').matches) {
 			currentBodyDimensions = Math.max(2550, vmax(250));
 		} else if (window.matchMedia('(min-width: 1439px)').matches) {
 			currentBodyDimensions = Math.min(4000, vmax(200));

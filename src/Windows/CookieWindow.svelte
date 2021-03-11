@@ -13,19 +13,17 @@
         isInForeground={true}
     >
         <p>
-            We use necessary Cookies to ensure visitors have the best possible
-            experience on our site. <br />
             Your privacy is important to us, therefore we don’t use any tracking
-            services by third-parties. <br /> Please read our Privacy Policy for
-            more info on this subject!
+            services by third-parties. <br /><br /> Please read our Privacy Policy
+            for more info on this subject!
         </p>
     </WindowElement>
 </div>
 
 <style>
     div {
-        grid-column: 63/83;
-        grid-row: 109/120;
+        grid-column: 61/85;
+        grid-row: 105/119;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -33,16 +31,9 @@
 
     p {
         color: #151515;
-        font-size: 15px;
+        font-size: 16px;
         margin: 0px;
-        padding: 6px;
-    }
-
-    @media only screen and (min-width: 1020px) {
-        div {
-            grid-column: 61/85;
-            grid-row: 105/119;
-        }
+        padding: 7px;
     }
 
     @media only screen and (min-width: 1440px) {

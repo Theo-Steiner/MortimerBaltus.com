@@ -50,19 +50,13 @@
 
 <style>
     div {
-        grid-column: 15/55;
-        grid-row: 83/113;
+        grid-column: 12/61;
+        grid-row: 79/114;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    @media only screen and (min-width: 1020px) {
-        div {
-            grid-column: 12/61;
-            grid-row: 79/114;
-        }
-    }
     @media only screen and (min-width: 1440px) {
         div {
             grid-column: 12/53;

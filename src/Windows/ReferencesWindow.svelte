@@ -36,8 +36,8 @@
 
 <style>
     div {
-        grid-column: 157/181;
-        grid-row: 121/143;
+        grid-column: 153/181;
+        grid-row: 116/142;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -61,12 +61,6 @@
         padding-top: 1px;
     }
 
-    @media only screen and (min-width: 1020px) {
-        div {
-            grid-column: 153/181;
-            grid-row: 116/142;
-        }
-    }
     @media only screen and (min-width: 1440px) {
         div {
             grid-column: 154/178;

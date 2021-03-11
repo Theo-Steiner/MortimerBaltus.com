@@ -12,9 +12,8 @@
         isInForeground={true}
         intersections={[1]}
         distanceFromIntersection={{
-            base: -6,
-            large: -13,
-            extralarge: -12,
+            base: -13,
+            large: -12,
         }}
     >
         <p>NICE <br /> TO<br /> MEET<br /> YOU</p>
@@ -23,8 +22,8 @@
 
 <style>
     div {
-        grid-column: 120/145;
-        grid-row: 107/133;
+        grid-column: 116/147;
+        grid-row: 102/134;
         display: flex;
         justify-content: flex-start;
         align-items: flex-end;
@@ -35,12 +34,6 @@
         font-size: 80px;
         padding: 15px;
         margin: 0px;
-    }
-    @media only screen and (min-width: 1020px) {
-        div {
-            grid-column: 116/147;
-            grid-row: 102/134;
-        }
     }
     @media only screen and (min-width: 1440px) {
         div {
