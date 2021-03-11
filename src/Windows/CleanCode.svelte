@@ -4,16 +4,15 @@
 
 <div>
     <WindowElement
-        width={{ base: 238, small: 378 }}
-        height={{ base: 172, small: 273 }}
+        width={378}
+        height={273}
         background="#7d7d7d"
         title="CLEAN.CODE"
         id={10}
         isInForeground={false}
         intersections={[3]}
         distanceFromIntersection={{
-            base: 25,
-            small: 8,
+            base: 8,
             large: 13,
             extralarge: 8,
         }}
@@ -33,31 +32,22 @@
 
 <style>
     div {
-        grid-column: 47/76;
-        grid-row: 46/67;
+        grid-column: 53/79;
+        grid-row: 41/59;
         display: flex;
         justify-content: flex-end;
         align-items: center;
     }
     p {
         color: #151515;
-        font-size: 13px;
+        font-size: 21px;
         margin: 0px;
-        padding: 4px;
+        padding: 6px;
     }
     .text-right {
         text-align: right;
     }
-    @media only screen and (min-width: 640px) {
-        div {
-            grid-column: 53/79;
-            grid-row: 41/59;
-        }
-        p {
-            font-size: 21px;
-            padding: 6px;
-        }
-    }
+
     @media only screen and (min-width: 1020px) {
         div {
             grid-column: 50/81;

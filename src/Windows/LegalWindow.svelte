@@ -4,8 +4,8 @@
 
 <div>
     <WindowElement
-        width={{ base: 268, small: 268 }}
-        height={{ base: 158, small: 158 }}
+        width={268}
+        height={158}
         background="#1C6370"
         title="LEGAL NOTICE"
         id={7}
@@ -20,8 +20,8 @@
 
 <style>
     div {
-        grid-column: 11/43;
-        grid-row: 165/184;
+        grid-column: 15/34;
+        grid-row: 180/191;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -36,12 +36,7 @@
         margin: 0px;
         padding: 14px 8px 14px 8px;
     }
-    @media only screen and (min-width: 640px) {
-        div {
-            grid-column: 15/34;
-            grid-row: 180/191;
-        }
-    }
+
     @media only screen and (min-width: 1020px) {
         div {
             grid-column: 16/38;

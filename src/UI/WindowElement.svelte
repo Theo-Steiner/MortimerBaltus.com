@@ -49,8 +49,8 @@
     in:scale={{
         duration: 1200,
     }}
-    style="--baseWindowWidth: {width.base}; --baseWindowHeight: {height.base}; --smallWindowWidth: {width.small}; --smallWindowHeight: {height.small};
-     --baseShuffleDistance: {distanceFromIntersection.base}; --smallShuffleDistance: {distanceFromIntersection.small}; --largeShuffleDistance: {distanceFromIntersection.large}; --extralargeShuffleDistance: {distanceFromIntersection.extralarge}; position: relative; z-index: {zIndex};"
+    style="--baseWindowWidth: {width}; --baseWindowHeight: {height};
+    --baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large}; --extralargeShuffleDistance: {distanceFromIntersection.extralarge}; position: relative; z-index: {zIndex};"
     on:click={handleWindowClick}
     class:trigger-shuffle={!isInForeground && touched}
 >
@@ -245,7 +245,7 @@
         }
         50% {
             right: calc(
-                (var(--baseShuffleDistance) * max(1704px, 300vmax) / 200 * 1.25)
+                (var(--baseShuffleDistance) * max(3080px, 220vmax) / 200 * 1.25)
             );
         }
         100% {
@@ -259,29 +259,6 @@
         animation-timing-function: ease-in-out;
     }
 
-    @media only screen and (min-width: 640px) {
-        section {
-            width: calc(var(--smallWindowWidth) * 1px);
-            height: calc(var(--smallWindowHeight) * 1px);
-        }
-
-        @keyframes shuffle {
-            0% {
-                right: 0;
-            }
-            50% {
-                right: calc(
-                    (
-                        var(--smallShuffleDistance) * max(3080px, 220vmax) / 200 *
-                            1.25
-                    )
-                );
-            }
-            100% {
-                right: 0;
-            }
-        }
-    }
     @media only screen and (min-width: 1020px) {
         @keyframes shuffle {
             0% {

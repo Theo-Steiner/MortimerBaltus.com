@@ -4,7 +4,7 @@
 <head>
 	<meta charset='utf-8'>
 	<meta name="viewport"
-		content="width=device-width, height=device-height, initial-scale=1, minimum-scale=1, maximum-scale=5.0"
+		content="width=device-width, height=device-height, initial-scale=0.86, minimum-scale=0.86, maximum-scale=5.0"
 		id="viewportmetatag">
 	<meta name="description"
 		content="MortimerBaltus provides creative services & solutions for digital development. Founded in 2021, MortimerBaltus is based in Hamburg (DE) and Tokyo (JP).">
@@ -27,14 +27,14 @@
 		imagesrcset="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/MortimerBaltus/Projects/ConCorazon_mksjj0 960w,
 		https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_auto:best/MortimerBaltus/Projects/ConCorazon_mksjj0 463w,
 		https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto,q_auto:best/MortimerBaltus/Projects/ConCorazon_mksjj0 291w"
-		imagesizes="(min-width: 640px) 463px, 291px" />
+		imagesizes="463px" />
 
 	<link rel="preload" as="image"
 		href="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/MortimerBaltus/Projects/EberhardMueller_v2tpxi"
 		imagesrcset="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/MortimerBaltus/Projects/EberhardMueller_v2tpxi 960w,
 		https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_auto:best/MortimerBaltus/Projects/EberhardMueller_v2tpxi 463w,
 		https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto,q_auto:best/MortimerBaltus/Projects/EberhardMueller_v2tpxi 291w"
-		imagesizes="(min-width: 640px) 463px, 291px" />
+		imagesizes="463px" />
 	<style>
 		body {
 			font-family: 'MabryPro';
@@ -50,8 +50,8 @@
 		}
 
 		.container {
-			width: max(1704px, 300vmax);
-			height: max(1704px, 300vmax);
+			width: max(3080px, 220vmax);
+			height: max(3080px, 220vmax);
 			display: grid;
 			grid-template-columns: repeat(200, 1fr);
 			grid-template-rows: repeat(200, 1fr);
@@ -103,13 +103,6 @@
 			height: 100vh;
 		}
 
-		@media only screen and (min-width: 640px) {
-			.container {
-
-				width: max(3080px, 220vmax);
-				height: max(3080px, 220vmax);
-			}
-		}
 
 		@media only screen and (min-width: 1020px) {
 			.container {
@@ -184,9 +177,22 @@
 
 
 <script>
-	if ("scrollRestoration" in window.history) {
-		window.history.scrollRestoration = "manuseragentl";
+
+	if (history.scrollRestoration) {
+		window.history.scrollRestoration = "manual";
 	}
+
+	let userAgent = window.navigator.userAgent;
+	if ((/(iPad|iPhone|iPod)/gi).test(userAgent) &&
+		!(/CriOS/).test(userAgent) &&
+		!(/FxiOS/).test(userAgent) &&
+		!(/OPiOS/).test(userAgent) &&
+		!(/mercury/).test(userAgent)) {
+		document.querySelector("main").style.overflow = "scroll";
+		const center = document.querySelector(".center");
+		center.scrollIntoView();
+	}
+
 
 	function vh(v) {
 		var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -202,22 +208,9 @@
 		return Math.max(vh(v), vw(v));
 	}
 
-	let userAgent = window.navigator.userAgent;
-	if ((/(iPad|iPhone|iPod)/gi).test(userAgent) &&
-		!(/CriOS/).test(userAgent) &&
-		!(/FxiOS/).test(userAgent) &&
-		!(/OPiOS/).test(userAgent) &&
-		!(/mercury/).test(userAgent)) {
-		document.querySelector("main").style.overflow = "scroll";
-		const center = document.querySelector(".center");
-		center.scrollIntoView();
-	}
-
 	function getScrollTo(screen) {
 		let currentBodyDimensions;
-		if (window.matchMedia('(max-width: 639px)').matches) {
-			currentBodyDimensions = Math.max(1704, vmax(300));
-		} else if (window.matchMedia('(max-width: 1019px)').matches) {
+		if (window.matchMedia('(max-width: 1019px)').matches) {
 			currentBodyDimensions = Math.max(3080, vmax(220));
 		} else if (window.matchMedia('(max-width: 1439px)').matches) {
 			currentBodyDimensions = Math.max(2550, vmax(250));
@@ -237,7 +230,6 @@
 		var preloadedScript = document.createElement("script");
 		preloadedScript.src = "/build/bundle.js";
 		document.body.appendChild(preloadedScript);
-
 	}
 
 </script>

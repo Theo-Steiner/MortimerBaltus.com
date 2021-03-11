@@ -4,8 +4,8 @@
 
 <div>
     <WindowElement
-        width={{ base: 255, small: 288 }}
-        height={{ base: 183, small: 207 }}
+        width={288}
+        height={207}
         background="#FEC7A3"
         title="PRIVACY POLICY"
         id={5}
@@ -20,8 +20,8 @@
 
 <style>
     div {
-        grid-column: 151/182;
-        grid-row: 171/193;
+        grid-column: 147/167;
+        grid-row: 181/195;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -29,27 +29,11 @@
 
     p {
         color: #151515;
-        font-size: 21px;
+        font-size: 24px;
         margin: 0px;
-        padding: 6px;
+        padding: 10px;
     }
 
-    @media only screen and (min-width: 640px) {
-        div {
-            grid-column: 147/167;
-            grid-row: 181/195;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        p {
-            color: #151515;
-            font-size: 24px;
-            margin: 0px;
-            padding: 10px;
-        }
-    }
     @media only screen and (min-width: 1020px) {
         div {
             grid-column: 142/166;

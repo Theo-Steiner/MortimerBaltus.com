@@ -4,8 +4,8 @@
 
 <div>
     <WindowElement
-        width={{ base: 290, small: 347 }}
-        height={{ base: 262, small: 314 }}
+        width={347}
+        height={314}
         background="#5F583D"
         title="References"
         enlargeable={false}
@@ -36,15 +36,15 @@
 
 <style>
     div {
-        grid-column: 156/191;
-        grid-row: 113/145;
+        grid-column: 157/181;
+        grid-row: 121/143;
         display: flex;
         justify-content: center;
         align-items: center;
     }
     a {
         color: #151515;
-        font-size: 13px;
+        font-size: 15px;
         margin: 0px;
         text-decoration: none;
     }
@@ -54,30 +54,13 @@
 
     ul {
         list-style-type: none;
-        padding: 0 6px 0 9px;
+        padding: 10px 0px 13px 11px;
         margin: 0;
     }
     li {
         padding-top: 1px;
     }
-    @media only screen and (min-width: 640px) {
-        div {
-            grid-column: 157/181;
-            grid-row: 121/143;
-        }
-        a {
-            font-size: 15px;
-            margin: 0px;
-        }
 
-        ul {
-            padding: 10px 0px 13px 11px;
-            margin: 0;
-        }
-        li {
-            padding-top: 1px;
-        }
-    }
     @media only screen and (min-width: 1020px) {
         div {
             grid-column: 153/181;

@@ -30,15 +30,15 @@
 
 <div>
     <WindowElement
-        width={{ base: 378, small: 600 }}
-        height={{ base: 274, small: 436 }}
+        width={600}
+        height={436}
         background={jpGallery[randomIndex].svg}
         title={jpGallery[randomIndex].name}
         id={8}
         isInForeground={true}
     >
         <ImageLoader
-            sizes="(min-width: 640px) 598px, 376px"
+            sizes="598px"
             srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug} 1280w,
             https://res.cloudinary.com/thdrstnr/image/upload/w_598,f_auto,q_auto:best/{slug} 598w,
             https://res.cloudinary.com/thdrstnr/image/upload/w_376,f_auto,q_auto:best/{slug} 376w,"
@@ -50,18 +50,13 @@
 
 <style>
     div {
-        grid-column: 7/52;
-        grid-row: 80/113;
+        grid-column: 15/55;
+        grid-row: 83/113;
         display: flex;
         justify-content: center;
         align-items: center;
     }
-    @media only screen and (min-width: 640px) {
-        div {
-            grid-column: 15/55;
-            grid-row: 83/113;
-        }
-    }
+
     @media only screen and (min-width: 1020px) {
         div {
             grid-column: 12/61;

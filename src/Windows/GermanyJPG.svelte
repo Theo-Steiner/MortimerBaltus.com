@@ -16,8 +16,8 @@
 
 <div>
     <WindowElement
-        width={{ base: 378, small: 600 }}
-        height={{ base: 274, small: 436 }}
+        width={600}
+        height={436}
         background={deGallery[randomIndex].svg}
         title={deGallery[randomIndex].name}
         id={11}
@@ -28,7 +28,7 @@
             https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto,q_auto:best/{slug} 598w,
             https://res.cloudinary.com/thdrstnr/image/upload/w_376,f_auto,q_auto:best/{slug} 376w,"
             src="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug}"
-            sizes="(min-width: 640px) 598px, 376px"
+            sizes="598px"
             alt={deGallery[randomIndex].alt}
         />
     </WindowElement>
@@ -36,18 +36,13 @@
 
 <style>
     div {
-        grid-column: 149/194;
-        grid-row: 21/54;
+        grid-column: 152/193;
+        grid-row: 13/43;
         display: flex;
         justify-content: center;
         align-items: center;
     }
-    @media only screen and (min-width: 640px) {
-        div {
-            grid-column: 152/193;
-            grid-row: 13/43;
-        }
-    }
+
     @media only screen and (min-width: 1020px) {
         div {
             grid-column: 145/194;

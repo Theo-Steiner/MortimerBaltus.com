@@ -4,16 +4,15 @@
 
 <div>
     <WindowElement
-        width={{ base: 238, small: 378 }}
-        height={{ base: 247, small: 392 }}
+        width={378}
+        height={392}
         background="#A25C24"
         title="ABOUT"
         id={0}
         isInForeground={true}
         intersections={[1]}
         distanceFromIntersection={{
-            base: -8,
-            small: -6,
+            base: -6,
             large: -13,
             extralarge: -12,
         }}
@@ -24,8 +23,8 @@
 
 <style>
     div {
-        grid-column: 117/145;
-        grid-row: 101/130;
+        grid-column: 120/145;
+        grid-row: 107/133;
         display: flex;
         justify-content: flex-start;
         align-items: flex-end;
@@ -33,19 +32,9 @@
 
     p {
         color: #151515;
-        font-size: 50px;
+        font-size: 80px;
+        padding: 15px;
         margin: 0px;
-        padding: 9px;
-    }
-    @media only screen and (min-width: 640px) {
-        p {
-            font-size: 80px;
-            padding: 15px;
-        }
-        div {
-            grid-column: 120/145;
-            grid-row: 107/133;
-        }
     }
     @media only screen and (min-width: 1020px) {
         div {
