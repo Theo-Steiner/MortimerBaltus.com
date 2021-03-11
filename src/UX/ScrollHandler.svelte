@@ -8,7 +8,8 @@
     function wheelHandler(event) {
         let reducedDeltaY = Math.round(event.deltaY / 2);
         let reducedDeltaX = Math.round(event.deltaX / 2);
-        window.scrollBy(reducedDeltaX, reducedDeltaY);
+        main.scrollTop = main.scrollTop + reducedDeltaY;
+        main.scrollLeft = main.scrollLeft + reducedDeltaX;
     }
 
     // The following functions take care of the grab handling
@@ -31,7 +32,8 @@
         currentM.y = event.clientY;
         const deltaX = initialM.x - currentM.x;
         const deltaY = initialM.y - currentM.y;
-        window.scrollBy(deltaX, deltaY);
+        main.scrollTop = main.scrollTop + deltaY;
+        main.scrollLeft = main.scrollLeft + deltaX;
         initialM.x = event.clientX;
         initialM.y = event.clientY;
     }

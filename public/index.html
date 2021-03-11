@@ -43,10 +43,9 @@
 		}
 
 		main {
-
 			height: 100vh;
 			width: 100%;
-
+			overflow: scroll;
 		}
 
 		.container {
@@ -134,7 +133,7 @@
 		}
 
 		@media only screen and (min-width: 2000px) {
-			body {
+			html {
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -164,12 +163,9 @@
 						class="mobile"><br /></span>THEODOR
 					BALTUS STEINER (JP)</h1>
 			</div>
-			<div class="center"></div>
 		</div>
 	</main>
 </body>
-
-
 
 
 <script>
@@ -177,33 +173,6 @@
 	if (history.scrollRestoration) {
 		window.history.scrollRestoration = "manual";
 	}
-
-	var hasTouchScreen = false;
-	if ("maxTouchPoints" in navigator) {
-		hasTouchScreen = navigator.maxTouchPoints > 0;
-	} else if ("msMaxTouchPoints" in navigator) {
-		hasTouchScreen = navigator.msMaxTouchPoints > 0;
-	} else {
-		var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
-		if (mQ && mQ.media === "(pointer:coarse)") {
-			hasTouchScreen = !!mQ.matches;
-		} else if ('orientation' in window) {
-			hasTouchScreen = true; // deprecated, but good fallback
-		} else {
-			// Only as a last resort, fall back to user agent sniffing
-			var UA = navigator.userAgent;
-			hasTouchScreen = (
-				/\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
-				/\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
-			);
-		}
-	}
-	if (hasTouchScreen) {
-		document.querySelector("main").style.overflow = "scroll";
-		const center = document.querySelector(".center");
-		center.scrollIntoView();
-	}
-
 
 	function vh(v) {
 		var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -233,14 +202,16 @@
 			return 0;
 		}
 	}
-	scrollTo(getScrollTo(vw(100)), getScrollTo(vh(100)));
+	const main = document.querySelector("main");
+	main.scrollTop = getScrollTo(vh(100));
+	main.scrollLeft = getScrollTo(vw(100));
+	// scrollTo(getScrollTo(vw(100)), getScrollTo(vh(100)));
 	console.log(`scrolled to x: ${getScrollTo(vw(100))} and ${getScrollTo(vh(100))}`)
 	window.onload = () => {
 		var preloadedScript = document.createElement("script");
 		preloadedScript.src = "/build/bundle.js";
 		document.body.appendChild(preloadedScript);
 	}
-
 </script>
 
 </html>
