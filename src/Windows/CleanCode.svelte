@@ -6,10 +6,11 @@
     <WindowElement
         width={378}
         height={273}
+        parallax="transform: translateZ(-0.5px) scale(2) translate(65%, -75%); transform-origin: 0 0;"
         background="#7d7d7d"
         title="CLEAN.CODE"
         id={10}
-        isInForeground={false}
+        isInForeground={true}
         intersections={[3]}
         distanceFromIntersection={{
             base: 13,

@@ -5,7 +5,7 @@
 
     export let height;
     export let width;
-    export let parallax = "transform: translateZ(-0.5px) scale(1.5);";
+    export let parallax = "transform: translateZ(-0.5px) scale(2);";
     export let background = "";
     export let title;
     export let enlargeable = true;

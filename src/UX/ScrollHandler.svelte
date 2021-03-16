@@ -78,6 +78,9 @@
         position: absolute;
         width: max(2550px, 250vmax);
         height: max(2550px, 250vmax);
+        transform: translateZ(0px) scale(5);
+        transform-origin: bottom right;
+        transform-origin: 0 0;
         top: 0;
         left: 0;
 

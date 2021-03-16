@@ -6,6 +6,7 @@
     <WindowElement
         width={472}
         height={344}
+        parallax="transform: translateZ(-0.6px) scale(2.2) translate(75%, -60%); transform-origin: 0 0;"
         title="LOGOPEDIA.MP4"
         enlargeable={false}
         background="#C4BDBD"

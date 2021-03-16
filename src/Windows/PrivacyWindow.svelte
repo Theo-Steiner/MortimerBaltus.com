@@ -6,7 +6,7 @@
     <WindowElement
         width={288}
         height={207}
-        parallax="transform: translateZ(-0.5px) scale(1.5) translate(200%, 50%);"
+        parallax="transform: translateZ(-0.3px) scale(1.6) translate(300%, 50%); transform-origin: 0 0;"
         background="#FEC7A3"
         title="PRIVACY POLICY"
         id={5}

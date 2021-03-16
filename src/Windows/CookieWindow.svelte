@@ -6,6 +6,7 @@
     <WindowElement
         width={300}
         height={164}
+        parallax="transform: translateZ(-0.3px) scale(1.6) translate(-35%, -60%); transform-origin: 0 0;"
         background="#5E4B1B"
         title="COOKIES"
         enlargeable={false}

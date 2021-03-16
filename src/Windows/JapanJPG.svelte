@@ -32,6 +32,7 @@
     <WindowElement
         width={600}
         height={436}
+        parallax="transform: translateZ(-0.2px) scale(1.4) translate(-25%, -155%); transform-origin: 0 0;"
         background={jpGallery[randomIndex].svg}
         title={jpGallery[randomIndex].name}
         id={8}

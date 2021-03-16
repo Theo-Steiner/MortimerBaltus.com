@@ -24,7 +24,7 @@
         height: 100%;
         display: block;
         opacity: 0;
-        transition: opacity 1000ms ease-out;
+        transition: opacity 500ms ease-out;
         object-fit: cover;
     }
     img.loaded {
