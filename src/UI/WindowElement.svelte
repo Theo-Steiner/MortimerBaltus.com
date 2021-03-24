@@ -14,10 +14,6 @@
     export let intersections = [];
     export let distanceFromIntersection = 20;
 
-    if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
-        parallax = "";
-    }
-
     let touched = false;
     let zIndex = 5;
     let thisWindowObject;
