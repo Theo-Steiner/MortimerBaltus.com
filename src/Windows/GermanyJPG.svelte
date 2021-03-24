@@ -18,7 +18,7 @@
     <WindowElement
         width={600}
         height={436}
-        parallax="transform: translateZ(-0.4px) scale(1.8) translate(160%, -45%); transform-origin: 0 0;"
+        parallax="very-fast"
         background={deGallery[randomIndex].svg}
         title={deGallery[randomIndex].name}
         id={11}

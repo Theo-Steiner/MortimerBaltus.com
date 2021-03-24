@@ -6,7 +6,7 @@
     <WindowElement
         width={268}
         height={158}
-        parallax="transform: translateZ(-0.7px) scale(2.4) translate(-65%, 125%); transform-origin: 0 0;"
+        parallax="very-slow"
         background="#1C6370"
         title="LEGAL NOTICE"
         id={7}
@@ -37,7 +37,6 @@
         margin: 0px;
         padding: 14px 8px 14px 8px;
     }
-
     @media only screen and (min-width: 1440px) {
         div {
             grid-column: 15/33;

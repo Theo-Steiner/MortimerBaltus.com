@@ -6,7 +6,7 @@
     <WindowElement
         width={347}
         height={314}
-        parallax="transform: translateZ(-0.7px) scale(2.4) translate(230%, -65%); transform-origin: 0 0;"
+        parallax="medium"
         background="#5F583D"
         title="References"
         enlargeable={false}
@@ -37,7 +37,7 @@
 
 <style>
     div {
-        grid-column: 153/181;
+        grid-column: 162/190;
         grid-row: 116/142;
         display: flex;
         justify-content: center;

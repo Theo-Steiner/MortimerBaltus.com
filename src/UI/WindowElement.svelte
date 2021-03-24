@@ -5,7 +5,7 @@
 
     export let height;
     export let width;
-    export let parallax = "transform: translateZ(-0.5px) scale(2);";
+    export let parallax;
     export let background = "";
     export let title;
     export let enlargeable = true;
@@ -13,6 +13,10 @@
     export let isInForeground = true;
     export let intersections = [];
     export let distanceFromIntersection = 20;
+
+    if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+        parallax = "";
+    }
 
     let touched = false;
     let zIndex = 5;
@@ -50,9 +54,10 @@
     in:scale={{
         duration: 1200,
     }}
-    style="--windowWidth: {width}; --windowHeight: {height}; {parallax}
+    class={parallax}
+    style="--windowWidth: {width}; --windowHeight: {height};
     --baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large};
-    position: relative; z-index: {zIndex};"
+    z-index: {zIndex};"
     on:click={handleWindowClick}
     class:trigger-shuffle={!isInForeground && touched}
 >
@@ -165,6 +170,10 @@
 
 <style>
     section {
+        pointer-events: auto;
+        user-select: none;
+        position: relative;
+        top: 0px;
         width: calc(var(--windowWidth) * 1px);
         height: calc(var(--windowHeight) * 1px);
         border: 1px solid #fefefe;
@@ -247,7 +256,7 @@
         }
         50% {
             right: calc(
-                (var(--baseShuffleDistance) * max(3080px, 220vmax) / 200 * 1.25)
+                (var(--baseShuffleDistance) * max(3080px, 220vmax) / 200 * 2)
             );
         }
         100% {
@@ -259,6 +268,35 @@
         animation-name: shuffle;
         animation-duration: 0.4s;
         animation-timing-function: ease-in-out;
+    }
+
+    /* Different parallax speeds. translateZ has to be a positive value in order to prevent Safari rendering bug*/
+
+    .very-slow {
+        transform: translateZ(1.2px) scale(0.88);
+        transform-origin: bottom right;
+    }
+
+    .slowish {
+        transform: translateZ(1px) scale(0.9);
+        transform-origin: bottom right;
+    }
+
+    .slow {
+        transform: translateZ(0.8px) scale(0.92);
+        transform-origin: bottom right;
+    }
+    .medium {
+        transform: translateZ(0.6px) scale(0.94);
+        transform-origin: bottom right;
+    }
+    .fast {
+        transform: translateZ(0.4px) scale(0.96);
+        transform-origin: bottom right;
+    }
+    .very-fast {
+        transform: translateZ(0.2px) scale(0.98);
+        transform-origin: bottom right;
     }
 
     @media only screen and (min-width: 1440px) {
@@ -277,6 +315,12 @@
             100% {
                 right: 0;
             }
+        }
+    }
+    @media only screen and (min-width: 2000px) {
+        section {
+            transform: none;
+            transform-origin: none;
         }
     }
 </style>

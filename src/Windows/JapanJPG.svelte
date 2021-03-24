@@ -32,7 +32,7 @@
     <WindowElement
         width={600}
         height={436}
-        parallax="transform: translateZ(-0.2px) scale(1.4) translate(-25%, -155%); transform-origin: 0 0;"
+        parallax="very-fast"
         background={jpGallery[randomIndex].svg}
         title={jpGallery[randomIndex].name}
         id={8}
@@ -51,7 +51,7 @@
 
 <style>
     div {
-        grid-column: 12/61;
+        grid-column: 7/56;
         grid-row: 79/114;
         display: flex;
         justify-content: center;

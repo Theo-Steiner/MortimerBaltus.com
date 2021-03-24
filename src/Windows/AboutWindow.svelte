@@ -6,7 +6,7 @@
     <WindowElement
         width={378}
         height={392}
-        parallax="transform: translateZ(-0.3px) scale(1.6) translate(55%, -20%); transform-origin: 0 0;"
+        parallax="very-fast"
         background="#A25C24"
         title="ABOUT"
         id={0}
@@ -24,7 +24,7 @@
 <style>
     div {
         grid-column: 116/147;
-        grid-row: 102/134;
+        grid-row: 100/132;
         display: flex;
         justify-content: flex-start;
         align-items: flex-end;

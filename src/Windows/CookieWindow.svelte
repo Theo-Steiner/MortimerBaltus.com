@@ -6,7 +6,7 @@
     <WindowElement
         width={300}
         height={164}
-        parallax="transform: translateZ(-0.3px) scale(1.6) translate(-35%, -60%); transform-origin: 0 0;"
+        parallax="very-slow"
         background="#5E4B1B"
         title="COOKIES"
         enlargeable={false}
@@ -23,7 +23,7 @@
 
 <style>
     div {
-        grid-column: 61/85;
+        grid-column: 58/82;
         grid-row: 105/119;
         display: flex;
         justify-content: center;
