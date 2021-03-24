@@ -5,7 +5,7 @@
     const slug = "MortimerBaltus/Projects/Raceworx_wfjyou";
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={499}
         height={392}

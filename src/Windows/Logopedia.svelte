@@ -2,7 +2,7 @@
     import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={472}
         height={344}

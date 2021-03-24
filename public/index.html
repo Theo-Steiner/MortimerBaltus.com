@@ -223,7 +223,6 @@
 		} else if (window.matchMedia('(min-width: 1439px)').matches) {
 			currentBodyDimensions = Math.min(4000, vmax(200));
 		}
-		console.log(`current body dimensions: ${currentBodyDimensions}`)
 		if (currentBodyDimensions > screen) {
 			return (currentBodyDimensions - screen) / 2;
 		} else {
@@ -233,8 +232,8 @@
 	const main = document.querySelector(".scroller");
 	main.scrollTop = getScrollTo(vh(100));
 	main.scrollLeft = getScrollTo(vw(100));
-	// scrollTo(getScrollTo(vw(100)), getScrollTo(vh(100)));
-	console.log(`scrolled to x: ${getScrollTo(vw(100))} and ${getScrollTo(vh(100))}`)
+
+
 	window.onload = () => {
 		var preloadedScript = document.createElement("script");
 		preloadedScript.src = "/build/bundle.js";

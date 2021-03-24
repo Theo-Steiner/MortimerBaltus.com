@@ -1807,11 +1807,11 @@ var app = (function () {
     			t2 = text(" MEET");
     			br2 = element("br");
     			t3 = text(" YOU");
-    			add_location(br0, file$2, 19, 16, 415);
-    			add_location(br1, file$2, 19, 25, 424);
-    			add_location(br2, file$2, 19, 36, 435);
+    			add_location(br0, file$2, 19, 16, 433);
+    			add_location(br1, file$2, 19, 25, 442);
+    			add_location(br2, file$2, 19, 36, 453);
     			attr_dev(p, "class", "svelte-ivu1sl");
-    			add_location(p, file$2, 19, 8, 407);
+    			add_location(p, file$2, 19, 8, 425);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -1865,7 +1865,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "svelte-ivu1sl");
+    			attr_dev(div, "class", "grid-area svelte-ivu1sl");
     			add_location(div, file$2, 4, 0, 80);
     		},
     		l: function claim(nodes) {
@@ -2736,7 +2736,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "svelte-10yjo1h");
+    			attr_dev(div, "class", "grid-area svelte-10yjo1h");
     			add_location(div, file$5, 7, 0, 199);
     		},
     		l: function claim(nodes) {
@@ -2887,7 +2887,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "svelte-12ry46m");
+    			attr_dev(div, "class", "grid-area svelte-12ry46m");
     			add_location(div, file$6, 7, 0, 197);
     		},
     		l: function claim(nodes) {
@@ -3040,7 +3040,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "svelte-1nzwgc7");
+    			attr_dev(div, "class", "grid-area svelte-1nzwgc7");
     			add_location(div, file$7, 7, 0, 204);
     		},
     		l: function claim(nodes) {
@@ -3133,10 +3133,10 @@ var app = (function () {
     			br0 = element("br");
     			br1 = element("br");
     			t1 = text(" Please read our Privacy Policy\n            for more info on this subject!");
-    			add_location(br0, file$8, 17, 39, 439);
-    			add_location(br1, file$8, 17, 45, 445);
+    			add_location(br0, file$8, 17, 39, 457);
+    			add_location(br1, file$8, 17, 45, 463);
     			attr_dev(p, "class", "svelte-17ckszq");
-    			add_location(p, file$8, 15, 8, 315);
+    			add_location(p, file$8, 15, 8, 333);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -3186,7 +3186,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "svelte-17ckszq");
+    			attr_dev(div, "class", "grid-area svelte-17ckszq");
     			add_location(div, file$8, 4, 0, 80);
     		},
     		l: function claim(nodes) {
@@ -3277,10 +3277,10 @@ var app = (function () {
     			br0 = element("br");
     			br1 = element("br");
     			t1 = text(" We've got you\n            covered!");
-    			add_location(br0, file$9, 15, 57, 353);
-    			add_location(br1, file$9, 15, 63, 359);
+    			add_location(br0, file$9, 15, 57, 371);
+    			add_location(br1, file$9, 15, 63, 377);
     			attr_dev(p, "class", "svelte-1q30fpw");
-    			add_location(p, file$9, 14, 8, 292);
+    			add_location(p, file$9, 14, 8, 310);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -3329,7 +3329,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "svelte-1q30fpw");
+    			attr_dev(div, "class", "grid-area svelte-1q30fpw");
     			add_location(div, file$9, 4, 0, 80);
     		},
     		l: function claim(nodes) {
@@ -3422,10 +3422,10 @@ var app = (function () {
     			t1 = space();
     			br1 = element("br");
     			t2 = text(" Surely this is just your cup of tea...");
-    			add_location(br0, file$a, 15, 74, 372);
-    			add_location(br1, file$a, 16, 12, 391);
+    			add_location(br0, file$a, 15, 74, 390);
+    			add_location(br1, file$a, 16, 12, 409);
     			attr_dev(p, "class", "svelte-ah36av");
-    			add_location(p, file$a, 14, 8, 294);
+    			add_location(p, file$a, 14, 8, 312);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -3475,7 +3475,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "svelte-ah36av");
+    			attr_dev(div, "class", "grid-area svelte-ah36av");
     			add_location(div, file$a, 4, 0, 80);
     		},
     		l: function claim(nodes) {
@@ -3649,71 +3649,71 @@ var app = (function () {
     			a12.textContent = "Zoeva";
     			attr_dev(a0, "href", "www.reference.com");
     			attr_dev(a0, "class", "svelte-jrcirl");
-    			add_location(a0, file$b, 16, 16, 336);
+    			add_location(a0, file$b, 16, 16, 354);
     			attr_dev(li0, "class", "svelte-jrcirl");
-    			add_location(li0, file$b, 16, 12, 332);
+    			add_location(li0, file$b, 16, 12, 350);
     			attr_dev(a1, "href", "www.reference.com");
     			attr_dev(a1, "class", "svelte-jrcirl");
-    			add_location(a1, file$b, 17, 16, 411);
+    			add_location(a1, file$b, 17, 16, 429);
     			attr_dev(li1, "class", "svelte-jrcirl");
-    			add_location(li1, file$b, 17, 12, 407);
+    			add_location(li1, file$b, 17, 12, 425);
     			attr_dev(a2, "href", "www.reference.com");
     			attr_dev(a2, "class", "svelte-jrcirl");
-    			add_location(a2, file$b, 18, 16, 473);
+    			add_location(a2, file$b, 18, 16, 491);
     			attr_dev(li2, "class", "svelte-jrcirl");
-    			add_location(li2, file$b, 18, 12, 469);
+    			add_location(li2, file$b, 18, 12, 487);
     			attr_dev(a3, "href", "www.reference.com");
     			attr_dev(a3, "class", "svelte-jrcirl");
-    			add_location(a3, file$b, 20, 16, 555);
+    			add_location(a3, file$b, 20, 16, 573);
     			attr_dev(li3, "class", "svelte-jrcirl");
-    			add_location(li3, file$b, 19, 12, 534);
+    			add_location(li3, file$b, 19, 12, 552);
     			attr_dev(a4, "href", "www.reference.com");
     			attr_dev(a4, "class", "svelte-jrcirl");
-    			add_location(a4, file$b, 22, 16, 649);
+    			add_location(a4, file$b, 22, 16, 667);
     			attr_dev(li4, "class", "svelte-jrcirl");
-    			add_location(li4, file$b, 22, 12, 645);
+    			add_location(li4, file$b, 22, 12, 663);
     			attr_dev(a5, "href", "www.reference.com");
     			attr_dev(a5, "class", "svelte-jrcirl");
-    			add_location(a5, file$b, 23, 16, 729);
+    			add_location(a5, file$b, 23, 16, 747);
     			attr_dev(li5, "class", "svelte-jrcirl");
-    			add_location(li5, file$b, 23, 12, 725);
+    			add_location(li5, file$b, 23, 12, 743);
     			attr_dev(a6, "href", "www.reference.com");
     			attr_dev(a6, "class", "svelte-jrcirl");
-    			add_location(a6, file$b, 24, 16, 788);
+    			add_location(a6, file$b, 24, 16, 806);
     			attr_dev(li6, "class", "svelte-jrcirl");
-    			add_location(li6, file$b, 24, 12, 784);
+    			add_location(li6, file$b, 24, 12, 802);
     			attr_dev(a7, "href", "www.reference.com");
     			attr_dev(a7, "class", "svelte-jrcirl");
-    			add_location(a7, file$b, 25, 16, 856);
+    			add_location(a7, file$b, 25, 16, 874);
     			attr_dev(li7, "class", "svelte-jrcirl");
-    			add_location(li7, file$b, 25, 12, 852);
+    			add_location(li7, file$b, 25, 12, 870);
     			attr_dev(a8, "href", "www.reference.com");
     			attr_dev(a8, "class", "svelte-jrcirl");
-    			add_location(a8, file$b, 26, 16, 922);
+    			add_location(a8, file$b, 26, 16, 940);
     			attr_dev(li8, "class", "svelte-jrcirl");
-    			add_location(li8, file$b, 26, 12, 918);
+    			add_location(li8, file$b, 26, 12, 936);
     			attr_dev(a9, "href", "www.reference.com");
     			attr_dev(a9, "class", "svelte-jrcirl");
-    			add_location(a9, file$b, 28, 16, 1003);
+    			add_location(a9, file$b, 28, 16, 1021);
     			attr_dev(li9, "class", "svelte-jrcirl");
-    			add_location(li9, file$b, 27, 12, 982);
+    			add_location(li9, file$b, 27, 12, 1000);
     			attr_dev(a10, "href", "www.reference.com");
     			attr_dev(a10, "class", "svelte-jrcirl");
-    			add_location(a10, file$b, 30, 16, 1098);
+    			add_location(a10, file$b, 30, 16, 1116);
     			attr_dev(li10, "class", "svelte-jrcirl");
-    			add_location(li10, file$b, 30, 12, 1094);
+    			add_location(li10, file$b, 30, 12, 1112);
     			attr_dev(a11, "href", "www.reference.com");
     			attr_dev(a11, "class", "svelte-jrcirl");
-    			add_location(a11, file$b, 31, 16, 1168);
+    			add_location(a11, file$b, 31, 16, 1186);
     			attr_dev(li11, "class", "svelte-jrcirl");
-    			add_location(li11, file$b, 31, 12, 1164);
+    			add_location(li11, file$b, 31, 12, 1182);
     			attr_dev(a12, "href", "www.reference.com");
     			attr_dev(a12, "class", "svelte-jrcirl");
-    			add_location(a12, file$b, 32, 16, 1230);
+    			add_location(a12, file$b, 32, 16, 1248);
     			attr_dev(li12, "class", "svelte-jrcirl");
-    			add_location(li12, file$b, 32, 12, 1226);
+    			add_location(li12, file$b, 32, 12, 1244);
     			attr_dev(ul, "class", "svelte-jrcirl");
-    			add_location(ul, file$b, 15, 8, 315);
+    			add_location(ul, file$b, 15, 8, 333);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -3797,7 +3797,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "svelte-jrcirl");
+    			attr_dev(div, "class", "grid-area svelte-jrcirl");
     			add_location(div, file$b, 4, 0, 80);
     		},
     		l: function claim(nodes) {
@@ -3946,7 +3946,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "svelte-lgv888");
+    			attr_dev(div, "class", "grid-area svelte-lgv888");
     			add_location(div, file$c, 16, 0, 3549);
     		},
     		l: function claim(nodes) {
@@ -4122,7 +4122,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "svelte-9kfdj4");
+    			attr_dev(div, "class", "grid-area svelte-9kfdj4");
     			add_location(div, file$d, 30, 0, 10186);
     		},
     		l: function claim(nodes) {
@@ -4445,7 +4445,7 @@ var app = (function () {
     			if (img.src !== (img_src_value = "images/Logopedia.svg")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "Logo Portfolio");
     			attr_dev(img, "class", "svelte-1yftxa2");
-    			add_location(img, file$f, 15, 8, 319);
+    			add_location(img, file$f, 15, 8, 337);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -4491,7 +4491,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "svelte-1yftxa2");
+    			attr_dev(div, "class", "grid-area svelte-1yftxa2");
     			add_location(div, file$f, 4, 0, 80);
     		},
     		l: function claim(nodes) {

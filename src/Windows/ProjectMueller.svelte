@@ -5,7 +5,7 @@
     const slug = "MortimerBaltus/Projects/EberhardMueller_v2tpxi";
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={465}
         height={497}
