@@ -176,7 +176,7 @@
         overflow: hidden;
         margin: 0px;
         padding: 0px;
-        transition: transform 0.4s;
+        transition: transform 0.5s;
     }
 
     header {

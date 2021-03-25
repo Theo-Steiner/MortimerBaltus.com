@@ -639,7 +639,7 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			div = element("div");
-    			attr_dev(div, "class", "grabbable svelte-1jxrp3a");
+    			attr_dev(div, "class", "grabbable svelte-1eppb7b");
     			toggle_class(div, "mousedown", /*isMousedown*/ ctx[0]);
     			add_location(div, file, 102, 4, 3538);
     		},
@@ -1041,7 +1041,7 @@ var app = (function () {
     		c: function create() {
     			h1 = element("h1");
     			h1.textContent = "Title";
-    			attr_dev(h1, "class", "svelte-198qer8");
+    			attr_dev(h1, "class", "svelte-2p37qd");
     			add_location(h1, file$1, 96, 12, 3052);
     		},
     		m: function mount(target, anchor) {
@@ -1073,7 +1073,7 @@ var app = (function () {
     		c: function create() {
     			h1 = element("h1");
     			t = text(/*title*/ ctx[5]);
-    			attr_dev(h1, "class", "svelte-198qer8");
+    			attr_dev(h1, "class", "svelte-2p37qd");
     			add_location(h1, file$1, 94, 12, 3007);
     		},
     		m: function mount(target, anchor) {
@@ -1106,7 +1106,7 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			button = element("button");
-    			attr_dev(button, "class", "disabled svelte-198qer8");
+    			attr_dev(button, "class", "disabled svelte-2p37qd");
     			add_location(button, file$1, 152, 12, 5606);
     		},
     		m: function mount(target, anchor) {
@@ -1170,7 +1170,7 @@ var app = (function () {
     			polygon0 = svg_element("polygon");
     			rect2 = svg_element("rect");
     			polygon1 = svg_element("polygon");
-    			attr_dev(span, "class", "svelte-198qer8");
+    			attr_dev(span, "class", "svelte-2p37qd");
     			add_location(span, file$1, 100, 16, 3160);
     			add_location(title_1, file$1, 107, 20, 3429);
     			attr_dev(rect0, "x", ".5");
@@ -1214,9 +1214,9 @@ var app = (function () {
     			attr_dev(svg, "viewBox", "0 0 54 15");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "role", "presentation");
-    			attr_dev(svg, "class", "svelte-198qer8");
+    			attr_dev(svg, "class", "svelte-2p37qd");
     			add_location(svg, file$1, 101, 16, 3217);
-    			attr_dev(button, "class", "enlarge svelte-198qer8");
+    			attr_dev(button, "class", "enlarge svelte-2p37qd");
     			add_location(button, file$1, 99, 12, 3119);
     		},
     		m: function mount(target, anchor) {
@@ -1364,7 +1364,7 @@ var app = (function () {
     			if (default_slot_or_fallback) default_slot_or_fallback.c();
     			t8 = space();
     			footer = element("footer");
-    			attr_dev(span, "class", "svelte-198qer8");
+    			attr_dev(span, "class", "svelte-2p37qd");
     			add_location(span, file$1, 59, 12, 1634);
     			add_location(title_1, file$1, 66, 16, 1874);
     			attr_dev(rect0, "x", ".5");
@@ -1394,19 +1394,19 @@ var app = (function () {
     			attr_dev(svg, "viewBox", "0 0 54 15");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "role", "presentation");
-    			attr_dev(svg, "class", "svelte-198qer8");
+    			attr_dev(svg, "class", "svelte-2p37qd");
     			add_location(svg, file$1, 60, 12, 1686);
-    			attr_dev(button, "class", "shrink svelte-198qer8");
+    			attr_dev(button, "class", "shrink svelte-2p37qd");
     			add_location(button, file$1, 58, 8, 1598);
-    			attr_dev(header, "class", "svelte-198qer8");
+    			attr_dev(header, "class", "svelte-2p37qd");
     			add_location(header, file$1, 57, 4, 1581);
     			set_style(div, "background", /*background*/ ctx[4]);
     			set_style(div, "background-size", "cover");
-    			attr_dev(div, "class", "svelte-198qer8");
+    			attr_dev(div, "class", "svelte-2p37qd");
     			toggle_class(div, "no-events", !/*isInForeground*/ ctx[1]);
     			add_location(div, file$1, 155, 4, 5666);
     			add_location(footer, file$1, 161, 4, 5846);
-    			attr_dev(section, "class", section_class_value = "" + (null_to_empty(/*parallax*/ ctx[0]) + " svelte-198qer8"));
+    			attr_dev(section, "class", section_class_value = "" + (null_to_empty(/*parallax*/ ctx[0]) + " svelte-2p37qd"));
     			set_style(section, "--windowWidth", /*width*/ ctx[3]);
     			set_style(section, "--windowHeight", /*height*/ ctx[2]);
     			set_style(section, "--baseShuffleDistance", /*distanceFromIntersection*/ ctx[7].base);
@@ -1496,7 +1496,7 @@ var app = (function () {
     				toggle_class(div, "no-events", !/*isInForeground*/ ctx[1]);
     			}
 
-    			if (!current || dirty & /*parallax*/ 1 && section_class_value !== (section_class_value = "" + (null_to_empty(/*parallax*/ ctx[0]) + " svelte-198qer8"))) {
+    			if (!current || dirty & /*parallax*/ 1 && section_class_value !== (section_class_value = "" + (null_to_empty(/*parallax*/ ctx[0]) + " svelte-2p37qd"))) {
     				attr_dev(section, "class", section_class_value);
     			}
 

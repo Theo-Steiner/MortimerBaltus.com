@@ -115,16 +115,16 @@
         width: max(2550px, 250vmax);
         height: max(2550px, 250vmax);
         transform: translateZ(0px) scale(1);
+        transform-origin: center;
         top: 0;
         left: 0;
-
         cursor: grab;
-        z-index: 0;
     }
     .mousedown {
         cursor: grabbing;
         user-select: none;
-        z-index: 9999;
+        transform: translateZ(2px) scale(0.8);
+        transform-origin: center;
     }
     @media only screen and (min-width: 1440px) {
         .grabbable {
