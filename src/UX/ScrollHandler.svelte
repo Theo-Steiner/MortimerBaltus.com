@@ -92,14 +92,8 @@
     }
     @media only screen and (min-width: 1440px) {
         .grabbable {
-            width: min(4000px, 200vmax);
-            height: min(4000px, 200vmax);
-        }
-    }
-    @media only screen and (min-width: 2000px) {
-        .grabbable {
-            width: 100%;
-            height: 100%;
+            width: max(2550px, 120vmax);
+            height: max(2550px, 120vmax);
         }
     }
 </style>

@@ -136,33 +136,10 @@
 
 		@media only screen and (min-width: 1440px) {
 			.grid-box {
-				width: min(4000px, 200vmax);
-				height: min(4000px, 200vmax);
+				width: max(2550px, 120vmax);
+				height: max(2550px, 120vmax);
 			}
 		}
-
-		@media only screen and (min-width: 2000px) {
-			html {
-				display: grid;
-				grid-template-rows: auto auto auto;
-				grid-template-columns: auto auto auto;
-			}
-
-			body {
-				grid-column: 2/3;
-				grid-row: 2/3;
-			}
-
-			.scroller {
-				perspective: none;
-				perspective-origin: none;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-			}
-		}
-
-		/* ALSO ADJUST SCROLLHANDLER SIZE */
 	</style>
 </head>
 
@@ -220,7 +197,7 @@
 		if (window.matchMedia('(max-width: 1439px)').matches) {
 			currentBodyDimensions = Math.max(2550, vmax(250));
 		} else if (window.matchMedia('(min-width: 1439px)').matches) {
-			currentBodyDimensions = Math.min(4000, vmax(200));
+			currentBodyDimensions = Math.max(2550, vmax(170));
 		}
 		if (currentBodyDimensions > screen) {
 			return (currentBodyDimensions - screen) / 2;

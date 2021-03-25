@@ -250,7 +250,7 @@
         }
         50% {
             right: calc(
-                (var(--baseShuffleDistance) * max(3080px, 220vmax) / 200 * 2)
+                (var(--baseShuffleDistance) * max(2550px, 250vmax) / 200 * 2)
             );
         }
         100% {
@@ -301,7 +301,7 @@
             50% {
                 right: calc(
                     (
-                        var(--largeShuffleDistance) * min(4000px, 200vmax) / 200 *
+                        var(--largeShuffleDistance) * max(2550px, 120vmax) / 200 *
                             1.25
                     )
                 );
@@ -309,12 +309,6 @@
             100% {
                 right: 0;
             }
-        }
-    }
-    @media only screen and (min-width: 2000px) {
-        section {
-            transform: none;
-            transform-origin: none;
         }
     }
 </style>
