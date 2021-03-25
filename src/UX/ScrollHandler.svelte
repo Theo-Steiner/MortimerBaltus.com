@@ -3,8 +3,8 @@
     let initialM = { x: 0, y: 0 };
     let currentM = { x: 0, y: 0 };
     let background;
-    let scrollVelocityX;
-    let scrollVelocityY;
+    let scrollVelocityX = 0;
+    let scrollVelocityY = 0;
     let momentumID;
     let scrollInertia = 1;
 
@@ -128,8 +128,8 @@
     }
     @media only screen and (min-width: 1440px) {
         .grabbable {
-            width: max(2550px, 120vmax);
-            height: max(2550px, 120vmax);
+            width: max(2880px, 120vmax);
+            height: max(2880px, 120vmax);
         }
     }
 </style>

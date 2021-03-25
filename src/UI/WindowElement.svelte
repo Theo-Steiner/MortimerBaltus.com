@@ -176,7 +176,7 @@
         overflow: hidden;
         margin: 0px;
         padding: 0px;
-        transition: transform 2s;
+        transition: transform 0.4s;
     }
 
     header {
@@ -301,7 +301,7 @@
             50% {
                 right: calc(
                     (
-                        var(--largeShuffleDistance) * max(2550px, 120vmax) / 200 *
+                        var(--largeShuffleDistance) * max(2880px, 120vmax) / 200 *
                             1.25
                     )
                 );
