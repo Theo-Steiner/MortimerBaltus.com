@@ -5,7 +5,7 @@
 	import ProjectRaceworx from "./Windows/ProjectRaceworx.svelte";
 	import ProjectMueller from "./Windows/ProjectMueller.svelte";
 	import CookieWindow from "./Windows/CookieWindow.svelte";
-	import LegalWindow from "./windows/LegalWindow.svelte";
+	import LegalWindow from "./Windows/LegalWindow.svelte";
 	import PrivacyWindow from "./Windows/PrivacyWindow.svelte";
 	import ReferencesWindow from "./Windows/ReferencesWindow.svelte";
 	import GermanyJPG from "./Windows/GermanyJPG.svelte";
