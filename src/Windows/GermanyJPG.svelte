@@ -14,10 +14,11 @@
     const slug = deGallery[randomIndex].src;
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={600}
         height={436}
+        parallax="very-fast"
         background={deGallery[randomIndex].svg}
         title={deGallery[randomIndex].name}
         id={11}

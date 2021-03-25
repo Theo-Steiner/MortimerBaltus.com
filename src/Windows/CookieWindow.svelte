@@ -2,10 +2,11 @@
     import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={300}
         height={164}
+        parallax="very-slow"
         background="#5E4B1B"
         title="COOKIES"
         enlargeable={false}
@@ -22,7 +23,7 @@
 
 <style>
     div {
-        grid-column: 61/85;
+        grid-column: 58/82;
         grid-row: 105/119;
         display: flex;
         justify-content: center;

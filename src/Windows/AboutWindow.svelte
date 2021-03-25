@@ -2,10 +2,11 @@
     import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={378}
         height={392}
+        parallax="very-slow"
         background="#A25C24"
         title="ABOUT"
         id={0}
@@ -23,7 +24,7 @@
 <style>
     div {
         grid-column: 116/147;
-        grid-row: 102/134;
+        grid-row: 100/132;
         display: flex;
         justify-content: flex-start;
         align-items: flex-end;

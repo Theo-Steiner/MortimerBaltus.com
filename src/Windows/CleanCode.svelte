@@ -2,14 +2,15 @@
     import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={378}
         height={273}
+        parallax="very-slow"
         background="#7d7d7d"
         title="CLEAN.CODE"
         id={10}
-        isInForeground={false}
+        isInForeground={true}
         intersections={[3]}
         distanceFromIntersection={{
             base: 13,

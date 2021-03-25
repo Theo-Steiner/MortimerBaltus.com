@@ -2,10 +2,11 @@
     import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={288}
         height={207}
+        parallax="very-slow"
         background="#FEC7A3"
         title="PRIVACY POLICY"
         id={5}

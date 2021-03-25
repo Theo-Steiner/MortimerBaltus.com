@@ -19,12 +19,12 @@
 <ProjectCorazon />
 <AboutWindow />
 <JapanJPG />
-<CookieWindow />
 <ProjectRaceworx />
+<CookieWindow />
 <LegalWindow />
 <PrivacyWindow />
-<CleanCode />
 <ProjectMueller />
+<CleanCode />
 <GermanyJPG />
 <ReferencesWindow />
 <Logopedia />

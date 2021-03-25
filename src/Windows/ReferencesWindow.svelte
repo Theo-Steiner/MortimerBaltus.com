@@ -2,10 +2,11 @@
     import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={347}
         height={314}
+        parallax="medium"
         background="#5F583D"
         title="References"
         enlargeable={false}
@@ -36,7 +37,7 @@
 
 <style>
     div {
-        grid-column: 153/181;
+        grid-column: 162/190;
         grid-row: 116/142;
         display: flex;
         justify-content: center;

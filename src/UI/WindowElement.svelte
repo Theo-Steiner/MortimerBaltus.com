@@ -5,6 +5,7 @@
 
     export let height;
     export let width;
+    export let parallax;
     export let background = "";
     export let title;
     export let enlargeable = true;
@@ -14,11 +15,10 @@
     export let distanceFromIntersection = 20;
 
     let touched = false;
-    let zIndex = 5;
     let thisWindowObject;
     windowHandler.registerWindow({
         id: id,
-        zIndex: zIndex,
+        parallax: parallax,
         isInForeground: isInForeground,
         intersections: intersections,
         touched: touched,
@@ -27,7 +27,7 @@
     const unsubscribe = windowHandler.subscribe((windows) => {
         thisWindowObject = windows.find((wdws) => wdws.id === id);
         isInForeground = thisWindowObject.isInForeground;
-        zIndex = thisWindowObject.zIndex;
+        parallax = thisWindowObject.parallax;
         touched = thisWindowObject.touched;
     });
 
@@ -49,9 +49,9 @@
     in:scale={{
         duration: 1200,
     }}
+    class={parallax}
     style="--windowWidth: {width}; --windowHeight: {height};
-    --baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large};
-    position: relative; z-index: {zIndex};"
+    --baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large};"
     on:click={handleWindowClick}
     class:trigger-shuffle={!isInForeground && touched}
 >
@@ -164,6 +164,10 @@
 
 <style>
     section {
+        pointer-events: auto;
+        user-select: none;
+        position: relative;
+        top: 0px;
         width: calc(var(--windowWidth) * 1px);
         height: calc(var(--windowHeight) * 1px);
         border: 1px solid #fefefe;
@@ -172,7 +176,7 @@
         overflow: hidden;
         margin: 0px;
         padding: 0px;
-        transition: z-index 0.2s;
+        transition: transform 2s;
     }
 
     header {
@@ -246,7 +250,7 @@
         }
         50% {
             right: calc(
-                (var(--baseShuffleDistance) * max(3080px, 220vmax) / 200 * 1.25)
+                (var(--baseShuffleDistance) * max(3080px, 220vmax) / 200 * 2)
             );
         }
         100% {
@@ -256,8 +260,37 @@
 
     .trigger-shuffle {
         animation-name: shuffle;
-        animation-duration: 0.4s;
+        animation-duration: 0.8s;
         animation-timing-function: ease-in-out;
+    }
+
+    /* Different parallax speeds. translateZ has to be a positive value in order to prevent Safari rendering bug*/
+
+    .very-slow {
+        transform: translateZ(1.2px) scale(0.88);
+        transform-origin: center;
+    }
+
+    .slowish {
+        transform: translateZ(1px) scale(0.9);
+        transform-origin: center;
+    }
+
+    .slow {
+        transform: translateZ(0.8px) scale(0.92);
+        transform-origin: center;
+    }
+    .medium {
+        transform: translateZ(0.6px) scale(0.94);
+        transform-origin: center;
+    }
+    .fast {
+        transform: translateZ(0.4px) scale(0.96);
+        transform-origin: center;
+    }
+    .very-fast {
+        transform: translateZ(0.2px) scale(0.98);
+        transform-origin: center;
     }
 
     @media only screen and (min-width: 1440px) {
@@ -276,6 +309,12 @@
             100% {
                 right: 0;
             }
+        }
+    }
+    @media only screen and (min-width: 2000px) {
+        section {
+            transform: none;
+            transform-origin: none;
         }
     }
 </style>

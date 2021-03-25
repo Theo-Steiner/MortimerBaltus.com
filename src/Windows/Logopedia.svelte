@@ -2,10 +2,11 @@
     import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={472}
         height={344}
+        parallax="slowish"
         title="LOGOPEDIA.MP4"
         enlargeable={false}
         background="#C4BDBD"

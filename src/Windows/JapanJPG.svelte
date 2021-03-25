@@ -28,10 +28,11 @@
     const slug = jpGallery[randomIndex].src;
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={600}
         height={436}
+        parallax="very-fast"
         background={jpGallery[randomIndex].svg}
         title={jpGallery[randomIndex].name}
         id={8}
@@ -50,7 +51,7 @@
 
 <style>
     div {
-        grid-column: 12/61;
+        grid-column: 7/56;
         grid-row: 79/114;
         display: flex;
         justify-content: center;

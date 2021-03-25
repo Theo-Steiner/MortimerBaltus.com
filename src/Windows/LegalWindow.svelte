@@ -2,10 +2,11 @@
     import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
-<div>
+<div class="grid-area">
     <WindowElement
         width={268}
         height={158}
+        parallax="very-slow"
         background="#1C6370"
         title="LEGAL NOTICE"
         id={7}
@@ -36,7 +37,6 @@
         margin: 0px;
         padding: 14px 8px 14px 8px;
     }
-
     @media only screen and (min-width: 1440px) {
         div {
             grid-column: 15/33;
