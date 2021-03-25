@@ -19,18 +19,19 @@ function windowHandler() {
             windowStore.update(windowObjects => {
                 let window = windowObjects.find(wndw => wndw.id === windowID);
                 const windowIndex = windowObjects.indexOf(window);
-                window.zIndex = 10;
+                const toForegroundParallax = window.parallax;
+                let intersectingWindow = windowObjects.find(wndw => wndw.id === window.intersections[0]);
+                const intersectingWindowIndex = windowObjects.indexOf(intersectingWindow);
+                const toBackgroundParallax = intersectingWindow.parallax;
+                window.parallax = toBackgroundParallax;
                 window.isInForeground = true;
-                let updatedWindowObjects = windowObjects.filter(wndw => true)
+                intersectingWindow.parallax = toForegroundParallax;
+                intersectingWindow.isInForeground = false;
+                intersectingWindow.touched = true;
+                console.log(`swapped parallaxA:"${toBackgroundParallax}" with parallaxB: "${toForegroundParallax}"`)
+                let updatedWindowObjects = [...windowObjects]
                 updatedWindowObjects[windowIndex] = window;
-                window.intersections.forEach(intersectingID => {
-                    let intersectingWindow = windowObjects.find(wndw => wndw.id === intersectingID);
-                    const intersectingWindowIndex = windowObjects.indexOf(intersectingWindow);
-                    intersectingWindow.zIndex = 5;
-                    intersectingWindow.isInForeground = false;
-                    intersectingWindow.touched = true;
-                    updatedWindowObjects[intersectingWindowIndex] = intersectingWindow;
-                });
+                updatedWindowObjects[intersectingWindowIndex] = intersectingWindow;
                 return updatedWindowObjects;
             })
 

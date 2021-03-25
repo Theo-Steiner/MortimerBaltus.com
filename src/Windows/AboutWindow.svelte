@@ -6,7 +6,7 @@
     <WindowElement
         width={378}
         height={392}
-        parallax="very-fast"
+        parallax="very-slow"
         background="#A25C24"
         title="ABOUT"
         id={0}

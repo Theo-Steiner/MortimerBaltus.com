@@ -15,11 +15,10 @@
     export let distanceFromIntersection = 20;
 
     let touched = false;
-    let zIndex = 5;
     let thisWindowObject;
     windowHandler.registerWindow({
         id: id,
-        zIndex: zIndex,
+        parallax: parallax,
         isInForeground: isInForeground,
         intersections: intersections,
         touched: touched,
@@ -28,7 +27,7 @@
     const unsubscribe = windowHandler.subscribe((windows) => {
         thisWindowObject = windows.find((wdws) => wdws.id === id);
         isInForeground = thisWindowObject.isInForeground;
-        zIndex = thisWindowObject.zIndex;
+        parallax = thisWindowObject.parallax;
         touched = thisWindowObject.touched;
     });
 
@@ -52,8 +51,7 @@
     }}
     class={parallax}
     style="--windowWidth: {width}; --windowHeight: {height};
-    --baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large};
-    z-index: {zIndex};"
+    --baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large};"
     on:click={handleWindowClick}
     class:trigger-shuffle={!isInForeground && touched}
 >
@@ -178,7 +176,7 @@
         overflow: hidden;
         margin: 0px;
         padding: 0px;
-        transition: z-index 0.2s;
+        transition: transform 2s;
     }
 
     header {
@@ -262,7 +260,7 @@
 
     .trigger-shuffle {
         animation-name: shuffle;
-        animation-duration: 0.4s;
+        animation-duration: 0.8s;
         animation-timing-function: ease-in-out;
     }
 
@@ -270,29 +268,29 @@
 
     .very-slow {
         transform: translateZ(1.2px) scale(0.88);
-        transform-origin: bottom right;
+        transform-origin: center;
     }
 
     .slowish {
         transform: translateZ(1px) scale(0.9);
-        transform-origin: bottom right;
+        transform-origin: center;
     }
 
     .slow {
         transform: translateZ(0.8px) scale(0.92);
-        transform-origin: bottom right;
+        transform-origin: center;
     }
     .medium {
         transform: translateZ(0.6px) scale(0.94);
-        transform-origin: bottom right;
+        transform-origin: center;
     }
     .fast {
         transform: translateZ(0.4px) scale(0.96);
-        transform-origin: bottom right;
+        transform-origin: center;
     }
     .very-fast {
         transform: translateZ(0.2px) scale(0.98);
-        transform-origin: bottom right;
+        transform-origin: center;
     }
 
     @media only screen and (min-width: 1440px) {
