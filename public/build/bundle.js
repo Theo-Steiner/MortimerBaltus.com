@@ -630,7 +630,7 @@ var app = (function () {
     const { window: window_1 } = globals;
     const file = "src/UX/ScrollHandler.svelte";
 
-    // (66:0) {#if !hasTouchScreen}
+    // (102:0) {#if !hasTouchScreen}
     function create_if_block(ctx) {
     	let div;
     	let mounted;
@@ -641,16 +641,16 @@ var app = (function () {
     			div = element("div");
     			attr_dev(div, "class", "grabbable svelte-1kqde6u");
     			toggle_class(div, "mousedown", /*isMousedown*/ ctx[0]);
-    			add_location(div, file, 66, 4, 2426);
+    			add_location(div, file, 102, 4, 3530);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
-    			/*div_binding*/ ctx[5](div);
+    			/*div_binding*/ ctx[6](div);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(div, "mousedown", /*handleMousedown*/ ctx[3], false, false, false),
-    					listen_dev(div, "mouseup", /*handleMouseup*/ ctx[4], false, false, false)
+    					listen_dev(div, "mousedown", /*handleMousedown*/ ctx[4], false, false, false),
+    					listen_dev(div, "mouseup", /*handleMouseup*/ ctx[5], false, false, false)
     				];
 
     				mounted = true;
@@ -663,7 +663,7 @@ var app = (function () {
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
-    			/*div_binding*/ ctx[5](null);
+    			/*div_binding*/ ctx[6](null);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -673,7 +673,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(66:0) {#if !hasTouchScreen}",
+    		source: "(102:0) {#if !hasTouchScreen}",
     		ctx
     	});
 
@@ -699,7 +699,7 @@ var app = (function () {
     			insert_dev(target, if_block_anchor, anchor);
 
     			if (!mounted) {
-    				dispose = listen_dev(window_1, "wheel", stop_propagation(prevent_default(wheelHandler)), { passive: false }, true, true);
+    				dispose = listen_dev(window_1, "wheel", stop_propagation(prevent_default(/*wheelHandler*/ ctx[3])), { passive: false }, true, true);
     				mounted = true;
     			}
     		},
@@ -738,13 +738,6 @@ var app = (function () {
     	return block;
     }
 
-    function wheelHandler(event) {
-    	let reducedDeltaY = Math.round(event.deltaY / 2);
-    	let reducedDeltaX = Math.round(event.deltaX / 2);
-    	main.scrollTop = main.scrollTop + reducedDeltaY;
-    	main.scrollLeft = main.scrollLeft + reducedDeltaX;
-    }
-
     function instance($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ScrollHandler", slots, []);
@@ -752,10 +745,52 @@ var app = (function () {
     	let initialM = { x: 0, y: 0 };
     	let currentM = { x: 0, y: 0 };
     	let background;
+    	let scrollVelocityX;
+    	let scrollVelocityY;
+    	let momentumID;
+    	let scrollInertia = 1;
+
+    	function beginMomentumTracking() {
+    		cancelMomentumTracking();
+    		momentumID = requestAnimationFrame(momentumLoop);
+    	}
+
+    	function cancelMomentumTracking() {
+    		cancelAnimationFrame(momentumID);
+    		scrollInertia = 1;
+    	}
+
+    	function momentumLoop() {
+    		scrollVelocityX *= scrollInertia; // Slow the velocity slightly
+    		scrollVelocityY *= scrollInertia; // Slow the velocity slightly
+    		scroll(scrollVelocityX, scrollVelocityY);
+    		scrollInertia = scrollInertia - 0.01;
+
+    		if (Math.abs(scrollVelocityX) > 0.5 || Math.abs(scrollVelocityY) > 0.5) {
+    			momentumID = requestAnimationFrame(momentumLoop); // Keep looping
+    		}
+    	}
+
+    	function scroll(x, y) {
+    		scrollVelocityX = Math.min(70, x);
+    		scrollVelocityY = Math.min(70, y);
+    		main.scrollLeft = main.scrollLeft + scrollVelocityX;
+    		main.scrollTop = main.scrollTop + scrollVelocityY;
+    	}
+
+    	// Slow down scroll speed with mousewheel
+    	function wheelHandler(event) {
+    		cancelMomentumTracking();
+    		let reducedDeltaY = Math.round(event.deltaY / 2);
+    		let reducedDeltaX = Math.round(event.deltaX / 2);
+    		main.scrollLeft = main.scrollLeft + reducedDeltaX;
+    		main.scrollTop = main.scrollTop + reducedDeltaY;
+    	}
 
     	// The following functions take care of the grab handling
     	function handleMousedown(event) {
     		$$invalidate(0, isMousedown = true);
+    		cancelMomentumTracking();
     		initialM.x = event.clientX;
     		initialM.y = event.clientY;
     		background.addEventListener("mousemove", handleMousemove);
@@ -766,6 +801,7 @@ var app = (function () {
 
     	function handleMouseup() {
     		$$invalidate(0, isMousedown = false);
+    		beginMomentumTracking();
     		background.removeEventListener("mousemove", handleMousemove);
     		background.removeEventListener("mouseout", handleMouseup);
     	}
@@ -775,8 +811,7 @@ var app = (function () {
     		currentM.y = event.clientY;
     		const deltaX = initialM.x - currentM.x;
     		const deltaY = initialM.y - currentM.y;
-    		main.scrollTop = main.scrollTop + deltaY;
-    		main.scrollLeft = main.scrollLeft + deltaX;
+    		scroll(deltaX, deltaY);
     		initialM.x = event.clientX;
     		initialM.y = event.clientY;
     	}
@@ -820,6 +855,14 @@ var app = (function () {
     		initialM,
     		currentM,
     		background,
+    		scrollVelocityX,
+    		scrollVelocityY,
+    		momentumID,
+    		scrollInertia,
+    		beginMomentumTracking,
+    		cancelMomentumTracking,
+    		momentumLoop,
+    		scroll,
     		wheelHandler,
     		handleMousedown,
     		handleMouseup,
@@ -834,6 +877,10 @@ var app = (function () {
     		if ("initialM" in $$props) initialM = $$props.initialM;
     		if ("currentM" in $$props) currentM = $$props.currentM;
     		if ("background" in $$props) $$invalidate(1, background = $$props.background);
+    		if ("scrollVelocityX" in $$props) scrollVelocityX = $$props.scrollVelocityX;
+    		if ("scrollVelocityY" in $$props) scrollVelocityY = $$props.scrollVelocityY;
+    		if ("momentumID" in $$props) momentumID = $$props.momentumID;
+    		if ("scrollInertia" in $$props) scrollInertia = $$props.scrollInertia;
     		if ("hasTouchScreen" in $$props) $$invalidate(2, hasTouchScreen = $$props.hasTouchScreen);
     		if ("mQ" in $$props) mQ = $$props.mQ;
     		if ("UA" in $$props) UA = $$props.UA;
@@ -847,6 +894,7 @@ var app = (function () {
     		isMousedown,
     		background,
     		hasTouchScreen,
+    		wheelHandler,
     		handleMousedown,
     		handleMouseup,
     		div_binding
@@ -2167,6 +2215,7 @@ var app = (function () {
     			attr_dev(img, "srcset", /*srcset*/ ctx[0]);
     			attr_dev(img, "alt", /*alt*/ ctx[2]);
     			if (img.src !== (img_src_value = /*src*/ ctx[1])) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "draggable", "false");
     			attr_dev(img, "class", "svelte-wrocp2");
     			toggle_class(img, "loaded", /*loaded*/ ctx[4]);
     			add_location(img, file$4, 18, 0, 290);
@@ -3246,8 +3295,8 @@ var app = (function () {
     	}
     }
 
-    /* src/windows/LegalWindow.svelte generated by Svelte v3.32.1 */
-    const file$9 = "src/windows/LegalWindow.svelte";
+    /* src/Windows/LegalWindow.svelte generated by Svelte v3.32.1 */
+    const file$9 = "src/Windows/LegalWindow.svelte";
 
     // (6:4) <WindowElement         width={268}         height={158}         parallax="very-slow"         background="#1C6370"         title="LEGAL NOTICE"         id={7}         isInForeground={true}     >
     function create_default_slot$6(ctx) {

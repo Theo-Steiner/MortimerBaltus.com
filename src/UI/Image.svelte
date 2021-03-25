@@ -16,7 +16,15 @@
     });
 </script>
 
-<img {sizes} {srcset} {alt} {src} class:loaded bind:this={thisImage} />
+<img
+    {sizes}
+    {srcset}
+    {alt}
+    {src}
+    class:loaded
+    bind:this={thisImage}
+    draggable="false"
+/>
 
 <style>
     img {

@@ -3,18 +3,54 @@
     let initialM = { x: 0, y: 0 };
     let currentM = { x: 0, y: 0 };
     let background;
+    let scrollVelocityX;
+    let scrollVelocityY;
+    let momentumID;
+    let scrollInertia = 1;
+
+    function beginMomentumTracking() {
+        cancelMomentumTracking();
+        momentumID = requestAnimationFrame(momentumLoop);
+    }
+
+    function cancelMomentumTracking() {
+        cancelAnimationFrame(momentumID);
+        scrollInertia = 1;
+    }
+
+    function momentumLoop() {
+        scrollVelocityX *= scrollInertia; // Slow the velocity slightly
+        scrollVelocityY *= scrollInertia; // Slow the velocity slightly
+        scroll(scrollVelocityX, scrollVelocityY);
+        scrollInertia = scrollInertia - 0.01;
+        if (
+            Math.abs(scrollVelocityX) > 0.5 ||
+            Math.abs(scrollVelocityY) > 0.5
+        ) {
+            momentumID = requestAnimationFrame(momentumLoop); // Keep looping
+        }
+    }
+
+    function scroll(x, y) {
+        scrollVelocityX = Math.min(70, x);
+        scrollVelocityY = Math.min(70, y);
+        main.scrollLeft = main.scrollLeft + scrollVelocityX;
+        main.scrollTop = main.scrollTop + scrollVelocityY;
+    }
 
     // Slow down scroll speed with mousewheel
     function wheelHandler(event) {
+        cancelMomentumTracking();
         let reducedDeltaY = Math.round(event.deltaY / 2);
         let reducedDeltaX = Math.round(event.deltaX / 2);
-        main.scrollTop = main.scrollTop + reducedDeltaY;
         main.scrollLeft = main.scrollLeft + reducedDeltaX;
+        main.scrollTop = main.scrollTop + reducedDeltaY;
     }
 
     // The following functions take care of the grab handling
     function handleMousedown(event) {
         isMousedown = true;
+        cancelMomentumTracking();
         initialM.x = event.clientX;
         initialM.y = event.clientY;
         background.addEventListener("mousemove", handleMousemove);
@@ -24,6 +60,7 @@
     }
     function handleMouseup() {
         isMousedown = false;
+        beginMomentumTracking();
         background.removeEventListener("mousemove", handleMousemove);
         background.removeEventListener("mouseout", handleMouseup);
     }
@@ -32,8 +69,7 @@
         currentM.y = event.clientY;
         const deltaX = initialM.x - currentM.x;
         const deltaY = initialM.y - currentM.y;
-        main.scrollTop = main.scrollTop + deltaY;
-        main.scrollLeft = main.scrollLeft + deltaX;
+        scroll(deltaX, deltaY);
         initialM.x = event.clientX;
         initialM.y = event.clientY;
     }
