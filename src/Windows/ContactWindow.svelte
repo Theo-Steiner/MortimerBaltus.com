@@ -1,8 +1,40 @@
 <script>
     import WindowElement from "../UI/WindowElement.svelte";
-    import { slide } from "svelte/transition";
+    import { fade } from "svelte/transition";
+    import { cubicOut } from "svelte/easing";
 
     let view = "overview";
+
+    function horizontalSlide(
+        node,
+        { delay = 0, duration = 400, easing = cubicOut, inverse = 1 }
+    ) {
+        const style = getComputedStyle(node);
+        const opacity = +style.opacity;
+        const width = parseFloat(style.width);
+        const paddingLeft = parseFloat(style.paddingLeft);
+        const paddingRight = parseFloat(style.paddingRight);
+        const marginLeft = parseFloat(style.marginLeft);
+        const marginRight = parseFloat(style.marginRight);
+        const borderLeftWidth = parseFloat(style.borderLeftWidth);
+        const borderRightWidth = parseFloat(style.borderRightWidth);
+
+        return {
+            delay,
+            duration,
+            easing,
+            css: (t) =>
+                `overflow: hidden;` +
+                `opacity: ${Math.min(t * 20, 1) * opacity};` +
+                `width: ${t * width}px;` +
+                `padding-left: ${t * paddingLeft}px;` +
+                `padding-right: ${t * paddingRight}px;` +
+                `margin-left: ${t * marginLeft}px;` +
+                `margin-right: ${t * marginRight}px;` +
+                `border-left-width: ${t * borderLeftWidth}px;` +
+                `border-right-width: ${t * borderRightWidth}px;`,
+        };
+    }
 
     const moritzmoji =
         "data:image/jpeg;base64,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";
@@ -22,7 +54,10 @@
     >
         <div class="container">
             {#if view === "overview"}
-                <div class="contact-container" out:slide={{ duration: 300 }}>
+                <div
+                    class="contact-container"
+                    out:horizontalSlide={{ duration: 300 }}
+                >
                     <h1>
                         GET IN <br />TOUCH
                     </h1>
@@ -56,7 +91,10 @@
                     </div>
                 </div>
             {:else}
-                <div class="message-container" out:slide={{ duration: 300 }}>
+                <div
+                    class="message-container"
+                    out:horizontalSlide={{ duration: 300 }}
+                >
                     <div class="message">
                         <img
                             src={view === "moritz" ? moritzmoji : theomoji}
@@ -69,9 +107,37 @@
                                 view = "overview";
                             }}
                         />
-                        <p class="message-bubble">Hi, nice to meet you!</p>
+                        <p style="height: 38px;" class="message-bubble">
+                            Hi, nice to meet you!
+                        </p>
                     </div>
-                    <button>Send Email</button>
+                    <div class="button-container">
+                        <button
+                            class="cancel-button"
+                            on:click={() => {
+                                view = "overview";
+                            }}
+                        >
+                            <svg
+                                version="1.1"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <title>Group 2</title>
+                                <g fill="none" fill-rule="evenodd">
+                                    <g transform="translate(1 1)" stroke="#fff">
+                                        <line x2="22" y2="22" />
+                                        <line
+                                            transform="translate(11 11) scale(-1 1) translate(-11 -11)"
+                                            x2="22"
+                                            y2="22"
+                                        />
+                                    </g>
+                                </g>
+                            </svg></button
+                        >
+                        <button class="action-button">Compose Email</button>
+                    </div>
                 </div>
             {/if}
         </div>
@@ -89,18 +155,53 @@
 
     .container {
         height: 279px;
-        width: 376px;
+        width: 752px;
+        display: flex;
+        overflow: hidden;
     }
 
-    button {
+    .button-container {
         width: 100%;
+        height: 54px;
+        display: flex;
+    }
+
+    .action-button {
+        height: 54px;
+        width: 322px;
         border: none;
         border-top: 1px solid #ffffff;
         background-color: #c7c7c7;
-        height: 54px;
         font-size: 20px;
         color: #151515;
     }
+
+    .cancel-button {
+        height: 54px;
+        width: 54px;
+        border: none;
+        border-top: 1px solid #ffffff;
+        border-right: 1px solid #ffffff;
+        background-color: #c7c7c7;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    line {
+        transition: stroke;
+    }
+
+    .cancel-button svg {
+        height: 22px;
+        width: 22px;
+    }
+
+    .cancel-button:hover svg line {
+        stroke: #151515;
+    }
+
     button:hover {
         background-color: #fefefe;
     }
@@ -114,6 +215,7 @@
         border-radius: 20px;
         margin-left: 10px;
         margin-top: 10px;
+        overflow: hidden;
     }
 
     .message-container {
@@ -134,6 +236,8 @@
     }
 
     .contact-container {
+        height: 279px;
+        width: 376px;
         padding: 2px;
     }
 
