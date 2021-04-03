@@ -73,6 +73,9 @@ var app = (function () {
     function null_to_empty(value) {
         return value == null ? '' : value;
     }
+    function action_destroyer(action_result) {
+        return action_result && is_function(action_result.destroy) ? action_result.destroy : noop;
+    }
 
     const is_client = typeof window !== 'undefined';
     let now = is_client
@@ -159,6 +162,9 @@ var app = (function () {
     }
     function children(element) {
         return Array.from(element.childNodes);
+    }
+    function set_input_value(input, value) {
+        input.value = value == null ? '' : value;
     }
     function set_style(node, key, value, important) {
         node.style.setProperty(key, value, important ? 'important' : '');
@@ -426,6 +432,111 @@ var app = (function () {
             }
         };
     }
+    function create_bidirectional_transition(node, fn, params, intro) {
+        let config = fn(node, params);
+        let t = intro ? 0 : 1;
+        let running_program = null;
+        let pending_program = null;
+        let animation_name = null;
+        function clear_animation() {
+            if (animation_name)
+                delete_rule(node, animation_name);
+        }
+        function init(program, duration) {
+            const d = program.b - t;
+            duration *= Math.abs(d);
+            return {
+                a: t,
+                b: program.b,
+                d,
+                duration,
+                start: program.start,
+                end: program.start + duration,
+                group: program.group
+            };
+        }
+        function go(b) {
+            const { delay = 0, duration = 300, easing = identity, tick = noop, css } = config || null_transition;
+            const program = {
+                start: now() + delay,
+                b
+            };
+            if (!b) {
+                // @ts-ignore todo: improve typings
+                program.group = outros;
+                outros.r += 1;
+            }
+            if (running_program || pending_program) {
+                pending_program = program;
+            }
+            else {
+                // if this is an intro, and there's a delay, we need to do
+                // an initial tick and/or apply CSS animation immediately
+                if (css) {
+                    clear_animation();
+                    animation_name = create_rule(node, t, b, duration, delay, easing, css);
+                }
+                if (b)
+                    tick(0, 1);
+                running_program = init(program, duration);
+                add_render_callback(() => dispatch(node, b, 'start'));
+                loop(now => {
+                    if (pending_program && now > pending_program.start) {
+                        running_program = init(pending_program, duration);
+                        pending_program = null;
+                        dispatch(node, running_program.b, 'start');
+                        if (css) {
+                            clear_animation();
+                            animation_name = create_rule(node, t, running_program.b, running_program.duration, 0, easing, config.css);
+                        }
+                    }
+                    if (running_program) {
+                        if (now >= running_program.end) {
+                            tick(t = running_program.b, 1 - t);
+                            dispatch(node, running_program.b, 'end');
+                            if (!pending_program) {
+                                // we're done
+                                if (running_program.b) {
+                                    // intro — we can tidy up immediately
+                                    clear_animation();
+                                }
+                                else {
+                                    // outro — needs to be coordinated
+                                    if (!--running_program.group.r)
+                                        run_all(running_program.group.c);
+                                }
+                            }
+                            running_program = null;
+                        }
+                        else if (now >= running_program.start) {
+                            const p = now - running_program.start;
+                            t = running_program.a + running_program.d * easing(p / running_program.duration);
+                            tick(t, 1 - t);
+                        }
+                    }
+                    return !!(running_program || pending_program);
+                });
+            }
+        }
+        return {
+            run(b) {
+                if (is_function(config)) {
+                    wait().then(() => {
+                        // @ts-ignore
+                        config = config();
+                        go(b);
+                    });
+                }
+                else {
+                    go(b);
+                }
+            },
+            end() {
+                clear_animation();
+                running_program = pending_program = null;
+            }
+        };
+    }
 
     const globals = (typeof window !== 'undefined'
         ? window
@@ -590,6 +701,10 @@ var app = (function () {
             dispatch_dev('SvelteDOMRemoveAttribute', { node, attribute });
         else
             dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
+    }
+    function prop_dev(node, property, value) {
+        node[property] = value;
+        dispatch_dev('SvelteDOMSetProperty', { node, property, value });
     }
     function set_data_dev(text, data) {
         data = '' + data;
@@ -3460,7 +3575,7 @@ var app = (function () {
     			t2 = text(" Surely this is just your cup of tea...");
     			add_location(br0, file$a, 15, 74, 390);
     			add_location(br1, file$a, 16, 12, 409);
-    			attr_dev(p, "class", "svelte-ah36av");
+    			attr_dev(p, "class", "svelte-da8dt3");
     			add_location(p, file$a, 14, 8, 312);
     		},
     		m: function mount(target, anchor) {
@@ -3511,7 +3626,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "grid-area svelte-ah36av");
+    			attr_dev(div, "class", "grid-area svelte-da8dt3");
     			add_location(div, file$a, 4, 0, 80);
     		},
     		l: function claim(nodes) {
@@ -4600,9 +4715,1485 @@ var app = (function () {
     	}
     }
 
-    /* src/App.svelte generated by Svelte v3.32.1 */
+    /* src/Windows/LanguageWindow.svelte generated by Svelte v3.32.1 */
+    const file$g = "src/Windows/LanguageWindow.svelte";
+
+    // (6:4) <WindowElement         width={266}         height={273}         parallax="very-slow"         background="#C96161"         title="LANGUAGE"         id={13}         enlargeable={false}     >
+    function create_default_slot$d(ctx) {
+    	let div;
+    	let svg;
+    	let path;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			svg = svg_element("svg");
+    			path = svg_element("path");
+    			attr_dev(path, "d", "m1864.20596 575c19.21588-2.172414 31.66253-5.431034 44.5459-11.948276 23.80149-11.948276 36.24814-29.97931 36.24814-52.789655 0-17.37931-7.20596-30.848276-21.83623-41.058621-7.64268-5.431034-13.97518-8.255172-23.1464-10.210345.87345-2.606896 1.31017-3.25862 2.83871-7.820689 1.70463-4.316797 2.19953-5.57006 2.6554-6.632735l.12424-.287254c.14587-.334653.29856-.676452.49579-1.117942l-20.74441-5.865517c-.65509 5.213793-2.18363 10.862068-4.80397 17.596551-4.73119-.181034-7.3394-.211207-10.35199-.216235l-1.2326-.000969c-.21102-.000037-.42534-.000037-.6437-.000037-10.26303 0-17.46898.868965-28.82382 3.258621.07139-2.698807.11943-4.515311.18992-6.299667l.02589-.629822c.14831-3.471907.40148-7.199557 1.09436-17.401546 19.43424-.434483 50.87841-3.693103 77.08189-7.82069 4.14888-.651724 5.24069-.868965 8.29776-1.086206l-1.09181-21.072414c-17.03226 5.648276-48.0397 9.993103-82.97767 11.948276.23292-2.819311.45894-5.350253.68297-7.63799l.16772-1.670908c.97709-9.489187 1.9395-14.539378 3.2982-18.932482l-22.92804-1.303448c.21836 1.52069.21836 2.606897.21836 3.475862 0 2.389655-.21836 9.775862-.43672 12.382759-.43673 6.372413-.5823 8.496551-.76023 10.620689l-.04534.533493c-.07732.89735-.16493 1.856163-.28625 3.183749h-4.80397c-18.77915 0-31.44416-1.086207-41.0521-3.258621v20.42069c1.96526-.217242 3.49379-.217242 4.36724-.217242 1.23935 0 7.79022.285635 14.6476.509512l1.37408.043848c1.146.035683 2.29124.069008 3.41256.098364 5.39484.383368 9.08962.42847 12.7344.433776l8.44675.000707c-.87345 15.858621-.87345 15.858621-1.09182 28.893104-12.88337 5.431034-20.96277 10.862069-29.69727 19.334482-13.75682 13.468966-21.3995 30.196552-21.3995 47.575862 0 20.855173 13.10174 35.844828 31.22581 35.844828 15.94044 0 32.31761-8.255172 49.7866-24.982759 18.12407-17.37931 30.78908-36.062069 43.67245-65.172413 18.99752 5.865517 29.47891 17.596551 29.47891 33.237931 0 18.031034-13.10174 32.368965-36.68486 40.406896-10.26303 3.258621-18.77916 4.562069-32.09926 4.996552 5.89578 8.906897 7.42432 12.382759 9.82631 20.637931zm-22.18236-51.645349c-.21863-.875345-.21863-.875345-.21863-1.969526-.21863-1.094181-.21863-1.094181-.43727-2.844871-1.3118-10.941811-1.53043-19.257587-1.9677-42.016555 8.96398-3.282543 18.14658-4.814397 29.51553-4.814397 2.18633 0 3.06087 0 5.68447.437673-7.87081 17.94457-16.17888 31.512416-29.07826 46.830952-.57391.738572-.93261 1.20018-1.26056 1.615626l-.32453.408609c-.43727.54709-.9292 1.14889-1.91305 2.352489zm-39.66832 21.976744c-8.08944 0-13.55528-6.98355-13.55528-17.458877 0-9.820618 3.9354-19.859472 11.36894-29.025382 5.02858-6.328843 10.27578-10.475327 19.67702-16.149462.21864 24.224192 1.3118 38.191294 4.15404 53.467811-7.87081 6.328843-14.64845 9.16591-21.64472 9.16591z");
+    			attr_dev(path, "fill", "#aa4545");
+    			attr_dev(path, "transform", "translate(-1769 -386)");
+    			add_location(path, file$g, 20, 17, 517);
+    			attr_dev(svg, "height", "189");
+    			attr_dev(svg, "viewBox", "0 0 176 189");
+    			attr_dev(svg, "width", "176");
+    			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
+    			attr_dev(svg, "class", "svelte-1e5y20h");
+    			add_location(svg, file$g, 15, 12, 349);
+    			attr_dev(div, "class", "container svelte-1e5y20h");
+    			add_location(div, file$g, 14, 8, 313);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, svg);
+    			append_dev(svg, path);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot$d.name,
+    		type: "slot",
+    		source: "(6:4) <WindowElement         width={266}         height={273}         parallax=\\\"very-slow\\\"         background=\\\"#C96161\\\"         title=\\\"LANGUAGE\\\"         id={13}         enlargeable={false}     >",
+    		ctx
+    	});
+
+    	return block;
+    }
 
     function create_fragment$h(ctx) {
+    	let div;
+    	let windowelement;
+    	let current;
+
+    	windowelement = new WindowElement({
+    			props: {
+    				width: 266,
+    				height: 273,
+    				parallax: "very-slow",
+    				background: "#C96161",
+    				title: "LANGUAGE",
+    				id: 13,
+    				enlargeable: false,
+    				$$slots: { default: [create_default_slot$d] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "wrapper grid-area svelte-1e5y20h");
+    			add_location(div, file$g, 4, 0, 80);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			const windowelement_changes = {};
+
+    			if (dirty & /*$$scope*/ 1) {
+    				windowelement_changes.$$scope = { dirty, ctx };
+    			}
+
+    			windowelement.$set(windowelement_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(windowelement.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(windowelement.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$h.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$h($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots("LanguageWindow", slots, []);
+    	const writable_props = [];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<LanguageWindow> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$capture_state = () => ({ WindowElement });
+    	return [];
+    }
+
+    class LanguageWindow extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$h, create_fragment$h, safe_not_equal, {});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "LanguageWindow",
+    			options,
+    			id: create_fragment$h.name
+    		});
+    	}
+    }
+
+    /* src/Windows/ContactWindow.svelte generated by Svelte v3.32.1 */
+
+    const { Error: Error_1, console: console_1 } = globals;
+    const file$h = "src/Windows/ContactWindow.svelte";
+
+    // (386:12) {:else}
+    function create_else_block$1(ctx) {
+    	let div2;
+    	let div1;
+    	let div0;
+    	let img;
+    	let img_src_value;
+    	let img_alt_value;
+    	let t0;
+    	let p;
+
+    	let t1_value = (/*success*/ ctx[7]
+    	? "Thank's! I'll get back to you as soon as possible."
+    	: "Oops, something went terribly wrong... Please try again or use your own e-mail client") + "";
+
+    	let t1;
+    	let div2_transition;
+    	let current;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			div2 = element("div");
+    			div1 = element("div");
+    			div0 = element("div");
+    			img = element("img");
+    			t0 = space();
+    			p = element("p");
+    			t1 = text(t1_value);
+
+    			if (img.src !== (img_src_value = /*view*/ ctx[4] === "moritz@mortimerbaltus.com"
+    			? moritzmoji
+    			: theomoji)) attr_dev(img, "src", img_src_value);
+
+    			attr_dev(img, "alt", img_alt_value = /*view*/ ctx[4] === "moritz@mortimerbaltus.com"
+    			? "Moritz Mortimer Müller as a Memoji"
+    			: "Theodor Baltus Steiner as a Memoji");
+
+    			attr_dev(img, "class", "message-img svelte-1b592rz");
+    			attr_dev(img, "draggable", "false");
+    			add_location(img, file$h, 393, 28, 35943);
+    			attr_dev(p, "class", "message-bubble svelte-1b592rz");
+    			add_location(p, file$h, 406, 28, 36645);
+    			attr_dev(div0, "class", "message svelte-1b592rz");
+    			add_location(div0, file$h, 392, 24, 35893);
+    			attr_dev(div1, "class", "fixed svelte-1b592rz");
+    			add_location(div1, file$h, 391, 20, 35849);
+    			attr_dev(div2, "class", "message-container svelte-1b592rz");
+    			add_location(div2, file$h, 386, 16, 35659);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div2, anchor);
+    			append_dev(div2, div1);
+    			append_dev(div1, div0);
+    			append_dev(div0, img);
+    			append_dev(div0, t0);
+    			append_dev(div0, p);
+    			append_dev(p, t1);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(img, "click", /*click_handler_8*/ ctx[29], false, false, false),
+    					action_destroyer(/*resetView*/ ctx[12].call(null, div2))
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty[0] & /*view*/ 16 && img.src !== (img_src_value = /*view*/ ctx[4] === "moritz@mortimerbaltus.com"
+    			? moritzmoji
+    			: theomoji)) {
+    				attr_dev(img, "src", img_src_value);
+    			}
+
+    			if (!current || dirty[0] & /*view*/ 16 && img_alt_value !== (img_alt_value = /*view*/ ctx[4] === "moritz@mortimerbaltus.com"
+    			? "Moritz Mortimer Müller as a Memoji"
+    			: "Theodor Baltus Steiner as a Memoji")) {
+    				attr_dev(img, "alt", img_alt_value);
+    			}
+
+    			if ((!current || dirty[0] & /*success*/ 128) && t1_value !== (t1_value = (/*success*/ ctx[7]
+    			? "Thank's! I'll get back to you as soon as possible."
+    			: "Oops, something went terribly wrong... Please try again or use your own e-mail client") + "")) set_data_dev(t1, t1_value);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!div2_transition) div2_transition = create_bidirectional_transition(div2, /*horizontalSlide*/ ctx[11], { duration: 300 }, true);
+    				div2_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!div2_transition) div2_transition = create_bidirectional_transition(div2, /*horizontalSlide*/ ctx[11], { duration: 300 }, false);
+    			div2_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div2);
+    			if (detaching && div2_transition) div2_transition.end();
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block$1.name,
+    		type: "else",
+    		source: "(386:12) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (299:47) 
+    function create_if_block_4(ctx) {
+    	let div1;
+    	let form;
+    	let input;
+    	let input_placeholder_value;
+    	let t0;
+    	let textarea;
+    	let t1;
+    	let div0;
+    	let button0;
+    	let svg;
+    	let title;
+    	let t2;
+    	let g1;
+    	let g0;
+    	let line0;
+    	let line1;
+    	let t3;
+    	let button1;
+    	let t4_value = (/*isLoading*/ ctx[8] ? "Sending..." : "Send Email") + "";
+    	let t4;
+    	let div1_transition;
+    	let current;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			div1 = element("div");
+    			form = element("form");
+    			input = element("input");
+    			t0 = space();
+    			textarea = element("textarea");
+    			t1 = space();
+    			div0 = element("div");
+    			button0 = element("button");
+    			svg = svg_element("svg");
+    			title = svg_element("title");
+    			t2 = text("Group 2");
+    			g1 = svg_element("g");
+    			g0 = svg_element("g");
+    			line0 = svg_element("line");
+    			line1 = svg_element("line");
+    			t3 = space();
+    			button1 = element("button");
+    			t4 = text(t4_value);
+    			attr_dev(input, "type", "text");
+    			attr_dev(input, "name", "email");
+    			attr_dev(input, "class", "user-email svelte-1b592rz");
+
+    			attr_dev(input, "placeholder", input_placeholder_value = /*emailTouched*/ ctx[6] && !/*isEmailValid*/ ctx[2]
+    			? "Please enter a valid Email address"
+    			: "Your Email");
+
+    			toggle_class(input, "invalid-email", /*emailTouched*/ ctx[6] && !/*isEmailValid*/ ctx[2]);
+    			add_location(input, file$h, 308, 24, 31825);
+    			attr_dev(textarea, "cols", "30");
+    			attr_dev(textarea, "rows", "10");
+    			attr_dev(textarea, "class", "user-body svelte-1b592rz");
+    			attr_dev(textarea, "name", "message");
+    			attr_dev(textarea, "placeholder", "Your Message");
+    			add_location(textarea, file$h, 320, 24, 32466);
+    			add_location(title, file$h, 356, 36, 34209);
+    			attr_dev(line0, "x2", "22");
+    			attr_dev(line0, "y2", "22");
+    			attr_dev(line0, "class", "svelte-1b592rz");
+    			add_location(line0, file$h, 362, 44, 34562);
+    			attr_dev(line1, "transform", "translate(11 11) scale(-1 1) translate(-11 -11)");
+    			attr_dev(line1, "x2", "22");
+    			attr_dev(line1, "y2", "22");
+    			attr_dev(line1, "class", "svelte-1b592rz");
+    			add_location(line1, file$h, 363, 44, 34631);
+    			attr_dev(g0, "transform", "translate(1 1)");
+    			attr_dev(g0, "stroke", "#fff");
+    			add_location(g0, file$h, 358, 40, 34344);
+    			attr_dev(g1, "fill", "none");
+    			attr_dev(g1, "fill-rule", "evenodd");
+    			add_location(g1, file$h, 357, 36, 34268);
+    			attr_dev(svg, "version", "1.1");
+    			attr_dev(svg, "viewBox", "0 0 24 24");
+    			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
+    			attr_dev(svg, "class", "svelte-1b592rz");
+    			add_location(svg, file$h, 351, 32, 33957);
+    			attr_dev(button0, "ontouchstart", "");
+    			attr_dev(button0, "class", "cancel-button svelte-1b592rz");
+    			add_location(button0, file$h, 329, 28, 32856);
+    			attr_dev(button1, "class", "action-button svelte-1b592rz");
+    			attr_dev(button1, "type", "submit");
+    			attr_dev(button1, "ontouchstart", "");
+    			button1.disabled = /*disabled*/ ctx[9];
+    			toggle_class(button1, "disabled", !/*isFormValid*/ ctx[3]);
+    			add_location(button1, file$h, 372, 28, 35095);
+    			attr_dev(div0, "class", "button-container svelte-1b592rz");
+    			add_location(div0, file$h, 328, 24, 32797);
+    			attr_dev(form, "method", "POST");
+    			attr_dev(form, "class", "fixed svelte-1b592rz");
+    			add_location(form, file$h, 303, 20, 31635);
+    			attr_dev(div1, "class", "email-container svelte-1b592rz");
+    			add_location(div1, file$h, 299, 16, 31481);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, form);
+    			append_dev(form, input);
+    			set_input_value(input, /*userEmail*/ ctx[0]);
+    			append_dev(form, t0);
+    			append_dev(form, textarea);
+    			set_input_value(textarea, /*userBody*/ ctx[1]);
+    			append_dev(form, t1);
+    			append_dev(form, div0);
+    			append_dev(div0, button0);
+    			append_dev(button0, svg);
+    			append_dev(svg, title);
+    			append_dev(title, t2);
+    			append_dev(svg, g1);
+    			append_dev(g1, g0);
+    			append_dev(g0, line0);
+    			append_dev(g0, line1);
+    			append_dev(div0, t3);
+    			append_dev(div0, button1);
+    			append_dev(button1, t4);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(input, "input", /*input_input_handler*/ ctx[24]),
+    					listen_dev(input, "blur", /*blur_handler*/ ctx[25], false, false, false),
+    					listen_dev(input, "focus", /*focus_handler*/ ctx[26], false, false, false),
+    					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[27]),
+    					listen_dev(button0, "click", /*click_handler_7*/ ctx[28], false, false, false),
+    					listen_dev(form, "submit", prevent_default(/*submitForm*/ ctx[15]), false, true, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty[0] & /*emailTouched, isEmailValid*/ 68 && input_placeholder_value !== (input_placeholder_value = /*emailTouched*/ ctx[6] && !/*isEmailValid*/ ctx[2]
+    			? "Please enter a valid Email address"
+    			: "Your Email")) {
+    				attr_dev(input, "placeholder", input_placeholder_value);
+    			}
+
+    			if (dirty[0] & /*userEmail*/ 1 && input.value !== /*userEmail*/ ctx[0]) {
+    				set_input_value(input, /*userEmail*/ ctx[0]);
+    			}
+
+    			if (dirty[0] & /*emailTouched, isEmailValid*/ 68) {
+    				toggle_class(input, "invalid-email", /*emailTouched*/ ctx[6] && !/*isEmailValid*/ ctx[2]);
+    			}
+
+    			if (dirty[0] & /*userBody*/ 2) {
+    				set_input_value(textarea, /*userBody*/ ctx[1]);
+    			}
+
+    			if ((!current || dirty[0] & /*isLoading*/ 256) && t4_value !== (t4_value = (/*isLoading*/ ctx[8] ? "Sending..." : "Send Email") + "")) set_data_dev(t4, t4_value);
+
+    			if (!current || dirty[0] & /*disabled*/ 512) {
+    				prop_dev(button1, "disabled", /*disabled*/ ctx[9]);
+    			}
+
+    			if (dirty[0] & /*isFormValid*/ 8) {
+    				toggle_class(button1, "disabled", !/*isFormValid*/ ctx[3]);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], { duration: 300 }, true);
+    				div1_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], { duration: 300 }, false);
+    			div1_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div1);
+    			if (detaching && div1_transition) div1_transition.end();
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_4.name,
+    		type: "if",
+    		source: "(299:47) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (177:59) 
+    function create_if_block_1$1(ctx) {
+    	let div5;
+    	let div4;
+    	let div0;
+    	let img;
+    	let img_src_value;
+    	let img_alt_value;
+    	let t0;
+    	let p;
+
+    	let t1_value = (/*view*/ ctx[4] === "moritz"
+    	? "Hi, nice to meet you!"
+    	: "Hey, I'm Theo!") + "";
+
+    	let t1;
+    	let t2;
+    	let div1;
+    	let t3;
+    	let div2;
+    	let t4;
+    	let div3;
+    	let button0;
+    	let svg;
+    	let title;
+    	let t5;
+    	let g1;
+    	let g0;
+    	let line0;
+    	let line1;
+    	let t6;
+    	let button1;
+    	let div5_transition;
+    	let current;
+    	let mounted;
+    	let dispose;
+    	let if_block0 = /*messageCounter*/ ctx[5] > 0 && create_if_block_3(ctx);
+    	let if_block1 = /*messageCounter*/ ctx[5] > 1 && create_if_block_2(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div5 = element("div");
+    			div4 = element("div");
+    			div0 = element("div");
+    			img = element("img");
+    			t0 = space();
+    			p = element("p");
+    			t1 = text(t1_value);
+    			t2 = space();
+    			div1 = element("div");
+    			if (if_block0) if_block0.c();
+    			t3 = space();
+    			div2 = element("div");
+    			if (if_block1) if_block1.c();
+    			t4 = space();
+    			div3 = element("div");
+    			button0 = element("button");
+    			svg = svg_element("svg");
+    			title = svg_element("title");
+    			t5 = text("Group 2");
+    			g1 = svg_element("g");
+    			g0 = svg_element("g");
+    			line0 = svg_element("line");
+    			line1 = svg_element("line");
+    			t6 = space();
+    			button1 = element("button");
+    			button1.textContent = "Compose Email";
+    			if (img.src !== (img_src_value = /*view*/ ctx[4] === "moritz" ? moritzmoji : theomoji)) attr_dev(img, "src", img_src_value);
+
+    			attr_dev(img, "alt", img_alt_value = /*view*/ ctx[4] === "moritz"
+    			? "Moritz Mortimer Müller as a Memoji"
+    			: "Theodor Baltus Steiner as a Memoji");
+
+    			attr_dev(img, "class", "message-img svelte-1b592rz");
+    			attr_dev(img, "draggable", "false");
+    			toggle_class(img, "hidden", /*messageCounter*/ ctx[5] != 0);
+    			add_location(img, file$h, 183, 28, 25246);
+    			set_style(p, "height", "38px");
+    			attr_dev(p, "class", "message-bubble svelte-1b592rz");
+    			add_location(p, file$h, 195, 28, 25903);
+    			attr_dev(div0, "class", "message svelte-1b592rz");
+    			set_style(div0, "height", "54px");
+    			add_location(div0, file$h, 182, 24, 25174);
+    			attr_dev(div1, "class", "message long-message svelte-1b592rz");
+    			set_style(div1, "height", "95px");
+    			add_location(div1, file$h, 205, 24, 26356);
+    			attr_dev(div2, "class", "message svelte-1b592rz");
+    			set_style(div2, "height", "54px");
+    			add_location(div2, file$h, 232, 24, 28005);
+    			add_location(title, file$h, 267, 36, 29852);
+    			attr_dev(line0, "x2", "22");
+    			attr_dev(line0, "y2", "22");
+    			attr_dev(line0, "class", "svelte-1b592rz");
+    			add_location(line0, file$h, 273, 44, 30205);
+    			attr_dev(line1, "transform", "translate(11 11) scale(-1 1) translate(-11 -11)");
+    			attr_dev(line1, "x2", "22");
+    			attr_dev(line1, "y2", "22");
+    			attr_dev(line1, "class", "svelte-1b592rz");
+    			add_location(line1, file$h, 274, 44, 30274);
+    			attr_dev(g0, "transform", "translate(1 1)");
+    			attr_dev(g0, "stroke", "#fff");
+    			add_location(g0, file$h, 269, 40, 29987);
+    			attr_dev(g1, "fill", "none");
+    			attr_dev(g1, "fill-rule", "evenodd");
+    			add_location(g1, file$h, 268, 36, 29911);
+    			attr_dev(svg, "version", "1.1");
+    			attr_dev(svg, "viewBox", "0 0 24 24");
+    			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
+    			attr_dev(svg, "class", "svelte-1b592rz");
+    			add_location(svg, file$h, 262, 32, 29600);
+    			attr_dev(button0, "ontouchstart", "");
+    			attr_dev(button0, "class", "cancel-button svelte-1b592rz");
+    			add_location(button0, file$h, 255, 28, 29290);
+    			attr_dev(button1, "class", "action-button svelte-1b592rz");
+    			attr_dev(button1, "ontouchstart", "");
+    			add_location(button1, file$h, 283, 28, 30738);
+    			attr_dev(div3, "class", "button-container svelte-1b592rz");
+    			add_location(div3, file$h, 254, 24, 29231);
+    			attr_dev(div4, "class", "fixed svelte-1b592rz");
+    			add_location(div4, file$h, 181, 20, 25130);
+    			attr_dev(div5, "class", "message-container svelte-1b592rz");
+    			add_location(div5, file$h, 177, 16, 24974);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div5, anchor);
+    			append_dev(div5, div4);
+    			append_dev(div4, div0);
+    			append_dev(div0, img);
+    			append_dev(div0, t0);
+    			append_dev(div0, p);
+    			append_dev(p, t1);
+    			append_dev(div4, t2);
+    			append_dev(div4, div1);
+    			if (if_block0) if_block0.m(div1, null);
+    			append_dev(div4, t3);
+    			append_dev(div4, div2);
+    			if (if_block1) if_block1.m(div2, null);
+    			append_dev(div4, t4);
+    			append_dev(div4, div3);
+    			append_dev(div3, button0);
+    			append_dev(button0, svg);
+    			append_dev(svg, title);
+    			append_dev(title, t5);
+    			append_dev(svg, g1);
+    			append_dev(g1, g0);
+    			append_dev(g0, line0);
+    			append_dev(g0, line1);
+    			append_dev(div3, t6);
+    			append_dev(div3, button1);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(img, "click", /*click_handler_2*/ ctx[19], false, false, false),
+    					action_destroyer(/*startMessageTimer*/ ctx[13].call(null, p)),
+    					listen_dev(button0, "click", /*click_handler_5*/ ctx[22], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_6*/ ctx[23], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (!current || dirty[0] & /*view*/ 16 && img.src !== (img_src_value = /*view*/ ctx[4] === "moritz" ? moritzmoji : theomoji)) {
+    				attr_dev(img, "src", img_src_value);
+    			}
+
+    			if (!current || dirty[0] & /*view*/ 16 && img_alt_value !== (img_alt_value = /*view*/ ctx[4] === "moritz"
+    			? "Moritz Mortimer Müller as a Memoji"
+    			: "Theodor Baltus Steiner as a Memoji")) {
+    				attr_dev(img, "alt", img_alt_value);
+    			}
+
+    			if (dirty[0] & /*messageCounter*/ 32) {
+    				toggle_class(img, "hidden", /*messageCounter*/ ctx[5] != 0);
+    			}
+
+    			if ((!current || dirty[0] & /*view*/ 16) && t1_value !== (t1_value = (/*view*/ ctx[4] === "moritz"
+    			? "Hi, nice to meet you!"
+    			: "Hey, I'm Theo!") + "")) set_data_dev(t1, t1_value);
+
+    			if (/*messageCounter*/ ctx[5] > 0) {
+    				if (if_block0) {
+    					if_block0.p(ctx, dirty);
+    				} else {
+    					if_block0 = create_if_block_3(ctx);
+    					if_block0.c();
+    					if_block0.m(div1, null);
+    				}
+    			} else if (if_block0) {
+    				if_block0.d(1);
+    				if_block0 = null;
+    			}
+
+    			if (/*messageCounter*/ ctx[5] > 1) {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+    				} else {
+    					if_block1 = create_if_block_2(ctx);
+    					if_block1.c();
+    					if_block1.m(div2, null);
+    				}
+    			} else if (if_block1) {
+    				if_block1.d(1);
+    				if_block1 = null;
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!div5_transition) div5_transition = create_bidirectional_transition(div5, /*horizontalSlide*/ ctx[11], { duration: 300 }, true);
+    				div5_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!div5_transition) div5_transition = create_bidirectional_transition(div5, /*horizontalSlide*/ ctx[11], { duration: 300 }, false);
+    			div5_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div5);
+    			if (if_block0) if_block0.d();
+    			if (if_block1) if_block1.d();
+    			if (detaching && div5_transition) div5_transition.end();
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$1.name,
+    		type: "if",
+    		source: "(177:59) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (136:12) {#if view === "overview"}
+    function create_if_block$3(ctx) {
+    	let div1;
+    	let div0;
+    	let h1;
+    	let t0;
+    	let br;
+    	let t1;
+    	let t2;
+    	let hr0;
+    	let t3;
+    	let button0;
+    	let img0;
+    	let img0_src_value;
+    	let t4;
+    	let p0;
+    	let t6;
+    	let hr1;
+    	let t7;
+    	let button1;
+    	let img1;
+    	let img1_src_value;
+    	let t8;
+    	let p1;
+    	let div1_transition;
+    	let current;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			div1 = element("div");
+    			div0 = element("div");
+    			h1 = element("h1");
+    			t0 = text("GET IN ");
+    			br = element("br");
+    			t1 = text("TOUCH");
+    			t2 = space();
+    			hr0 = element("hr");
+    			t3 = space();
+    			button0 = element("button");
+    			img0 = element("img");
+    			t4 = space();
+    			p0 = element("p");
+    			p0.textContent = "Moritz Mortimer (DE)";
+    			t6 = space();
+    			hr1 = element("hr");
+    			t7 = space();
+    			button1 = element("button");
+    			img1 = element("img");
+    			t8 = space();
+    			p1 = element("p");
+    			p1.textContent = "Theodor Baltus (JP)";
+    			add_location(br, file$h, 142, 35, 23553);
+    			attr_dev(h1, "class", "svelte-1b592rz");
+    			add_location(h1, file$h, 141, 24, 23513);
+    			add_location(hr0, file$h, 144, 24, 23619);
+    			if (img0.src !== (img0_src_value = moritzmoji)) attr_dev(img0, "src", img0_src_value);
+    			attr_dev(img0, "alt", "Moritz Mortimer Müller as a Memoji");
+    			attr_dev(img0, "draggable", "false");
+    			attr_dev(img0, "class", "svelte-1b592rz");
+    			add_location(img0, file$h, 152, 28, 23926);
+    			attr_dev(p0, "class", "svelte-1b592rz");
+    			add_location(p0, file$h, 157, 28, 24162);
+    			attr_dev(button0, "ontouchstart", "");
+    			attr_dev(button0, "class", "contact svelte-1b592rz");
+    			add_location(button0, file$h, 145, 24, 23650);
+    			add_location(hr1, file$h, 159, 24, 24248);
+    			if (img1.src !== (img1_src_value = theomoji)) attr_dev(img1, "src", img1_src_value);
+    			attr_dev(img1, "alt", "Theodor Baltus Steiner as a Memoji");
+    			attr_dev(img1, "draggable", "false");
+    			attr_dev(img1, "class", "svelte-1b592rz");
+    			add_location(img1, file$h, 167, 28, 24553);
+    			attr_dev(p1, "class", "svelte-1b592rz");
+    			add_location(p1, file$h, 172, 28, 24787);
+    			attr_dev(button1, "ontouchstart", "");
+    			attr_dev(button1, "class", "contact svelte-1b592rz");
+    			add_location(button1, file$h, 160, 24, 24279);
+    			attr_dev(div0, "class", "fixed svelte-1b592rz");
+    			add_location(div0, file$h, 140, 20, 23469);
+    			attr_dev(div1, "class", "contact-container svelte-1b592rz");
+    			add_location(div1, file$h, 136, 16, 23313);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, div0);
+    			append_dev(div0, h1);
+    			append_dev(h1, t0);
+    			append_dev(h1, br);
+    			append_dev(h1, t1);
+    			append_dev(div0, t2);
+    			append_dev(div0, hr0);
+    			append_dev(div0, t3);
+    			append_dev(div0, button0);
+    			append_dev(button0, img0);
+    			append_dev(button0, t4);
+    			append_dev(button0, p0);
+    			append_dev(div0, t6);
+    			append_dev(div0, hr1);
+    			append_dev(div0, t7);
+    			append_dev(div0, button1);
+    			append_dev(button1, img1);
+    			append_dev(button1, t8);
+    			append_dev(button1, p1);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(button0, "click", /*click_handler*/ ctx[17], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_1*/ ctx[18], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: noop,
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], { duration: 300 }, true);
+    				div1_transition.run(1);
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], { duration: 300 }, false);
+    			div1_transition.run(0);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div1);
+    			if (detaching && div1_transition) div1_transition.end();
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$3.name,
+    		type: "if",
+    		source: "(136:12) {#if view === \\\"overview\\\"}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (207:28) {#if messageCounter > 0}
+    function create_if_block_3(ctx) {
+    	let img;
+    	let img_src_value;
+    	let img_alt_value;
+    	let t0;
+    	let p;
+
+    	let t1_value = (/*view*/ ctx[4] === "moritz"
+    	? "You can send me a message right from this window or shoot me an email the old fashioned way at moritz@mortimerbaltus.de"
+    	: "If you wanna talk tech, ask me anything or just need someone to share memes with... hit me up at theo@mortimerbaltus.de") + "";
+
+    	let t1;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			img = element("img");
+    			t0 = space();
+    			p = element("p");
+    			t1 = text(t1_value);
+    			if (img.src !== (img_src_value = /*view*/ ctx[4] === "moritz" ? moritzmoji : theomoji)) attr_dev(img, "src", img_src_value);
+
+    			attr_dev(img, "alt", img_alt_value = /*view*/ ctx[4] === "moritz"
+    			? "Moritz Mortimer Müller as a Memoji"
+    			: "Theodor Baltus Steiner as a Memoji");
+
+    			attr_dev(img, "class", "message-img svelte-1b592rz");
+    			attr_dev(img, "draggable", "false");
+    			toggle_class(img, "hidden", /*messageCounter*/ ctx[5] != 1);
+    			add_location(img, file$h, 207, 32, 26498);
+    			set_style(p, "height", "95px");
+    			attr_dev(p, "class", "message-bubble svelte-1b592rz");
+    			add_location(p, file$h, 221, 32, 27283);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, img, anchor);
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, p, anchor);
+    			append_dev(p, t1);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(img, "click", /*click_handler_3*/ ctx[20], false, false, false),
+    					action_destroyer(/*startMessageTimer*/ ctx[13].call(null, p))
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*view*/ 16 && img.src !== (img_src_value = /*view*/ ctx[4] === "moritz" ? moritzmoji : theomoji)) {
+    				attr_dev(img, "src", img_src_value);
+    			}
+
+    			if (dirty[0] & /*view*/ 16 && img_alt_value !== (img_alt_value = /*view*/ ctx[4] === "moritz"
+    			? "Moritz Mortimer Müller as a Memoji"
+    			: "Theodor Baltus Steiner as a Memoji")) {
+    				attr_dev(img, "alt", img_alt_value);
+    			}
+
+    			if (dirty[0] & /*messageCounter*/ 32) {
+    				toggle_class(img, "hidden", /*messageCounter*/ ctx[5] != 1);
+    			}
+
+    			if (dirty[0] & /*view*/ 16 && t1_value !== (t1_value = (/*view*/ ctx[4] === "moritz"
+    			? "You can send me a message right from this window or shoot me an email the old fashioned way at moritz@mortimerbaltus.de"
+    			: "If you wanna talk tech, ask me anything or just need someone to share memes with... hit me up at theo@mortimerbaltus.de") + "")) set_data_dev(t1, t1_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(img);
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(p);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_3.name,
+    		type: "if",
+    		source: "(207:28) {#if messageCounter > 0}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (234:28) {#if messageCounter > 1}
+    function create_if_block_2(ctx) {
+    	let img;
+    	let img_src_value;
+    	let img_alt_value;
+    	let t0;
+    	let p;
+
+    	let t1_value = (/*view*/ ctx[4] === "moritz"
+    	? "looking forward to hear from you!"
+    	: "I'm excited to hear from you!") + "";
+
+    	let t1;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			img = element("img");
+    			t0 = space();
+    			p = element("p");
+    			t1 = text(t1_value);
+    			if (img.src !== (img_src_value = /*view*/ ctx[4] === "moritz" ? moritzmoji : theomoji)) attr_dev(img, "src", img_src_value);
+
+    			attr_dev(img, "alt", img_alt_value = /*view*/ ctx[4] === "moritz"
+    			? "Moritz Mortimer Müller as a Memoji"
+    			: "Theodor Baltus Steiner as a Memoji");
+
+    			attr_dev(img, "class", "message-img svelte-1b592rz");
+    			attr_dev(img, "draggable", "false");
+    			add_location(img, file$h, 234, 32, 28134);
+    			set_style(p, "height", "38px");
+    			attr_dev(p, "class", "message-bubble svelte-1b592rz");
+    			add_location(p, file$h, 247, 32, 28848);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, img, anchor);
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, p, anchor);
+    			append_dev(p, t1);
+
+    			if (!mounted) {
+    				dispose = listen_dev(img, "click", /*click_handler_4*/ ctx[21], false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*view*/ 16 && img.src !== (img_src_value = /*view*/ ctx[4] === "moritz" ? moritzmoji : theomoji)) {
+    				attr_dev(img, "src", img_src_value);
+    			}
+
+    			if (dirty[0] & /*view*/ 16 && img_alt_value !== (img_alt_value = /*view*/ ctx[4] === "moritz"
+    			? "Moritz Mortimer Müller as a Memoji"
+    			: "Theodor Baltus Steiner as a Memoji")) {
+    				attr_dev(img, "alt", img_alt_value);
+    			}
+
+    			if (dirty[0] & /*view*/ 16 && t1_value !== (t1_value = (/*view*/ ctx[4] === "moritz"
+    			? "looking forward to hear from you!"
+    			: "I'm excited to hear from you!") + "")) set_data_dev(t1, t1_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(img);
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(p);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2.name,
+    		type: "if",
+    		source: "(234:28) {#if messageCounter > 1}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (126:4) <WindowElement         width={378}         height={313}         parallax="very-slow"         background="#EFEFEF"         title="CONTACT"         id={14}         enlargeable={false}     >
+    function create_default_slot$e(ctx) {
+    	let div;
+    	let show_if;
+    	let current_block_type_index;
+    	let if_block;
+    	let current;
+    	const if_block_creators = [create_if_block$3, create_if_block_1$1, create_if_block_4, create_else_block$1];
+    	const if_blocks = [];
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*view*/ ctx[4] === "overview") return 0;
+    		if (/*view*/ ctx[4] === "theo" || /*view*/ ctx[4] === "moritz") return 1;
+    		if (dirty[0] & /*view*/ 16) show_if = !!/*view*/ ctx[4].includes("mailto:");
+    		if (show_if) return 2;
+    		return 3;
+    	}
+
+    	current_block_type_index = select_block_type(ctx, [-1]);
+    	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			if_block.c();
+    			attr_dev(div, "class", "container svelte-1b592rz");
+    			add_location(div, file$h, 134, 8, 23235);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			if_blocks[current_block_type_index].m(div, null);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type(ctx, dirty);
+
+    			if (current_block_type_index === previous_block_index) {
+    				if_blocks[current_block_type_index].p(ctx, dirty);
+    			} else {
+    				group_outros();
+
+    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    					if_blocks[previous_block_index] = null;
+    				});
+
+    				check_outros();
+    				if_block = if_blocks[current_block_type_index];
+
+    				if (!if_block) {
+    					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block.c();
+    				} else {
+    					if_block.p(ctx, dirty);
+    				}
+
+    				transition_in(if_block, 1);
+    				if_block.m(div, null);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			if_blocks[current_block_type_index].d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot$e.name,
+    		type: "slot",
+    		source: "(126:4) <WindowElement         width={378}         height={313}         parallax=\\\"very-slow\\\"         background=\\\"#EFEFEF\\\"         title=\\\"CONTACT\\\"         id={14}         enlargeable={false}     >",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$i(ctx) {
+    	let div;
+    	let windowelement;
+    	let current;
+
+    	windowelement = new WindowElement({
+    			props: {
+    				width: 378,
+    				height: 313,
+    				parallax: "very-slow",
+    				background: "#EFEFEF",
+    				title: "CONTACT",
+    				id: 14,
+    				enlargeable: false,
+    				$$slots: { default: [create_default_slot$e] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			create_component(windowelement.$$.fragment);
+    			attr_dev(div, "class", "wrapper grid-area svelte-1b592rz");
+    			add_location(div, file$h, 124, 0, 23003);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error_1("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			mount_component(windowelement, div, null);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const windowelement_changes = {};
+
+    			if (dirty[0] & /*view, messageCounter, disabled, isFormValid, isLoading, userEmail, userBody, emailTouched, isEmailValid, success*/ 1023 | dirty[1] & /*$$scope*/ 1) {
+    				windowelement_changes.$$scope = { dirty, ctx };
+    			}
+
+    			windowelement.$set(windowelement_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(windowelement.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(windowelement.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			destroy_component(windowelement);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$i.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    const moritzmoji = "data:image/jpeg;base64,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";
+    const theomoji = "data:image/png;base64,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";
+
+    function isEmpty(body) {
+    	return body.trim().length === 0;
+    }
+
+    function isValidEmail(email) {
+    	return new RegExp("[a-z0-9!#$%&' * +/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").test(email);
+    }
+
+    function instance$i($$self, $$props, $$invalidate) {
+    	let isEmailValid;
+    	let isBodyValid;
+    	let isFormValid;
+    	let disabled;
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots("ContactWindow", slots, []);
+    	let view = "overview";
+    	let messageCounter = 0;
+    	let userEmail = "";
+    	let userBody = "";
+    	let emailTouched = false;
+    	let success = false;
+    	let isLoading = false;
+
+    	function resetEmail() {
+    		$$invalidate(0, userEmail = "");
+    		$$invalidate(1, userBody = "");
+    		$$invalidate(6, emailTouched = false);
+    	}
+
+    	function horizontalSlide(node, { delay = 0, duration = 400, easing = cubicOut, inverse = 1 }) {
+    		const style = getComputedStyle(node);
+    		const opacity = +style.opacity;
+    		const width = parseFloat(style.width);
+    		const paddingLeft = parseFloat(style.paddingLeft);
+    		const paddingRight = parseFloat(style.paddingRight);
+    		const marginLeft = parseFloat(style.marginLeft);
+    		const marginRight = parseFloat(style.marginRight);
+    		const borderLeftWidth = parseFloat(style.borderLeftWidth);
+    		const borderRightWidth = parseFloat(style.borderRightWidth);
+
+    		return {
+    			delay,
+    			duration,
+    			easing,
+    			css: t => `overflow: hidden;` + `opacity: ${Math.min(t * 20, 1) * opacity};` + `width: ${t * width}px;` + `padding-left: ${t * paddingLeft}px;` + `padding-right: ${t * paddingRight}px;` + `margin-left: ${t * marginLeft}px;` + `margin-right: ${t * marginRight}px;` + `border-left-width: ${t * borderLeftWidth}px;` + `border-right-width: ${t * borderRightWidth}px;`
+    		};
+    	}
+
+    	function resetView() {
+    		setTimeout(
+    			() => {
+    				$$invalidate(4, view = "overview");
+    			},
+    			5000
+    		);
+    	}
+
+    	let messageTimer;
+
+    	function startMessageTimer() {
+    		clearTimeout(messageTimer);
+
+    		messageTimer = setTimeout(
+    			() => {
+    				$$invalidate(5, messageCounter++, messageCounter);
+    			},
+    			1500
+    		);
+    	}
+
+    	function resetChatView() {
+    		clearTimeout(messageTimer);
+    		$$invalidate(4, view = view === "moritz" || view === "theo" ? "overview" : view);
+    		$$invalidate(5, messageCounter = 0);
+    	}
+
+    	function submitForm() {
+    		$$invalidate(8, isLoading = true);
+
+    		fetch("https://formspree.io/f/moqyqqbv", {
+    			method: "POST",
+    			body: JSON.stringify({ email: userEmail, message: userBody }),
+    			headers: {
+    				Accept: "application/json",
+    				"Content-Type": "application/json"
+    			}
+    		}).then(res => {
+    			if (!res.ok) {
+    				throw new Error("Failed to send email");
+    			}
+
+    			$$invalidate(7, success = true);
+    			$$invalidate(8, isLoading = false);
+    			resetEmail();
+    			$$invalidate(4, view = view.substring(7));
+    		}).catch(err => {
+    			console.log(err);
+    			$$invalidate(7, success = false);
+    			$$invalidate(8, isLoading = false);
+    			$$invalidate(4, view = view.substring(7));
+    		});
+    	}
+
+    	const writable_props = [];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1.warn(`<ContactWindow> was created with unknown prop '${key}'`);
+    	});
+
+    	const click_handler = () => {
+    		$$invalidate(4, view = "moritz");
+    	};
+
+    	const click_handler_1 = () => {
+    		$$invalidate(4, view = "theo");
+    	};
+
+    	const click_handler_2 = () => {
+    		resetChatView();
+    	};
+
+    	const click_handler_3 = () => {
+    		resetChatView();
+    	};
+
+    	const click_handler_4 = () => {
+    		resetChatView();
+    	};
+
+    	const click_handler_5 = () => {
+    		resetChatView();
+    	};
+
+    	const click_handler_6 = () => {
+    		$$invalidate(4, view = `mailto:${view === "moritz"
+		? "moritz@mortimerbaltus.com"
+		: "theo@mortimerbaltus.com"}`);
+
+    		resetChatView();
+    	};
+
+    	function input_input_handler() {
+    		userEmail = this.value;
+    		$$invalidate(0, userEmail);
+    	}
+
+    	const blur_handler = () => $$invalidate(6, emailTouched = true);
+    	const focus_handler = () => $$invalidate(6, emailTouched = false);
+
+    	function textarea_input_handler() {
+    		userBody = this.value;
+    		$$invalidate(1, userBody);
+    	}
+
+    	const click_handler_7 = () => {
+    		if (!isEmpty(userEmail) && !isEmpty(userBody)) {
+    			if (confirm("Do you really want to discard your Message?")) {
+    				$$invalidate(4, view = "overview");
+    				resetEmail();
+    			}
+    		} else {
+    			$$invalidate(4, view = "overview");
+    			resetEmail();
+    		}
+    	};
+
+    	const click_handler_8 = () => {
+    		$$invalidate(4, view = "overview");
+    	};
+
+    	$$self.$capture_state = () => ({
+    		WindowElement,
+    		cubicOut,
+    		view,
+    		messageCounter,
+    		userEmail,
+    		userBody,
+    		emailTouched,
+    		success,
+    		isLoading,
+    		isEmpty,
+    		isValidEmail,
+    		resetEmail,
+    		horizontalSlide,
+    		moritzmoji,
+    		theomoji,
+    		resetView,
+    		messageTimer,
+    		startMessageTimer,
+    		resetChatView,
+    		submitForm,
+    		isEmailValid,
+    		isBodyValid,
+    		isFormValid,
+    		disabled
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ("view" in $$props) $$invalidate(4, view = $$props.view);
+    		if ("messageCounter" in $$props) $$invalidate(5, messageCounter = $$props.messageCounter);
+    		if ("userEmail" in $$props) $$invalidate(0, userEmail = $$props.userEmail);
+    		if ("userBody" in $$props) $$invalidate(1, userBody = $$props.userBody);
+    		if ("emailTouched" in $$props) $$invalidate(6, emailTouched = $$props.emailTouched);
+    		if ("success" in $$props) $$invalidate(7, success = $$props.success);
+    		if ("isLoading" in $$props) $$invalidate(8, isLoading = $$props.isLoading);
+    		if ("messageTimer" in $$props) messageTimer = $$props.messageTimer;
+    		if ("isEmailValid" in $$props) $$invalidate(2, isEmailValid = $$props.isEmailValid);
+    		if ("isBodyValid" in $$props) $$invalidate(16, isBodyValid = $$props.isBodyValid);
+    		if ("isFormValid" in $$props) $$invalidate(3, isFormValid = $$props.isFormValid);
+    		if ("disabled" in $$props) $$invalidate(9, disabled = $$props.disabled);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty[0] & /*userEmail*/ 1) {
+    			$$invalidate(2, isEmailValid = isValidEmail(userEmail));
+    		}
+
+    		if ($$self.$$.dirty[0] & /*userBody*/ 2) {
+    			$$invalidate(16, isBodyValid = !isEmpty(userBody));
+    		}
+
+    		if ($$self.$$.dirty[0] & /*isEmailValid, isBodyValid*/ 65540) {
+    			$$invalidate(3, isFormValid = isEmailValid && isBodyValid);
+    		}
+
+    		if ($$self.$$.dirty[0] & /*isFormValid*/ 8) {
+    			$$invalidate(9, disabled = !isFormValid);
+    		}
+    	};
+
+    	return [
+    		userEmail,
+    		userBody,
+    		isEmailValid,
+    		isFormValid,
+    		view,
+    		messageCounter,
+    		emailTouched,
+    		success,
+    		isLoading,
+    		disabled,
+    		resetEmail,
+    		horizontalSlide,
+    		resetView,
+    		startMessageTimer,
+    		resetChatView,
+    		submitForm,
+    		isBodyValid,
+    		click_handler,
+    		click_handler_1,
+    		click_handler_2,
+    		click_handler_3,
+    		click_handler_4,
+    		click_handler_5,
+    		click_handler_6,
+    		input_input_handler,
+    		blur_handler,
+    		focus_handler,
+    		textarea_input_handler,
+    		click_handler_7,
+    		click_handler_8
+    	];
+    }
+
+    class ContactWindow extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$i, create_fragment$i, safe_not_equal, {}, [-1, -1]);
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "ContactWindow",
+    			options,
+    			id: create_fragment$i.name
+    		});
+    	}
+    }
+
+    /* src/App.svelte generated by Svelte v3.32.1 */
+
+    function create_fragment$j(ctx) {
     	let scrollhandler;
     	let t0;
     	let projectcorazon;
@@ -4628,6 +6219,10 @@ var app = (function () {
     	let referenceswindow;
     	let t11;
     	let logopedia;
+    	let t12;
+    	let language;
+    	let t13;
+    	let contact;
     	let current;
     	scrollhandler = new ScrollHandler({ $$inline: true });
     	projectcorazon = new ProjectCorazon({ $$inline: true });
@@ -4642,6 +6237,8 @@ var app = (function () {
     	germanyjpg = new GermanyJPG({ $$inline: true });
     	referenceswindow = new ReferencesWindow({ $$inline: true });
     	logopedia = new Logopedia({ $$inline: true });
+    	language = new LanguageWindow({ $$inline: true });
+    	contact = new ContactWindow({ $$inline: true });
 
     	const block = {
     		c: function create() {
@@ -4670,6 +6267,10 @@ var app = (function () {
     			create_component(referenceswindow.$$.fragment);
     			t11 = space();
     			create_component(logopedia.$$.fragment);
+    			t12 = space();
+    			create_component(language.$$.fragment);
+    			t13 = space();
+    			create_component(contact.$$.fragment);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4700,6 +6301,10 @@ var app = (function () {
     			mount_component(referenceswindow, target, anchor);
     			insert_dev(target, t11, anchor);
     			mount_component(logopedia, target, anchor);
+    			insert_dev(target, t12, anchor);
+    			mount_component(language, target, anchor);
+    			insert_dev(target, t13, anchor);
+    			mount_component(contact, target, anchor);
     			current = true;
     		},
     		p: noop,
@@ -4718,6 +6323,8 @@ var app = (function () {
     			transition_in(germanyjpg.$$.fragment, local);
     			transition_in(referenceswindow.$$.fragment, local);
     			transition_in(logopedia.$$.fragment, local);
+    			transition_in(language.$$.fragment, local);
+    			transition_in(contact.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
@@ -4734,6 +6341,8 @@ var app = (function () {
     			transition_out(germanyjpg.$$.fragment, local);
     			transition_out(referenceswindow.$$.fragment, local);
     			transition_out(logopedia.$$.fragment, local);
+    			transition_out(language.$$.fragment, local);
+    			transition_out(contact.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
@@ -4762,12 +6371,16 @@ var app = (function () {
     			destroy_component(referenceswindow, detaching);
     			if (detaching) detach_dev(t11);
     			destroy_component(logopedia, detaching);
+    			if (detaching) detach_dev(t12);
+    			destroy_component(language, detaching);
+    			if (detaching) detach_dev(t13);
+    			destroy_component(contact, detaching);
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$h.name,
+    		id: create_fragment$j.name,
     		type: "component",
     		source: "",
     		ctx
@@ -4776,7 +6389,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$h($$self, $$props, $$invalidate) {
+    function instance$j($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
     	const writable_props = [];
@@ -4798,7 +6411,9 @@ var app = (function () {
     		GermanyJPG,
     		JapanJPG,
     		CleanCode,
-    		Logopedia
+    		Logopedia,
+    		Language: LanguageWindow,
+    		Contact: ContactWindow
     	});
 
     	return [];
@@ -4807,13 +6422,13 @@ var app = (function () {
     class App extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$h, create_fragment$h, safe_not_equal, {});
+    		init(this, options, instance$j, create_fragment$j, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "App",
     			options,
-    			id: create_fragment$h.name
+    			id: create_fragment$j.name
     		});
     	}
     }

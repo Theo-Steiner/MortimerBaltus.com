@@ -12,6 +12,8 @@
 	import JapanJPG from "./Windows/JapanJPG.svelte";
 	import CleanCode from "./Windows/CleanCode.svelte";
 	import Logopedia from "./Windows/Logopedia.svelte";
+	import Language from "./Windows/LanguageWindow.svelte";
+	import Contact from "./Windows/ContactWindow.svelte";
 </script>
 
 <ScrollHandler />
@@ -28,3 +30,5 @@
 <GermanyJPG />
 <ReferencesWindow />
 <Logopedia />
+<Language />
+<Contact />
