@@ -10,6 +10,7 @@
     let emailTouched = false;
 
     let success = false;
+    let isLoading = false;
 
     $: isEmailValid = isValidEmail(userEmail);
     $: isBodyValid = !isEmpty(userBody);
@@ -81,13 +82,44 @@
         clearTimeout(messageTimer);
         messageTimer = setTimeout(() => {
             messageCounter++;
-        }, 2000);
+        }, 1500);
     }
 
     function resetChatView() {
         clearTimeout(messageTimer);
         view = view === "moritz" || view === "theo" ? "overview" : view;
         messageCounter = 0;
+    }
+
+    function submitForm() {
+        isLoading = true;
+        fetch("/api/sendmail", {
+            method: "POST",
+            body: JSON.stringify({
+                userEmail: userEmail,
+                recipient: view.substring(7),
+                message: userBody,
+            }),
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("Failed to send email");
+                }
+                success = true;
+                isLoading = false;
+                resetEmail();
+                view = view.substring(7);
+            })
+            .catch((err) => {
+                console.log(err);
+                success = false;
+                isLoading = false;
+                view = view.substring(7);
+            });
     }
 </script>
 
@@ -270,9 +302,14 @@
                     class="email-container"
                     transition:horizontalSlide={{ duration: 300 }}
                 >
-                    <div class="fixed">
+                    <form
+                        on:submit|preventDefault={submitForm}
+                        method="POST"
+                        class="fixed"
+                    >
                         <input
                             type="text"
+                            name="email"
                             class="user-email"
                             placeholder={emailTouched && !isEmailValid
                                 ? "Please enter a valid Email address"
@@ -283,11 +320,10 @@
                             on:focus={() => (emailTouched = false)}
                         />
                         <textarea
-                            name=""
-                            id=""
                             cols="30"
                             rows="10"
                             class="user-body"
+                            name="message"
                             placeholder="Your Message"
                             bind:value={userBody}
                         />
@@ -337,23 +373,16 @@
                             >
                             <button
                                 class="action-button"
+                                type="submit"
                                 ontouchstart=""
                                 class:disabled={!isFormValid}
                                 {disabled}
-                                on:click={() => {
-                                    console.log(
-                                        `email with body ${userBody} from ${userEmail} sent to ${view}`
-                                    );
-                                    view = view.substring(7);
-                                    // fetch request: on success => success = true;
-                                    success =
-                                        userBody === "fail" ? false : true;
-                                    // deletes body and user email
-                                    resetEmail();
-                                }}>Send Email</button
+                                >{isLoading
+                                    ? "Sending..."
+                                    : "Send Email"}</button
                             >
                         </div>
-                    </div>
+                    </form>
                 </div>
             {:else}
                 <div
@@ -390,6 +419,10 @@
 </div>
 
 <style>
+    form {
+        height: 279px;
+    }
+
     input {
         font-size: 16px;
         width: 376px;
