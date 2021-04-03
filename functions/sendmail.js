@@ -17,11 +17,11 @@ exports.handler = function (event, context, callback) {
     );
 
     transporter.sendMail({
-        from: "mail-server@mortimerbaltus.com",
-        to: data.recipient,
+        from: "contact@mortimerbaltus.com",
+        to: "contact@mortimerbaltus.com",
         replyTo: data.userEmail,
         subject: `New message from ${data.userEmail} on ${currentTime}`,
-        html: `<h3>Email from ${data.userEmail}</h3>
+        html: `<h3>Email from ${data.userEmail} to ${data.recipient}</h3>
         <p>${data.message}</p>
         <footer><p>If you reply to this email your message will be forwarded to ${data.userEmail}</p></footer>`
     }, function (error, info) {
