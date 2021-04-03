@@ -254,6 +254,15 @@ var app = (function () {
     function onDestroy(fn) {
         get_current_component().$$.on_destroy.push(fn);
     }
+    // TODO figure out if we still want to support
+    // shorthand events, or if we want to implement
+    // a real bubbling mechanism
+    function bubble(component, event) {
+        const callbacks = component.$$.callbacks[event.type];
+        if (callbacks) {
+            callbacks.slice().forEach(fn => fn(event));
+        }
+    }
 
     const dirty_components = [];
     const binding_callbacks = [];
@@ -4865,7 +4874,7 @@ var app = (function () {
     const { Error: Error_1, console: console_1 } = globals;
     const file$h = "src/Windows/ContactWindow.svelte";
 
-    // (386:12) {:else}
+    // (384:12) {:else}
     function create_else_block$1(ctx) {
     	let div2;
     	let div1;
@@ -4904,17 +4913,17 @@ var app = (function () {
     			? "Moritz Mortimer Müller as a Memoji"
     			: "Theodor Baltus Steiner as a Memoji");
 
-    			attr_dev(img, "class", "message-img svelte-1b592rz");
+    			attr_dev(img, "class", "message-img svelte-rtrn63");
     			attr_dev(img, "draggable", "false");
-    			add_location(img, file$h, 393, 28, 35943);
-    			attr_dev(p, "class", "message-bubble svelte-1b592rz");
-    			add_location(p, file$h, 406, 28, 36645);
-    			attr_dev(div0, "class", "message svelte-1b592rz");
-    			add_location(div0, file$h, 392, 24, 35893);
-    			attr_dev(div1, "class", "fixed svelte-1b592rz");
-    			add_location(div1, file$h, 391, 20, 35849);
-    			attr_dev(div2, "class", "message-container svelte-1b592rz");
-    			add_location(div2, file$h, 386, 16, 35659);
+    			add_location(img, file$h, 391, 28, 35985);
+    			attr_dev(p, "class", "message-bubble svelte-rtrn63");
+    			add_location(p, file$h, 404, 28, 36687);
+    			attr_dev(div0, "class", "message svelte-rtrn63");
+    			add_location(div0, file$h, 390, 24, 35935);
+    			attr_dev(div1, "class", "fixed svelte-rtrn63");
+    			add_location(div1, file$h, 389, 20, 35891);
+    			attr_dev(div2, "class", "message-container svelte-rtrn63");
+    			add_location(div2, file$h, 384, 16, 35701);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -4928,7 +4937,7 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(img, "click", /*click_handler_8*/ ctx[29], false, false, false),
+    					listen_dev(img, "click", /*click_handler_8*/ ctx[30], false, false, false),
     					action_destroyer(/*resetView*/ ctx[12].call(null, div2))
     				];
 
@@ -4979,14 +4988,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(386:12) {:else}",
+    		source: "(384:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (299:47) 
+    // (300:47) 
     function create_if_block_4(ctx) {
     	let div1;
     	let form;
@@ -5035,57 +5044,57 @@ var app = (function () {
     			t4 = text(t4_value);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "name", "email");
-    			attr_dev(input, "class", "user-email svelte-1b592rz");
+    			attr_dev(input, "class", "user-email svelte-rtrn63");
 
     			attr_dev(input, "placeholder", input_placeholder_value = /*emailTouched*/ ctx[6] && !/*isEmailValid*/ ctx[2]
     			? "Please enter a valid Email address"
     			: "Your Email");
 
     			toggle_class(input, "invalid-email", /*emailTouched*/ ctx[6] && !/*isEmailValid*/ ctx[2]);
-    			add_location(input, file$h, 308, 24, 31825);
+    			add_location(input, file$h, 305, 24, 31813);
     			attr_dev(textarea, "cols", "30");
     			attr_dev(textarea, "rows", "10");
-    			attr_dev(textarea, "class", "user-body svelte-1b592rz");
+    			attr_dev(textarea, "class", "user-body svelte-rtrn63");
     			attr_dev(textarea, "name", "message");
     			attr_dev(textarea, "placeholder", "Your Message");
-    			add_location(textarea, file$h, 320, 24, 32466);
-    			add_location(title, file$h, 356, 36, 34209);
+    			add_location(textarea, file$h, 317, 24, 32454);
+    			add_location(title, file$h, 353, 36, 34197);
     			attr_dev(line0, "x2", "22");
     			attr_dev(line0, "y2", "22");
-    			attr_dev(line0, "class", "svelte-1b592rz");
-    			add_location(line0, file$h, 362, 44, 34562);
+    			attr_dev(line0, "class", "svelte-rtrn63");
+    			add_location(line0, file$h, 359, 44, 34550);
     			attr_dev(line1, "transform", "translate(11 11) scale(-1 1) translate(-11 -11)");
     			attr_dev(line1, "x2", "22");
     			attr_dev(line1, "y2", "22");
-    			attr_dev(line1, "class", "svelte-1b592rz");
-    			add_location(line1, file$h, 363, 44, 34631);
+    			attr_dev(line1, "class", "svelte-rtrn63");
+    			add_location(line1, file$h, 360, 44, 34619);
     			attr_dev(g0, "transform", "translate(1 1)");
     			attr_dev(g0, "stroke", "#fff");
-    			add_location(g0, file$h, 358, 40, 34344);
+    			add_location(g0, file$h, 355, 40, 34332);
     			attr_dev(g1, "fill", "none");
     			attr_dev(g1, "fill-rule", "evenodd");
-    			add_location(g1, file$h, 357, 36, 34268);
+    			add_location(g1, file$h, 354, 36, 34256);
     			attr_dev(svg, "version", "1.1");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
-    			attr_dev(svg, "class", "svelte-1b592rz");
-    			add_location(svg, file$h, 351, 32, 33957);
+    			attr_dev(svg, "class", "svelte-rtrn63");
+    			add_location(svg, file$h, 348, 32, 33945);
     			attr_dev(button0, "ontouchstart", "");
-    			attr_dev(button0, "class", "cancel-button svelte-1b592rz");
-    			add_location(button0, file$h, 329, 28, 32856);
-    			attr_dev(button1, "class", "action-button svelte-1b592rz");
+    			attr_dev(button0, "class", "cancel-button svelte-rtrn63");
+    			add_location(button0, file$h, 326, 28, 32844);
+    			attr_dev(button1, "class", "action-button svelte-rtrn63");
     			attr_dev(button1, "type", "submit");
     			attr_dev(button1, "ontouchstart", "");
     			button1.disabled = /*disabled*/ ctx[9];
     			toggle_class(button1, "disabled", !/*isFormValid*/ ctx[3]);
-    			add_location(button1, file$h, 372, 28, 35095);
-    			attr_dev(div0, "class", "button-container svelte-1b592rz");
-    			add_location(div0, file$h, 328, 24, 32797);
+    			add_location(button1, file$h, 369, 28, 35083);
+    			attr_dev(div0, "class", "button-container svelte-rtrn63");
+    			add_location(div0, file$h, 325, 24, 32785);
     			attr_dev(form, "method", "POST");
-    			attr_dev(form, "class", "fixed svelte-1b592rz");
-    			add_location(form, file$h, 303, 20, 31635);
-    			attr_dev(div1, "class", "email-container svelte-1b592rz");
-    			add_location(div1, file$h, 299, 16, 31481);
+    			attr_dev(form, "class", "fixed svelte-rtrn63");
+    			add_location(form, file$h, 304, 20, 31729);
+    			attr_dev(div1, "class", "email-container svelte-rtrn63");
+    			add_location(div1, file$h, 300, 16, 31575);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -5112,12 +5121,13 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input, "input", /*input_input_handler*/ ctx[24]),
-    					listen_dev(input, "blur", /*blur_handler*/ ctx[25], false, false, false),
-    					listen_dev(input, "focus", /*focus_handler*/ ctx[26], false, false, false),
-    					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[27]),
-    					listen_dev(button0, "click", /*click_handler_7*/ ctx[28], false, false, false),
-    					listen_dev(form, "submit", prevent_default(/*submitForm*/ ctx[15]), false, true, false)
+    					listen_dev(input, "input", /*input_input_handler*/ ctx[25]),
+    					listen_dev(input, "blur", /*blur_handler*/ ctx[26], false, false, false),
+    					listen_dev(input, "focus", /*focus_handler*/ ctx[27], false, false, false),
+    					listen_dev(textarea, "input", /*textarea_input_handler*/ ctx[28]),
+    					listen_dev(button0, "click", /*click_handler_7*/ ctx[29], false, false, false),
+    					listen_dev(button1, "click", /*submitForm*/ ctx[15], false, false, false),
+    					listen_dev(form, "submit", prevent_default(/*submit_handler*/ ctx[17]), false, true, false)
     				];
 
     				mounted = true;
@@ -5179,14 +5189,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(299:47) ",
+    		source: "(300:47) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (177:59) 
+    // (178:59) 
     function create_if_block_1$1(ctx) {
     	let div5;
     	let div4;
@@ -5259,55 +5269,55 @@ var app = (function () {
     			? "Moritz Mortimer Müller as a Memoji"
     			: "Theodor Baltus Steiner as a Memoji");
 
-    			attr_dev(img, "class", "message-img svelte-1b592rz");
+    			attr_dev(img, "class", "message-img svelte-rtrn63");
     			attr_dev(img, "draggable", "false");
     			toggle_class(img, "hidden", /*messageCounter*/ ctx[5] != 0);
-    			add_location(img, file$h, 183, 28, 25246);
+    			add_location(img, file$h, 184, 28, 25343);
     			set_style(p, "height", "38px");
-    			attr_dev(p, "class", "message-bubble svelte-1b592rz");
-    			add_location(p, file$h, 195, 28, 25903);
-    			attr_dev(div0, "class", "message svelte-1b592rz");
+    			attr_dev(p, "class", "message-bubble svelte-rtrn63");
+    			add_location(p, file$h, 196, 28, 26000);
+    			attr_dev(div0, "class", "message svelte-rtrn63");
     			set_style(div0, "height", "54px");
-    			add_location(div0, file$h, 182, 24, 25174);
-    			attr_dev(div1, "class", "message long-message svelte-1b592rz");
+    			add_location(div0, file$h, 183, 24, 25271);
+    			attr_dev(div1, "class", "message long-message svelte-rtrn63");
     			set_style(div1, "height", "95px");
-    			add_location(div1, file$h, 205, 24, 26356);
-    			attr_dev(div2, "class", "message svelte-1b592rz");
+    			add_location(div1, file$h, 206, 24, 26453);
+    			attr_dev(div2, "class", "message svelte-rtrn63");
     			set_style(div2, "height", "54px");
-    			add_location(div2, file$h, 232, 24, 28005);
-    			add_location(title, file$h, 267, 36, 29852);
+    			add_location(div2, file$h, 233, 24, 28102);
+    			add_location(title, file$h, 268, 36, 29946);
     			attr_dev(line0, "x2", "22");
     			attr_dev(line0, "y2", "22");
-    			attr_dev(line0, "class", "svelte-1b592rz");
-    			add_location(line0, file$h, 273, 44, 30205);
+    			attr_dev(line0, "class", "svelte-rtrn63");
+    			add_location(line0, file$h, 274, 44, 30299);
     			attr_dev(line1, "transform", "translate(11 11) scale(-1 1) translate(-11 -11)");
     			attr_dev(line1, "x2", "22");
     			attr_dev(line1, "y2", "22");
-    			attr_dev(line1, "class", "svelte-1b592rz");
-    			add_location(line1, file$h, 274, 44, 30274);
+    			attr_dev(line1, "class", "svelte-rtrn63");
+    			add_location(line1, file$h, 275, 44, 30368);
     			attr_dev(g0, "transform", "translate(1 1)");
     			attr_dev(g0, "stroke", "#fff");
-    			add_location(g0, file$h, 269, 40, 29987);
+    			add_location(g0, file$h, 270, 40, 30081);
     			attr_dev(g1, "fill", "none");
     			attr_dev(g1, "fill-rule", "evenodd");
-    			add_location(g1, file$h, 268, 36, 29911);
+    			add_location(g1, file$h, 269, 36, 30005);
     			attr_dev(svg, "version", "1.1");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
-    			attr_dev(svg, "class", "svelte-1b592rz");
-    			add_location(svg, file$h, 262, 32, 29600);
+    			attr_dev(svg, "class", "svelte-rtrn63");
+    			add_location(svg, file$h, 263, 32, 29694);
     			attr_dev(button0, "ontouchstart", "");
-    			attr_dev(button0, "class", "cancel-button svelte-1b592rz");
-    			add_location(button0, file$h, 255, 28, 29290);
-    			attr_dev(button1, "class", "action-button svelte-1b592rz");
+    			attr_dev(button0, "class", "cancel-button svelte-rtrn63");
+    			add_location(button0, file$h, 256, 28, 29384);
+    			attr_dev(button1, "class", "action-button svelte-rtrn63");
     			attr_dev(button1, "ontouchstart", "");
-    			add_location(button1, file$h, 283, 28, 30738);
-    			attr_dev(div3, "class", "button-container svelte-1b592rz");
-    			add_location(div3, file$h, 254, 24, 29231);
-    			attr_dev(div4, "class", "fixed svelte-1b592rz");
-    			add_location(div4, file$h, 181, 20, 25130);
-    			attr_dev(div5, "class", "message-container svelte-1b592rz");
-    			add_location(div5, file$h, 177, 16, 24974);
+    			add_location(button1, file$h, 284, 28, 30832);
+    			attr_dev(div3, "class", "button-container svelte-rtrn63");
+    			add_location(div3, file$h, 255, 24, 29325);
+    			attr_dev(div4, "class", "fixed svelte-rtrn63");
+    			add_location(div4, file$h, 182, 20, 25227);
+    			attr_dev(div5, "class", "message-container svelte-rtrn63");
+    			add_location(div5, file$h, 178, 16, 25071);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div5, anchor);
@@ -5339,10 +5349,10 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(img, "click", /*click_handler_2*/ ctx[19], false, false, false),
+    					listen_dev(img, "click", /*click_handler_2*/ ctx[20], false, false, false),
     					action_destroyer(/*startMessageTimer*/ ctx[13].call(null, p)),
-    					listen_dev(button0, "click", /*click_handler_5*/ ctx[22], false, false, false),
-    					listen_dev(button1, "click", /*click_handler_6*/ ctx[23], false, false, false)
+    					listen_dev(button0, "click", /*click_handler_5*/ ctx[23], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_6*/ ctx[24], false, false, false)
     				];
 
     				mounted = true;
@@ -5422,14 +5432,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(177:59) ",
+    		source: "(178:59) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (136:12) {#if view === "overview"}
+    // (137:12) {#if view === "overview"}
     function create_if_block$3(ctx) {
     	let div1;
     	let div0;
@@ -5482,35 +5492,35 @@ var app = (function () {
     			t8 = space();
     			p1 = element("p");
     			p1.textContent = "Theodor Baltus (JP)";
-    			add_location(br, file$h, 142, 35, 23553);
-    			attr_dev(h1, "class", "svelte-1b592rz");
-    			add_location(h1, file$h, 141, 24, 23513);
-    			add_location(hr0, file$h, 144, 24, 23619);
+    			add_location(br, file$h, 143, 35, 23650);
+    			attr_dev(h1, "class", "svelte-rtrn63");
+    			add_location(h1, file$h, 142, 24, 23610);
+    			add_location(hr0, file$h, 145, 24, 23716);
     			if (img0.src !== (img0_src_value = moritzmoji)) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "alt", "Moritz Mortimer Müller as a Memoji");
     			attr_dev(img0, "draggable", "false");
-    			attr_dev(img0, "class", "svelte-1b592rz");
-    			add_location(img0, file$h, 152, 28, 23926);
-    			attr_dev(p0, "class", "svelte-1b592rz");
-    			add_location(p0, file$h, 157, 28, 24162);
+    			attr_dev(img0, "class", "svelte-rtrn63");
+    			add_location(img0, file$h, 153, 28, 24023);
+    			attr_dev(p0, "class", "svelte-rtrn63");
+    			add_location(p0, file$h, 158, 28, 24259);
     			attr_dev(button0, "ontouchstart", "");
-    			attr_dev(button0, "class", "contact svelte-1b592rz");
-    			add_location(button0, file$h, 145, 24, 23650);
-    			add_location(hr1, file$h, 159, 24, 24248);
+    			attr_dev(button0, "class", "contact svelte-rtrn63");
+    			add_location(button0, file$h, 146, 24, 23747);
+    			add_location(hr1, file$h, 160, 24, 24345);
     			if (img1.src !== (img1_src_value = theomoji)) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "alt", "Theodor Baltus Steiner as a Memoji");
     			attr_dev(img1, "draggable", "false");
-    			attr_dev(img1, "class", "svelte-1b592rz");
-    			add_location(img1, file$h, 167, 28, 24553);
-    			attr_dev(p1, "class", "svelte-1b592rz");
-    			add_location(p1, file$h, 172, 28, 24787);
+    			attr_dev(img1, "class", "svelte-rtrn63");
+    			add_location(img1, file$h, 168, 28, 24650);
+    			attr_dev(p1, "class", "svelte-rtrn63");
+    			add_location(p1, file$h, 173, 28, 24884);
     			attr_dev(button1, "ontouchstart", "");
-    			attr_dev(button1, "class", "contact svelte-1b592rz");
-    			add_location(button1, file$h, 160, 24, 24279);
-    			attr_dev(div0, "class", "fixed svelte-1b592rz");
-    			add_location(div0, file$h, 140, 20, 23469);
-    			attr_dev(div1, "class", "contact-container svelte-1b592rz");
-    			add_location(div1, file$h, 136, 16, 23313);
+    			attr_dev(button1, "class", "contact svelte-rtrn63");
+    			add_location(button1, file$h, 161, 24, 24376);
+    			attr_dev(div0, "class", "fixed svelte-rtrn63");
+    			add_location(div0, file$h, 141, 20, 23566);
+    			attr_dev(div1, "class", "contact-container svelte-rtrn63");
+    			add_location(div1, file$h, 137, 16, 23410);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -5537,8 +5547,8 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(button0, "click", /*click_handler*/ ctx[17], false, false, false),
-    					listen_dev(button1, "click", /*click_handler_1*/ ctx[18], false, false, false)
+    					listen_dev(button0, "click", /*click_handler*/ ctx[18], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_1*/ ctx[19], false, false, false)
     				];
 
     				mounted = true;
@@ -5572,14 +5582,14 @@ var app = (function () {
     		block,
     		id: create_if_block$3.name,
     		type: "if",
-    		source: "(136:12) {#if view === \\\"overview\\\"}",
+    		source: "(137:12) {#if view === \\\"overview\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (207:28) {#if messageCounter > 0}
+    // (208:28) {#if messageCounter > 0}
     function create_if_block_3(ctx) {
     	let img;
     	let img_src_value;
@@ -5607,13 +5617,13 @@ var app = (function () {
     			? "Moritz Mortimer Müller as a Memoji"
     			: "Theodor Baltus Steiner as a Memoji");
 
-    			attr_dev(img, "class", "message-img svelte-1b592rz");
+    			attr_dev(img, "class", "message-img svelte-rtrn63");
     			attr_dev(img, "draggable", "false");
     			toggle_class(img, "hidden", /*messageCounter*/ ctx[5] != 1);
-    			add_location(img, file$h, 207, 32, 26498);
+    			add_location(img, file$h, 208, 32, 26595);
     			set_style(p, "height", "95px");
-    			attr_dev(p, "class", "message-bubble svelte-1b592rz");
-    			add_location(p, file$h, 221, 32, 27283);
+    			attr_dev(p, "class", "message-bubble svelte-rtrn63");
+    			add_location(p, file$h, 222, 32, 27380);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -5623,7 +5633,7 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(img, "click", /*click_handler_3*/ ctx[20], false, false, false),
+    					listen_dev(img, "click", /*click_handler_3*/ ctx[21], false, false, false),
     					action_destroyer(/*startMessageTimer*/ ctx[13].call(null, p))
     				];
 
@@ -5662,14 +5672,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(207:28) {#if messageCounter > 0}",
+    		source: "(208:28) {#if messageCounter > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (234:28) {#if messageCounter > 1}
+    // (235:28) {#if messageCounter > 1}
     function create_if_block_2(ctx) {
     	let img;
     	let img_src_value;
@@ -5678,7 +5688,7 @@ var app = (function () {
     	let p;
 
     	let t1_value = (/*view*/ ctx[4] === "moritz"
-    	? "looking forward to hear from you!"
+    	? "I can't wait to hear from you!"
     	: "I'm excited to hear from you!") + "";
 
     	let t1;
@@ -5697,12 +5707,12 @@ var app = (function () {
     			? "Moritz Mortimer Müller as a Memoji"
     			: "Theodor Baltus Steiner as a Memoji");
 
-    			attr_dev(img, "class", "message-img svelte-1b592rz");
+    			attr_dev(img, "class", "message-img svelte-rtrn63");
     			attr_dev(img, "draggable", "false");
-    			add_location(img, file$h, 234, 32, 28134);
+    			add_location(img, file$h, 235, 32, 28231);
     			set_style(p, "height", "38px");
-    			attr_dev(p, "class", "message-bubble svelte-1b592rz");
-    			add_location(p, file$h, 247, 32, 28848);
+    			attr_dev(p, "class", "message-bubble svelte-rtrn63");
+    			add_location(p, file$h, 248, 32, 28945);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -5711,7 +5721,7 @@ var app = (function () {
     			append_dev(p, t1);
 
     			if (!mounted) {
-    				dispose = listen_dev(img, "click", /*click_handler_4*/ ctx[21], false, false, false);
+    				dispose = listen_dev(img, "click", /*click_handler_4*/ ctx[22], false, false, false);
     				mounted = true;
     			}
     		},
@@ -5727,7 +5737,7 @@ var app = (function () {
     			}
 
     			if (dirty[0] & /*view*/ 16 && t1_value !== (t1_value = (/*view*/ ctx[4] === "moritz"
-    			? "looking forward to hear from you!"
+    			? "I can't wait to hear from you!"
     			: "I'm excited to hear from you!") + "")) set_data_dev(t1, t1_value);
     		},
     		d: function destroy(detaching) {
@@ -5743,14 +5753,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(234:28) {#if messageCounter > 1}",
+    		source: "(235:28) {#if messageCounter > 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (126:4) <WindowElement         width={378}         height={313}         parallax="very-slow"         background="#EFEFEF"         title="CONTACT"         id={14}         enlargeable={false}     >
+    // (127:4) <WindowElement         width={378}         height={313}         parallax="very-slow"         background="#EFEFEF"         title="CONTACT"         id={14}         enlargeable={false}     >
     function create_default_slot$e(ctx) {
     	let div;
     	let show_if;
@@ -5775,8 +5785,9 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			if_block.c();
-    			attr_dev(div, "class", "container svelte-1b592rz");
-    			add_location(div, file$h, 134, 8, 23235);
+    			attr_dev(div, "class", "container svelte-rtrn63");
+    			toggle_class(div, "inverse-slide", /*view*/ ctx[4] === "overview");
+    			add_location(div, file$h, 135, 8, 23290);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -5809,6 +5820,10 @@ var app = (function () {
     				transition_in(if_block, 1);
     				if_block.m(div, null);
     			}
+
+    			if (dirty[0] & /*view*/ 16) {
+    				toggle_class(div, "inverse-slide", /*view*/ ctx[4] === "overview");
+    			}
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -5829,7 +5844,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$e.name,
     		type: "slot",
-    		source: "(126:4) <WindowElement         width={378}         height={313}         parallax=\\\"very-slow\\\"         background=\\\"#EFEFEF\\\"         title=\\\"CONTACT\\\"         id={14}         enlargeable={false}     >",
+    		source: "(127:4) <WindowElement         width={378}         height={313}         parallax=\\\"very-slow\\\"         background=\\\"#EFEFEF\\\"         title=\\\"CONTACT\\\"         id={14}         enlargeable={false}     >",
     		ctx
     	});
 
@@ -5860,8 +5875,8 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "wrapper grid-area svelte-1b592rz");
-    			add_location(div, file$h, 124, 0, 23003);
+    			attr_dev(div, "class", "wrapper grid-area svelte-rtrn63");
+    			add_location(div, file$h, 125, 0, 23058);
     		},
     		l: function claim(nodes) {
     			throw new Error_1("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5874,7 +5889,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const windowelement_changes = {};
 
-    			if (dirty[0] & /*view, messageCounter, disabled, isFormValid, isLoading, userEmail, userBody, emailTouched, isEmailValid, success*/ 1023 | dirty[1] & /*$$scope*/ 1) {
+    			if (dirty[0] & /*view, messageCounter, disabled, isFormValid, isLoading, userEmail, userBody, emailTouched, isEmailValid, success*/ 1023 | dirty[1] & /*$$scope*/ 2) {
     				windowelement_changes.$$scope = { dirty, ctx };
     			}
 
@@ -5988,9 +6003,13 @@ var app = (function () {
     	function submitForm() {
     		$$invalidate(8, isLoading = true);
 
-    		fetch("https://formspree.io/f/moqyqqbv", {
+    		fetch("/api/sendmail", {
     			method: "POST",
-    			body: JSON.stringify({ email: userEmail, message: userBody }),
+    			body: JSON.stringify({
+    				userEmail,
+    				recipient: view.substring(7),
+    				message: userBody
+    			}),
     			headers: {
     				Accept: "application/json",
     				"Content-Type": "application/json"
@@ -6017,6 +6036,10 @@ var app = (function () {
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1.warn(`<ContactWindow> was created with unknown prop '${key}'`);
     	});
+
+    	function submit_handler(event) {
+    		bubble($$self, event);
+    	}
 
     	const click_handler = () => {
     		$$invalidate(4, view = "moritz");
@@ -6127,7 +6150,7 @@ var app = (function () {
 
     	$$self.$$.update = () => {
     		if ($$self.$$.dirty[0] & /*userEmail*/ 1) {
-    			$$invalidate(2, isEmailValid = isValidEmail(userEmail));
+    			$$invalidate(2, isEmailValid = isValidEmail(userEmail) && !isEmpty(userEmail));
     		}
 
     		if ($$self.$$.dirty[0] & /*userBody*/ 2) {
@@ -6161,6 +6184,7 @@ var app = (function () {
     		resetChatView,
     		submitForm,
     		isBodyValid,
+    		submit_handler,
     		click_handler,
     		click_handler_1,
     		click_handler_2,

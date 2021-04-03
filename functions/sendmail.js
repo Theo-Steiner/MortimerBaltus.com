@@ -4,6 +4,11 @@ const { SMTP_USER, SMTP_PASS } = process.env;
 const currentTime = new Date();
 
 exports.handler = function (event, context, callback) {
+
+    if (event.headers["Origin"] != "https://mortimerbaltus.com") {
+        return callback(null, { statusCode: 403 });
+    }
+
     let data = JSON.parse(event.body);
 
     let transporter = nodemailer.createTransport(

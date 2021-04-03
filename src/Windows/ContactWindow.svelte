@@ -12,7 +12,7 @@
     let success = false;
     let isLoading = false;
 
-    $: isEmailValid = isValidEmail(userEmail);
+    $: isEmailValid = isValidEmail(userEmail) && !isEmpty(userEmail);
     $: isBodyValid = !isEmpty(userBody);
     $: isFormValid = isEmailValid && isBodyValid;
 
@@ -133,7 +133,7 @@
         id={14}
         enlargeable={false}
     >
-        <div class="container">
+        <div class="container" class:inverse-slide={view === "overview"}>
             {#if view === "overview"}
                 <div
                     class="contact-container"
@@ -248,7 +248,7 @@
                                 />
                                 <p style="height: 38px;" class="message-bubble">
                                     {view === "moritz"
-                                        ? "looking forward to hear from you!"
+                                        ? "I can't wait to hear from you!"
                                         : "I'm excited to hear from you!"}
                                 </p>
                             {/if}
@@ -302,11 +302,7 @@
                     class="email-container"
                     transition:horizontalSlide={{ duration: 300 }}
                 >
-                    <form
-                        on:submit|preventDefault={submitForm}
-                        method="POST"
-                        class="fixed"
-                    >
+                    <form on:submit|preventDefault method="POST" class="fixed">
                         <input
                             type="text"
                             name="email"
@@ -377,6 +373,7 @@
                                 ontouchstart=""
                                 class:disabled={!isFormValid}
                                 {disabled}
+                                on:click={submitForm}
                                 >{isLoading
                                     ? "Sending..."
                                     : "Send Email"}</button
@@ -486,6 +483,12 @@
         width: 752px;
         display: flex;
         overflow: hidden;
+    }
+
+    .inverse-slide {
+        position: relative;
+        left: -376px;
+        flex-direction: row-reverse;
     }
 
     .email-container {
