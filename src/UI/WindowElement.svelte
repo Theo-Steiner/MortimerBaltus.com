@@ -48,6 +48,7 @@
 <section
     in:scale={{
         duration: 1200,
+        delay: 1400,
     }}
     class={parallax}
     style="--windowWidth: {width}; --windowHeight: {height};

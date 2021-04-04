@@ -24,6 +24,7 @@
     class:loaded
     bind:this={thisImage}
     draggable="false"
+    loading="lazy"
 />
 
 <style>
@@ -32,7 +33,7 @@
         height: 100%;
         display: block;
         opacity: 0;
-        transition: opacity 500ms ease-out;
+        transition: opacity 200ms ease-out;
         object-fit: cover;
     }
     img.loaded {
