@@ -135,10 +135,7 @@
     >
         <div class="container" class:inverse-slide={view === "overview"}>
             {#if view === "overview"}
-                <div
-                    class="contact-container"
-                    transition:horizontalSlide={{ duration: 300 }}
-                >
+                <div class="contact-container" transition:horizontalSlide>
                     <div class="fixed">
                         <h1>
                             GET IN <br />TOUCH
@@ -176,10 +173,7 @@
                     </div>
                 </div>
             {:else if view === "theo" || view === "moritz"}
-                <div
-                    class="message-container"
-                    transition:horizontalSlide={{ duration: 300 }}
-                >
+                <div class="message-container" transition:horizontalSlide>
                     <div class="fixed">
                         <div class="message" style="height: 54px;">
                             <img
@@ -298,10 +292,7 @@
                     </div>
                 </div>
             {:else if view.includes("mailto:")}
-                <div
-                    class="email-container"
-                    transition:horizontalSlide={{ duration: 300 }}
-                >
+                <div class="email-container" transition:horizontalSlide>
                     <form on:submit|preventDefault method="POST" class="fixed">
                         <input
                             type="text"
@@ -384,7 +375,7 @@
             {:else}
                 <div
                     class="message-container"
-                    transition:horizontalSlide={{ duration: 300 }}
+                    transition:horizontalSlide
                     use:resetView
                 >
                     <div class="fixed">

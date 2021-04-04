@@ -4874,7 +4874,7 @@ var app = (function () {
     const { Error: Error_1, console: console_1 } = globals;
     const file$h = "src/Windows/ContactWindow.svelte";
 
-    // (384:12) {:else}
+    // (375:12) {:else}
     function create_else_block$1(ctx) {
     	let div2;
     	let div1;
@@ -4915,15 +4915,15 @@ var app = (function () {
 
     			attr_dev(img, "class", "message-img svelte-rtrn63");
     			attr_dev(img, "draggable", "false");
-    			add_location(img, file$h, 391, 28, 35985);
+    			add_location(img, file$h, 382, 28, 35734);
     			attr_dev(p, "class", "message-bubble svelte-rtrn63");
-    			add_location(p, file$h, 404, 28, 36687);
+    			add_location(p, file$h, 395, 28, 36436);
     			attr_dev(div0, "class", "message svelte-rtrn63");
-    			add_location(div0, file$h, 390, 24, 35935);
+    			add_location(div0, file$h, 381, 24, 35684);
     			attr_dev(div1, "class", "fixed svelte-rtrn63");
-    			add_location(div1, file$h, 389, 20, 35891);
+    			add_location(div1, file$h, 380, 20, 35640);
     			attr_dev(div2, "class", "message-container svelte-rtrn63");
-    			add_location(div2, file$h, 384, 16, 35701);
+    			add_location(div2, file$h, 375, 16, 35470);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -4965,14 +4965,14 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div2_transition) div2_transition = create_bidirectional_transition(div2, /*horizontalSlide*/ ctx[11], { duration: 300 }, true);
+    				if (!div2_transition) div2_transition = create_bidirectional_transition(div2, /*horizontalSlide*/ ctx[11], {}, true);
     				div2_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div2_transition) div2_transition = create_bidirectional_transition(div2, /*horizontalSlide*/ ctx[11], { duration: 300 }, false);
+    			if (!div2_transition) div2_transition = create_bidirectional_transition(div2, /*horizontalSlide*/ ctx[11], {}, false);
     			div2_transition.run(0);
     			current = false;
     		},
@@ -4988,14 +4988,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(384:12) {:else}",
+    		source: "(375:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (300:47) 
+    // (294:47) 
     function create_if_block_4(ctx) {
     	let div1;
     	let form;
@@ -5051,50 +5051,50 @@ var app = (function () {
     			: "Your Email");
 
     			toggle_class(input, "invalid-email", /*emailTouched*/ ctx[6] && !/*isEmailValid*/ ctx[2]);
-    			add_location(input, file$h, 305, 24, 31813);
+    			add_location(input, file$h, 296, 24, 31582);
     			attr_dev(textarea, "cols", "30");
     			attr_dev(textarea, "rows", "10");
     			attr_dev(textarea, "class", "user-body svelte-rtrn63");
     			attr_dev(textarea, "name", "message");
     			attr_dev(textarea, "placeholder", "Your Message");
-    			add_location(textarea, file$h, 317, 24, 32454);
-    			add_location(title, file$h, 353, 36, 34197);
+    			add_location(textarea, file$h, 308, 24, 32223);
+    			add_location(title, file$h, 344, 36, 33966);
     			attr_dev(line0, "x2", "22");
     			attr_dev(line0, "y2", "22");
     			attr_dev(line0, "class", "svelte-rtrn63");
-    			add_location(line0, file$h, 359, 44, 34550);
+    			add_location(line0, file$h, 350, 44, 34319);
     			attr_dev(line1, "transform", "translate(11 11) scale(-1 1) translate(-11 -11)");
     			attr_dev(line1, "x2", "22");
     			attr_dev(line1, "y2", "22");
     			attr_dev(line1, "class", "svelte-rtrn63");
-    			add_location(line1, file$h, 360, 44, 34619);
+    			add_location(line1, file$h, 351, 44, 34388);
     			attr_dev(g0, "transform", "translate(1 1)");
     			attr_dev(g0, "stroke", "#fff");
-    			add_location(g0, file$h, 355, 40, 34332);
+    			add_location(g0, file$h, 346, 40, 34101);
     			attr_dev(g1, "fill", "none");
     			attr_dev(g1, "fill-rule", "evenodd");
-    			add_location(g1, file$h, 354, 36, 34256);
+    			add_location(g1, file$h, 345, 36, 34025);
     			attr_dev(svg, "version", "1.1");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "class", "svelte-rtrn63");
-    			add_location(svg, file$h, 348, 32, 33945);
+    			add_location(svg, file$h, 339, 32, 33714);
     			attr_dev(button0, "ontouchstart", "");
     			attr_dev(button0, "class", "cancel-button svelte-rtrn63");
-    			add_location(button0, file$h, 326, 28, 32844);
+    			add_location(button0, file$h, 317, 28, 32613);
     			attr_dev(button1, "class", "action-button svelte-rtrn63");
     			attr_dev(button1, "type", "submit");
     			attr_dev(button1, "ontouchstart", "");
     			button1.disabled = /*disabled*/ ctx[9];
     			toggle_class(button1, "disabled", !/*isFormValid*/ ctx[3]);
-    			add_location(button1, file$h, 369, 28, 35083);
+    			add_location(button1, file$h, 360, 28, 34852);
     			attr_dev(div0, "class", "button-container svelte-rtrn63");
-    			add_location(div0, file$h, 325, 24, 32785);
+    			add_location(div0, file$h, 316, 24, 32554);
     			attr_dev(form, "method", "POST");
     			attr_dev(form, "class", "fixed svelte-rtrn63");
-    			add_location(form, file$h, 304, 20, 31729);
+    			add_location(form, file$h, 295, 20, 31498);
     			attr_dev(div1, "class", "email-container svelte-rtrn63");
-    			add_location(div1, file$h, 300, 16, 31575);
+    			add_location(div1, file$h, 294, 16, 31421);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -5166,14 +5166,14 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], { duration: 300 }, true);
+    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], {}, true);
     				div1_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], { duration: 300 }, false);
+    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], {}, false);
     			div1_transition.run(0);
     			current = false;
     		},
@@ -5189,14 +5189,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(300:47) ",
+    		source: "(294:47) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (178:59) 
+    // (175:59) 
     function create_if_block_1$1(ctx) {
     	let div5;
     	let div4;
@@ -5272,52 +5272,52 @@ var app = (function () {
     			attr_dev(img, "class", "message-img svelte-rtrn63");
     			attr_dev(img, "draggable", "false");
     			toggle_class(img, "hidden", /*messageCounter*/ ctx[5] != 0);
-    			add_location(img, file$h, 184, 28, 25343);
+    			add_location(img, file$h, 178, 28, 25189);
     			set_style(p, "height", "38px");
     			attr_dev(p, "class", "message-bubble svelte-rtrn63");
-    			add_location(p, file$h, 196, 28, 26000);
+    			add_location(p, file$h, 190, 28, 25846);
     			attr_dev(div0, "class", "message svelte-rtrn63");
     			set_style(div0, "height", "54px");
-    			add_location(div0, file$h, 183, 24, 25271);
+    			add_location(div0, file$h, 177, 24, 25117);
     			attr_dev(div1, "class", "message long-message svelte-rtrn63");
     			set_style(div1, "height", "95px");
-    			add_location(div1, file$h, 206, 24, 26453);
+    			add_location(div1, file$h, 200, 24, 26299);
     			attr_dev(div2, "class", "message svelte-rtrn63");
     			set_style(div2, "height", "54px");
-    			add_location(div2, file$h, 233, 24, 28102);
-    			add_location(title, file$h, 268, 36, 29946);
+    			add_location(div2, file$h, 227, 24, 27948);
+    			add_location(title, file$h, 262, 36, 29792);
     			attr_dev(line0, "x2", "22");
     			attr_dev(line0, "y2", "22");
     			attr_dev(line0, "class", "svelte-rtrn63");
-    			add_location(line0, file$h, 274, 44, 30299);
+    			add_location(line0, file$h, 268, 44, 30145);
     			attr_dev(line1, "transform", "translate(11 11) scale(-1 1) translate(-11 -11)");
     			attr_dev(line1, "x2", "22");
     			attr_dev(line1, "y2", "22");
     			attr_dev(line1, "class", "svelte-rtrn63");
-    			add_location(line1, file$h, 275, 44, 30368);
+    			add_location(line1, file$h, 269, 44, 30214);
     			attr_dev(g0, "transform", "translate(1 1)");
     			attr_dev(g0, "stroke", "#fff");
-    			add_location(g0, file$h, 270, 40, 30081);
+    			add_location(g0, file$h, 264, 40, 29927);
     			attr_dev(g1, "fill", "none");
     			attr_dev(g1, "fill-rule", "evenodd");
-    			add_location(g1, file$h, 269, 36, 30005);
+    			add_location(g1, file$h, 263, 36, 29851);
     			attr_dev(svg, "version", "1.1");
     			attr_dev(svg, "viewBox", "0 0 24 24");
     			attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
     			attr_dev(svg, "class", "svelte-rtrn63");
-    			add_location(svg, file$h, 263, 32, 29694);
+    			add_location(svg, file$h, 257, 32, 29540);
     			attr_dev(button0, "ontouchstart", "");
     			attr_dev(button0, "class", "cancel-button svelte-rtrn63");
-    			add_location(button0, file$h, 256, 28, 29384);
+    			add_location(button0, file$h, 250, 28, 29230);
     			attr_dev(button1, "class", "action-button svelte-rtrn63");
     			attr_dev(button1, "ontouchstart", "");
-    			add_location(button1, file$h, 284, 28, 30832);
+    			add_location(button1, file$h, 278, 28, 30678);
     			attr_dev(div3, "class", "button-container svelte-rtrn63");
-    			add_location(div3, file$h, 255, 24, 29325);
+    			add_location(div3, file$h, 249, 24, 29171);
     			attr_dev(div4, "class", "fixed svelte-rtrn63");
-    			add_location(div4, file$h, 182, 20, 25227);
+    			add_location(div4, file$h, 176, 20, 25073);
     			attr_dev(div5, "class", "message-container svelte-rtrn63");
-    			add_location(div5, file$h, 178, 16, 25071);
+    			add_location(div5, file$h, 175, 16, 24994);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div5, anchor);
@@ -5407,14 +5407,14 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div5_transition) div5_transition = create_bidirectional_transition(div5, /*horizontalSlide*/ ctx[11], { duration: 300 }, true);
+    				if (!div5_transition) div5_transition = create_bidirectional_transition(div5, /*horizontalSlide*/ ctx[11], {}, true);
     				div5_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div5_transition) div5_transition = create_bidirectional_transition(div5, /*horizontalSlide*/ ctx[11], { duration: 300 }, false);
+    			if (!div5_transition) div5_transition = create_bidirectional_transition(div5, /*horizontalSlide*/ ctx[11], {}, false);
     			div5_transition.run(0);
     			current = false;
     		},
@@ -5432,7 +5432,7 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(178:59) ",
+    		source: "(175:59) ",
     		ctx
     	});
 
@@ -5492,33 +5492,33 @@ var app = (function () {
     			t8 = space();
     			p1 = element("p");
     			p1.textContent = "Theodor Baltus (JP)";
-    			add_location(br, file$h, 143, 35, 23650);
+    			add_location(br, file$h, 140, 35, 23573);
     			attr_dev(h1, "class", "svelte-rtrn63");
-    			add_location(h1, file$h, 142, 24, 23610);
-    			add_location(hr0, file$h, 145, 24, 23716);
+    			add_location(h1, file$h, 139, 24, 23533);
+    			add_location(hr0, file$h, 142, 24, 23639);
     			if (img0.src !== (img0_src_value = moritzmoji)) attr_dev(img0, "src", img0_src_value);
     			attr_dev(img0, "alt", "Moritz Mortimer Müller as a Memoji");
     			attr_dev(img0, "draggable", "false");
     			attr_dev(img0, "class", "svelte-rtrn63");
-    			add_location(img0, file$h, 153, 28, 24023);
+    			add_location(img0, file$h, 150, 28, 23946);
     			attr_dev(p0, "class", "svelte-rtrn63");
-    			add_location(p0, file$h, 158, 28, 24259);
+    			add_location(p0, file$h, 155, 28, 24182);
     			attr_dev(button0, "ontouchstart", "");
     			attr_dev(button0, "class", "contact svelte-rtrn63");
-    			add_location(button0, file$h, 146, 24, 23747);
-    			add_location(hr1, file$h, 160, 24, 24345);
+    			add_location(button0, file$h, 143, 24, 23670);
+    			add_location(hr1, file$h, 157, 24, 24268);
     			if (img1.src !== (img1_src_value = theomoji)) attr_dev(img1, "src", img1_src_value);
     			attr_dev(img1, "alt", "Theodor Baltus Steiner as a Memoji");
     			attr_dev(img1, "draggable", "false");
     			attr_dev(img1, "class", "svelte-rtrn63");
-    			add_location(img1, file$h, 168, 28, 24650);
+    			add_location(img1, file$h, 165, 28, 24573);
     			attr_dev(p1, "class", "svelte-rtrn63");
-    			add_location(p1, file$h, 173, 28, 24884);
+    			add_location(p1, file$h, 170, 28, 24807);
     			attr_dev(button1, "ontouchstart", "");
     			attr_dev(button1, "class", "contact svelte-rtrn63");
-    			add_location(button1, file$h, 161, 24, 24376);
+    			add_location(button1, file$h, 158, 24, 24299);
     			attr_dev(div0, "class", "fixed svelte-rtrn63");
-    			add_location(div0, file$h, 141, 20, 23566);
+    			add_location(div0, file$h, 138, 20, 23489);
     			attr_dev(div1, "class", "contact-container svelte-rtrn63");
     			add_location(div1, file$h, 137, 16, 23410);
     		},
@@ -5559,14 +5559,14 @@ var app = (function () {
     			if (current) return;
 
     			add_render_callback(() => {
-    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], { duration: 300 }, true);
+    				if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], {}, true);
     				div1_transition.run(1);
     			});
 
     			current = true;
     		},
     		o: function outro(local) {
-    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], { duration: 300 }, false);
+    			if (!div1_transition) div1_transition = create_bidirectional_transition(div1, /*horizontalSlide*/ ctx[11], {}, false);
     			div1_transition.run(0);
     			current = false;
     		},
@@ -5589,7 +5589,7 @@ var app = (function () {
     	return block;
     }
 
-    // (208:28) {#if messageCounter > 0}
+    // (202:28) {#if messageCounter > 0}
     function create_if_block_3(ctx) {
     	let img;
     	let img_src_value;
@@ -5620,10 +5620,10 @@ var app = (function () {
     			attr_dev(img, "class", "message-img svelte-rtrn63");
     			attr_dev(img, "draggable", "false");
     			toggle_class(img, "hidden", /*messageCounter*/ ctx[5] != 1);
-    			add_location(img, file$h, 208, 32, 26595);
+    			add_location(img, file$h, 202, 32, 26441);
     			set_style(p, "height", "95px");
     			attr_dev(p, "class", "message-bubble svelte-rtrn63");
-    			add_location(p, file$h, 222, 32, 27380);
+    			add_location(p, file$h, 216, 32, 27226);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -5672,14 +5672,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(208:28) {#if messageCounter > 0}",
+    		source: "(202:28) {#if messageCounter > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (235:28) {#if messageCounter > 1}
+    // (229:28) {#if messageCounter > 1}
     function create_if_block_2(ctx) {
     	let img;
     	let img_src_value;
@@ -5709,10 +5709,10 @@ var app = (function () {
 
     			attr_dev(img, "class", "message-img svelte-rtrn63");
     			attr_dev(img, "draggable", "false");
-    			add_location(img, file$h, 235, 32, 28231);
+    			add_location(img, file$h, 229, 32, 28077);
     			set_style(p, "height", "38px");
     			attr_dev(p, "class", "message-bubble svelte-rtrn63");
-    			add_location(p, file$h, 248, 32, 28945);
+    			add_location(p, file$h, 242, 32, 28791);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -5753,7 +5753,7 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(235:28) {#if messageCounter > 1}",
+    		source: "(229:28) {#if messageCounter > 1}",
     		ctx
     	});
 
