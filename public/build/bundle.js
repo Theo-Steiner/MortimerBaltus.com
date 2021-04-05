@@ -4811,48 +4811,48 @@ var app = (function () {
     			div12 = element("div");
     			div12.textContent = "あ";
     			attr_dev(div0, "id", "layer1");
-    			attr_dev(div0, "class", "svelte-gqzekf");
+    			attr_dev(div0, "class", "svelte-1s6seif");
     			add_location(div0, file$g, 26, 16, 686);
     			attr_dev(div1, "id", "layer2");
-    			attr_dev(div1, "class", "svelte-gqzekf");
+    			attr_dev(div1, "class", "svelte-1s6seif");
     			add_location(div1, file$g, 27, 16, 727);
     			attr_dev(div2, "id", "layer3");
-    			attr_dev(div2, "class", "svelte-gqzekf");
+    			attr_dev(div2, "class", "svelte-1s6seif");
     			add_location(div2, file$g, 28, 16, 768);
     			attr_dev(div3, "id", "layerX");
-    			attr_dev(div3, "class", "svelte-gqzekf");
+    			attr_dev(div3, "class", "svelte-1s6seif");
     			add_location(div3, file$g, 29, 16, 809);
     			attr_dev(div4, "id", "layer4");
-    			attr_dev(div4, "class", "svelte-gqzekf");
+    			attr_dev(div4, "class", "svelte-1s6seif");
     			add_location(div4, file$g, 30, 16, 850);
     			attr_dev(div5, "id", "layer5");
-    			attr_dev(div5, "class", "svelte-gqzekf");
+    			attr_dev(div5, "class", "svelte-1s6seif");
     			add_location(div5, file$g, 31, 16, 891);
-    			attr_dev(div6, "class", "animation-wrap svelte-gqzekf");
+    			attr_dev(div6, "class", "animation-wrap svelte-1s6seif");
     			toggle_class(div6, "hidden", /*languageSelected*/ ctx[0] === "japanese");
     			add_location(div6, file$g, 22, 12, 549);
     			attr_dev(div7, "id", "layer1");
-    			attr_dev(div7, "class", "svelte-gqzekf");
+    			attr_dev(div7, "class", "svelte-1s6seif");
     			add_location(div7, file$g, 37, 16, 1083);
     			attr_dev(div8, "id", "layer2");
-    			attr_dev(div8, "class", "svelte-gqzekf");
+    			attr_dev(div8, "class", "svelte-1s6seif");
     			add_location(div8, file$g, 38, 16, 1124);
     			attr_dev(div9, "id", "layer3");
-    			attr_dev(div9, "class", "svelte-gqzekf");
+    			attr_dev(div9, "class", "svelte-1s6seif");
     			add_location(div9, file$g, 39, 16, 1165);
     			attr_dev(div10, "id", "layerX");
-    			attr_dev(div10, "class", "svelte-gqzekf");
+    			attr_dev(div10, "class", "svelte-1s6seif");
     			add_location(div10, file$g, 40, 16, 1206);
     			attr_dev(div11, "id", "layer4");
-    			attr_dev(div11, "class", "svelte-gqzekf");
+    			attr_dev(div11, "class", "svelte-1s6seif");
     			add_location(div11, file$g, 41, 16, 1247);
     			attr_dev(div12, "id", "layer5");
-    			attr_dev(div12, "class", "svelte-gqzekf");
+    			attr_dev(div12, "class", "svelte-1s6seif");
     			add_location(div12, file$g, 42, 16, 1288);
-    			attr_dev(div13, "class", "animation-wrap svelte-gqzekf");
+    			attr_dev(div13, "class", "animation-wrap svelte-1s6seif");
     			toggle_class(div13, "hidden", /*languageSelected*/ ctx[0] === "english");
     			add_location(div13, file$g, 33, 12, 947);
-    			attr_dev(div14, "class", "container svelte-gqzekf");
+    			attr_dev(div14, "class", "container svelte-1s6seif");
     			add_location(div14, file$g, 21, 8, 487);
     		},
     		m: function mount(target, anchor) {
@@ -4939,7 +4939,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "wrapper grid-area svelte-gqzekf");
+    			attr_dev(div, "class", "wrapper grid-area svelte-1s6seif");
     			add_location(div, file$g, 11, 0, 254);
     		},
     		l: function claim(nodes) {

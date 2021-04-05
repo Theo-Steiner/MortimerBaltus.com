@@ -173,51 +173,50 @@
 
     @keyframes layerX {
         0% {
-            transform: translate(0px, 133px) rotateX(-90deg) rotateY(-90deg)
-                rotateZ(0deg);
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(180deg);
         }
         40% {
-            transform: translate(0px, 133px) rotateX(-90deg) rotateY(-90deg)
-                rotateZ(0deg);
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(180deg);
         }
         60% {
             transform: translate(0px, 0px) rotateX(0deg) rotateY(0deg)
                 rotateZ(0deg);
         }
         80% {
-            transform: translate(0px, -133px) rotateX(90deg) rotateY(0deg)
-                rotateZ(-90deg);
-        }
-        100% {
-            transform: translate(0px, -133px) rotateX(90deg) rotateY(0deg)
-                rotateZ(-90deg);
-        }
-    }
-
-    @keyframes layer4 {
-        0% {
-            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(180deg);
-        }
-        60% {
-            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(180deg);
-        }
-        80% {
-            transform: translate(0px, 0px) rotateX(0deg) rotateZ(0deg);
+            transform: translate(133px, 0px) rotateX(0deg) rotateY(90deg)
+                rotateZ(180deg);
         }
         100% {
             transform: translate(133px, 0px) rotateX(0deg) rotateY(90deg)
                 rotateZ(180deg);
         }
     }
-    @keyframes layer5 {
+
+    @keyframes layer4 {
         0% {
             transform: translate(-133px, 0px) rotateY(90deg) rotateZ(-90deg);
         }
-        80% {
+        60% {
             transform: translate(-133px, 0px) rotateY(90deg) rotateZ(-90deg);
         }
+        80% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateZ(0deg);
+        }
         100% {
-            transform: translate(0px, 0px) rotateY(0deg) rotateZ(0deg);
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(-90deg);
+        }
+    }
+    @keyframes layer5 {
+        0% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateZ(-180deg);
+        }
+
+        80% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateZ(-180deg);
+        }
+
+        100% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateZ(0deg);
         }
     }
 
