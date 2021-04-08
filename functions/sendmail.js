@@ -1,27 +1,30 @@
 const nodemailer = require("nodemailer");
 const { SMTP_USER, SMTP_PASS } = process.env;
 
+const transporter = nodemailer.createTransport(
+    {
+        service: "Outlook365",
+        auth: {
+            user: SMTP_USER,
+            pass: SMTP_PASS
+        }
+    }
+);
+
 const currentTime = new Date();
 
-exports.handler = function (event, context, callback) {
-
+exports.handler = async (event) => {
+    // limits the origin. Will deny access in any other environment thant prod.
     if (event.headers["Origin"] != "https://mortimerbaltus.com") {
-        return callback(null, { statusCode: 403 });
+        return {
+            'result': 'ACCESS DENIED',
+            statusCode: 403,
+        };
     }
 
-    let data = JSON.parse(event.body);
+    const data = JSON.parse(event.body);
 
-    let transporter = nodemailer.createTransport(
-        {
-            service: "Outlook365",
-            auth: {
-                user: SMTP_USER,
-                pass: SMTP_PASS
-            }
-        }
-    );
-
-    transporter.sendMail({
+    await transporter.sendMail({
         from: "contact@mortimerbaltus.com",
         to: "contact@mortimerbaltus.com",
         replyTo: data.userEmail,
@@ -29,16 +32,25 @@ exports.handler = function (event, context, callback) {
         html: `<h3>Email from ${data.userEmail} to ${data.recipient}</h3>
         <p>${data.message}</p>
         <footer><p>If you reply to this email your message will be forwarded to ${data.userEmail}</p></footer>`
-    }, function (error, info) {
-        if (error) {
-            callback(error);
-        } else {
-            callback(null, {
+    })
+        .then((info) => {
+            console.log(info);
+            return {
                 statusCode: 200,
                 body: JSON.stringify({
-                    'result': 'success'
+                    'result': 'OK',
+                    'message': info
                 })
-            });
-        }
-    })
+            }
+        })
+        .catch(error => {
+            console.error(error)
+            return {
+                statusCode: 418,
+                body: JSON.stringify({
+                    'result': 'Internal Server Error',
+                    'message': error
+                })
+            }
+        })
 }

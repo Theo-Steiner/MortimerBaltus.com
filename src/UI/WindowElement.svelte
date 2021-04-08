@@ -2,6 +2,7 @@
     import { onDestroy } from "svelte";
     import { scale } from "svelte/transition";
     import windowHandler from "../UX/window-state";
+    import Button from "./Button.svelte";
 
     export let height;
     export let width;
@@ -47,7 +48,7 @@
 
 <section
     in:scale={{
-        duration: 1200,
+        duration: 2500,
     }}
     class={parallax}
     style="--windowWidth: {width}; --windowHeight: {height};
@@ -56,101 +57,16 @@
     class:trigger-shuffle={!isInForeground && touched}
 >
     <header>
-        <button class="shrink">
-            <span>Shrink this {title} window</span>
-            <svg
-                version="1.1"
-                viewBox="0 0 54 15"
-                xmlns="http://www.w3.org/2000/svg"
-                role="presentation"
-            >
-                <title>Group 7</title>
-                <g fill="none" fill-rule="evenodd">
-                    <g transform="translate(-615 -1492)">
-                        <g transform="translate(606 1483)">
-                            <g transform="translate(9 9)">
-                                <rect
-                                    x=".5"
-                                    y=".5"
-                                    width="53"
-                                    height="14"
-                                    rx="3"
-                                    fill="#151515"
-                                    stroke="#FEFEFE"
-                                />
-                                <rect
-                                    x="17"
-                                    y="7"
-                                    width="20"
-                                    height="1"
-                                    fill="#FEFEFE"
-                                />
-                            </g>
-                        </g>
-                    </g>
-                </g>
-            </svg>
-        </button>
+        <Button buttonType="minimize" />
         {#if title}
             <h1>{title}</h1>
         {:else}
             <h1>Title</h1>
         {/if}
         {#if enlargeable}
-            <button class="enlarge">
-                <span>Enlarge this {title} window</span>
-                <svg
-                    version="1.1"
-                    viewBox="0 0 54 15"
-                    xmlns="http://www.w3.org/2000/svg"
-                    role="presentation"
-                >
-                    <title>Group 6</title>
-                    <g fill="none" fill-rule="evenodd">
-                        <g transform="translate(-1042 -1492)">
-                            <g transform="translate(606 1483)">
-                                <g transform="translate(436 9)">
-                                    <rect
-                                        x=".5"
-                                        y=".5"
-                                        width="53"
-                                        height="14"
-                                        rx="3"
-                                        fill="#151515"
-                                        stroke="#FEFEFE"
-                                    />
-                                    <rect
-                                        x="17"
-                                        y="6"
-                                        width="20"
-                                        height="1"
-                                        fill="#FEFEFE"
-                                    />
-                                    <polygon
-                                        points="47 7 37 4 37 7"
-                                        fill="#FEFEFE"
-                                    />
-                                    <rect
-                                        transform="translate(27 8.5) rotate(180) translate(-27 -8.5)"
-                                        x="17"
-                                        y="8"
-                                        width="20"
-                                        height="1"
-                                        fill="#FEFEFE"
-                                    />
-                                    <polygon
-                                        transform="translate(12 9.5) rotate(180) translate(-12 -9.5)"
-                                        points="17 11 7 8 7 11"
-                                        fill="#FEFEFE"
-                                    />
-                                </g>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-            </button>
+            <Button buttonType="subpage" />
         {:else}
-            <button class="disabled" />
+            <Button buttonType="hidden" />
         {/if}
     </header>
     <div
@@ -177,6 +93,7 @@
         margin: 0px;
         padding: 0px;
         transition: transform 0.5s;
+        box-shadow: 0px 4px 6px -2px rgba(0, 0, 0, 0.66);
     }
 
     header {
@@ -188,43 +105,6 @@
         background-color: #151515;
         padding: 0px;
         margin: 0px;
-    }
-    .disabled {
-        visibility: hidden;
-    }
-    button {
-        width: 54px;
-        height: 15px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        border-radius: 6px;
-        padding: 0;
-        margin: 8px;
-    }
-    button:hover {
-        transform: scale(1.05);
-    }
-    button:active {
-        transform: scale(1);
-    }
-    button:focus {
-        box-shadow: 0 0 0 1px #a25c24;
-        outline: none;
-    }
-    svg {
-        outline: none;
-        width: 100%;
-        height: 100%;
-    }
-
-    span {
-        overflow: hidden;
-        height: 1px;
-        width: 1px;
-        position: absolute;
     }
 
     h1 {

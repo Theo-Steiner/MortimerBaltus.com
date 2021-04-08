@@ -2,7 +2,7 @@
     import WindowElement from "../UI/WindowElement.svelte";
 </script>
 
-<div class="grid-area">
+<div class="wrapper grid-area">
     <WindowElement
         width={378}
         height={392}
@@ -17,12 +17,17 @@
             large: -12,
         }}
     >
-        <p>NICE <br /> TO<br /> MEET<br /> YOU</p>
+        <div class="container">
+            <p style="--animation-order: 0; --left-offset: 120">NICE</p>
+            <p style="--animation-order: 1; --left-offset: 218">TO</p>
+            <p style="--animation-order: 2; --left-offset: 72">MEET</p>
+            <p style="--animation-order: 3; --left-offset: 146">YOU</p>
+        </div>
     </WindowElement>
 </div>
 
 <style>
-    div {
+    .wrapper {
         grid-column: 116/147;
         grid-row: 100/132;
         display: flex;
@@ -30,14 +35,27 @@
         align-items: flex-end;
     }
 
+    .container {
+        padding-top: 15px;
+        padding-left: 10px;
+    }
+
     p {
         color: #151515;
-        font-size: 80px;
-        padding: 15px;
+        font-size: 100px;
+        line-height: 85.5px;
+        letter-spacing: 1.72px;
         margin: 0px;
+        transition: 1s;
+        transition-delay: calc(var(--animation-order) * 200ms);
     }
+
+    .container:hover p {
+        transform: translateX(calc(var(--left-offset) * 1px));
+    }
+
     @media only screen and (min-width: 1440px) {
-        div {
+        .wrapper {
             grid-column: 117/143;
             grid-row: 102/129;
         }
