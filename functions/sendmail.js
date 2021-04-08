@@ -15,13 +15,6 @@ const currentTime = new Date();
 
 exports.handler = async (event) => {
     // limits the origin. Will deny access in any other environment thant prod.
-    if (event.headers["Origin"] != "https://mortimerbaltus.com") {
-        return {
-            'result': 'ACCESS DENIED',
-            statusCode: 403,
-        };
-    }
-
     const data = JSON.parse(event.body);
 
     await transporter.sendMail({
