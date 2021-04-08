@@ -15,12 +15,12 @@ const currentTime = new Date();
 
 exports.handler = async (event) => {
     // limits the origin. Will deny access in any other environment thant prod.
-    // if (event.headers["Origin"] != "https://mortimerbaltus.com") {
-    //     return {
-    //         'result': 'ACCESS DENIED',
-    //         statusCode: 403,
-    //     };
-    // }
+    if (event.headers["Origin"] != "https://mortimerbaltus.com") {
+        return {
+            'result': 'ACCESS DENIED',
+            statusCode: 403,
+        };
+    }
 
     const data = JSON.parse(event.body);
 
@@ -35,10 +35,16 @@ exports.handler = async (event) => {
     })
         .then((info) => {
             console.log(info);
-
+            return {
+                statusCode: 200,
+                body: JSON.stringify({
+                    'result': 'OK',
+                    'message': info
+                })
+            }
         })
         .catch(error => {
-            console.log(error)
+            console.error(error)
             return {
                 statusCode: 418,
                 body: JSON.stringify({
@@ -47,12 +53,4 @@ exports.handler = async (event) => {
                 })
             }
         })
-
-    return {
-        statusCode: 200,
-        body: JSON.stringify({
-            'result': 'OK',
-            'message': info
-        })
-    }
 }

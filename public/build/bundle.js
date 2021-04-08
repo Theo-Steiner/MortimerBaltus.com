@@ -763,7 +763,7 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			div = element("div");
-    			attr_dev(div, "class", "grabbable svelte-1eppb7b");
+    			attr_dev(div, "class", "grabbable svelte-kj9z40");
     			toggle_class(div, "mousedown", /*isMousedown*/ ctx[0]);
     			add_location(div, file, 102, 4, 3538);
     		},

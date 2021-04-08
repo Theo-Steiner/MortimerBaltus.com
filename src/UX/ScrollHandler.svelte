@@ -123,7 +123,7 @@
     .mousedown {
         cursor: grabbing;
         user-select: none;
-        transform: translateZ(2px) scale(0.8);
+        transform: translateZ(2px) scale(1);
         transform-origin: center;
     }
     @media only screen and (min-width: 1440px) {
