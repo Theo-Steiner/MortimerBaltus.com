@@ -14,7 +14,6 @@ const transporter = nodemailer.createTransport(
 const currentTime = new Date();
 
 exports.handler = async (event) => {
-    // limits the origin. Will deny access in any other environment thant prod.
     const data = JSON.parse(event.body);
 
     await transporter.sendMail({

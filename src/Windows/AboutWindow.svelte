@@ -18,10 +18,10 @@
         }}
     >
         <div class="container">
-            <p style="--animation-order: 0; --left-offset: 120">NICE</p>
-            <p style="--animation-order: 1; --left-offset: 218">TO</p>
-            <p style="--animation-order: 2; --left-offset: 72">MEET</p>
-            <p style="--animation-order: 3; --left-offset: 146">YOU</p>
+            <p style="--animation-order: 0; --left-offset: 110">NICE</p>
+            <p style="--animation-order: 1; --left-offset: 208">TO</p>
+            <p style="--animation-order: 2; --left-offset: 62">MEET</p>
+            <p style="--animation-order: 3; --left-offset: 136">YOU</p>
         </div>
     </WindowElement>
 </div>
@@ -46,7 +46,7 @@
         line-height: 85.5px;
         letter-spacing: 1.72px;
         margin: 0px;
-        transition: 1s;
+        transition: 0.8s cubic-bezier(0.83, 0, 0.15, 1);
         transition-delay: calc(var(--animation-order) * 200ms);
     }
 

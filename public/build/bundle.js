@@ -2245,22 +2245,22 @@ var app = (function () {
     			p3 = element("p");
     			p3.textContent = "YOU";
     			set_style(p0, "--animation-order", "0");
-    			set_style(p0, "--left-offset", "120");
-    			attr_dev(p0, "class", "svelte-1svwnnw");
+    			set_style(p0, "--left-offset", "110");
+    			attr_dev(p0, "class", "svelte-calz74");
     			add_location(p0, file$3, 20, 12, 469);
     			set_style(p1, "--animation-order", "1");
-    			set_style(p1, "--left-offset", "218");
-    			attr_dev(p1, "class", "svelte-1svwnnw");
+    			set_style(p1, "--left-offset", "208");
+    			attr_dev(p1, "class", "svelte-calz74");
     			add_location(p1, file$3, 21, 12, 542);
     			set_style(p2, "--animation-order", "2");
-    			set_style(p2, "--left-offset", "72");
-    			attr_dev(p2, "class", "svelte-1svwnnw");
+    			set_style(p2, "--left-offset", "62");
+    			attr_dev(p2, "class", "svelte-calz74");
     			add_location(p2, file$3, 22, 12, 613);
     			set_style(p3, "--animation-order", "3");
-    			set_style(p3, "--left-offset", "146");
-    			attr_dev(p3, "class", "svelte-1svwnnw");
+    			set_style(p3, "--left-offset", "136");
+    			attr_dev(p3, "class", "svelte-calz74");
     			add_location(p3, file$3, 23, 12, 685);
-    			attr_dev(div, "class", "container svelte-1svwnnw");
+    			attr_dev(div, "class", "container svelte-calz74");
     			add_location(div, file$3, 19, 8, 433);
     		},
     		m: function mount(target, anchor) {
@@ -2315,7 +2315,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			create_component(windowelement.$$.fragment);
-    			attr_dev(div, "class", "wrapper grid-area svelte-1svwnnw");
+    			attr_dev(div, "class", "wrapper grid-area svelte-calz74");
     			add_location(div, file$3, 4, 0, 80);
     		},
     		l: function claim(nodes) {
