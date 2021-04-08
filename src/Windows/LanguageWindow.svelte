@@ -1,5 +1,12 @@
 <script>
     import WindowElement from "../UI/WindowElement.svelte";
+
+    let languageSelected = "english";
+
+    function changeLanguage() {
+        languageSelected =
+            languageSelected === "english" ? "japanese" : "english";
+    }
 </script>
 
 <div class="wrapper grid-area">
@@ -7,23 +14,56 @@
         width={266}
         height={273}
         parallax="very-slow"
-        background="#C96161"
+        background=".C96161"
         title="LANGUAGE"
         id={13}
         enlargeable={false}
     >
-        <div class="container">
-            <svg
-                height="189"
-                viewBox="0 0 176 189"
-                width="176"
-                xmlns="http://www.w3.org/2000/svg"
-                ><path
-                    d="m1864.20596 575c19.21588-2.172414 31.66253-5.431034 44.5459-11.948276 23.80149-11.948276 36.24814-29.97931 36.24814-52.789655 0-17.37931-7.20596-30.848276-21.83623-41.058621-7.64268-5.431034-13.97518-8.255172-23.1464-10.210345.87345-2.606896 1.31017-3.25862 2.83871-7.820689 1.70463-4.316797 2.19953-5.57006 2.6554-6.632735l.12424-.287254c.14587-.334653.29856-.676452.49579-1.117942l-20.74441-5.865517c-.65509 5.213793-2.18363 10.862068-4.80397 17.596551-4.73119-.181034-7.3394-.211207-10.35199-.216235l-1.2326-.000969c-.21102-.000037-.42534-.000037-.6437-.000037-10.26303 0-17.46898.868965-28.82382 3.258621.07139-2.698807.11943-4.515311.18992-6.299667l.02589-.629822c.14831-3.471907.40148-7.199557 1.09436-17.401546 19.43424-.434483 50.87841-3.693103 77.08189-7.82069 4.14888-.651724 5.24069-.868965 8.29776-1.086206l-1.09181-21.072414c-17.03226 5.648276-48.0397 9.993103-82.97767 11.948276.23292-2.819311.45894-5.350253.68297-7.63799l.16772-1.670908c.97709-9.489187 1.9395-14.539378 3.2982-18.932482l-22.92804-1.303448c.21836 1.52069.21836 2.606897.21836 3.475862 0 2.389655-.21836 9.775862-.43672 12.382759-.43673 6.372413-.5823 8.496551-.76023 10.620689l-.04534.533493c-.07732.89735-.16493 1.856163-.28625 3.183749h-4.80397c-18.77915 0-31.44416-1.086207-41.0521-3.258621v20.42069c1.96526-.217242 3.49379-.217242 4.36724-.217242 1.23935 0 7.79022.285635 14.6476.509512l1.37408.043848c1.146.035683 2.29124.069008 3.41256.098364 5.39484.383368 9.08962.42847 12.7344.433776l8.44675.000707c-.87345 15.858621-.87345 15.858621-1.09182 28.893104-12.88337 5.431034-20.96277 10.862069-29.69727 19.334482-13.75682 13.468966-21.3995 30.196552-21.3995 47.575862 0 20.855173 13.10174 35.844828 31.22581 35.844828 15.94044 0 32.31761-8.255172 49.7866-24.982759 18.12407-17.37931 30.78908-36.062069 43.67245-65.172413 18.99752 5.865517 29.47891 17.596551 29.47891 33.237931 0 18.031034-13.10174 32.368965-36.68486 40.406896-10.26303 3.258621-18.77916 4.562069-32.09926 4.996552 5.89578 8.906897 7.42432 12.382759 9.82631 20.637931zm-22.18236-51.645349c-.21863-.875345-.21863-.875345-.21863-1.969526-.21863-1.094181-.21863-1.094181-.43727-2.844871-1.3118-10.941811-1.53043-19.257587-1.9677-42.016555 8.96398-3.282543 18.14658-4.814397 29.51553-4.814397 2.18633 0 3.06087 0 5.68447.437673-7.87081 17.94457-16.17888 31.512416-29.07826 46.830952-.57391.738572-.93261 1.20018-1.26056 1.615626l-.32453.408609c-.43727.54709-.9292 1.14889-1.91305 2.352489zm-39.66832 21.976744c-8.08944 0-13.55528-6.98355-13.55528-17.458877 0-9.820618 3.9354-19.859472 11.36894-29.025382 5.02858-6.328843 10.27578-10.475327 19.67702-16.149462.21864 24.224192 1.3118 38.191294 4.15404 53.467811-7.87081 6.328843-14.64845 9.16591-21.64472 9.16591z"
-                    fill="#aa4545"
-                    transform="translate(-1769 -386)"
-                /></svg
-            >
+        <div class="container" on:click={changeLanguage}>
+            <div class="animation-wrap">
+                <div
+                    class:layer1-japanese={languageSelected === "japanese"}
+                    class:layer1-english={languageSelected === "english"}
+                    class="animate"
+                >
+                    {languageSelected === "japanese" ? "あ" : "A"}
+                </div>
+                <div
+                    class:layer2-japanese={languageSelected === "japanese"}
+                    class:layer2-english={languageSelected === "english"}
+                    class="animate"
+                >
+                    {languageSelected === "japanese" ? "A" : "あ"}
+                </div>
+                <div
+                    class:layer3-japanese={languageSelected === "japanese"}
+                    class:layer3-english={languageSelected === "english"}
+                    class="animate"
+                >
+                    {languageSelected === "japanese" ? "あ" : "A"}
+                </div>
+                <div
+                    class:layerX-japanese={languageSelected === "japanese"}
+                    class:layerX-english={languageSelected === "english"}
+                    class="animate"
+                >
+                    {languageSelected === "japanese" ? "A" : "あ"}
+                </div>
+                <div
+                    class:layer4-japanese={languageSelected === "japanese"}
+                    class:layer4-english={languageSelected === "english"}
+                    class="animate"
+                >
+                    {languageSelected === "japanese" ? "あ" : "A"}
+                </div>
+                <div
+                    class:layer5-japanese={languageSelected === "japanese"}
+                    class:layer5-english={languageSelected === "english"}
+                    class="animate"
+                >
+                    {languageSelected === "japanese" ? "A" : "あ"}
+                </div>
+            </div>
         </div>
     </WindowElement>
 </div>
@@ -43,7 +83,280 @@
         align-items: center;
     }
 
-    svg {
-        margin-bottom: 25px;
+    .animation-wrap {
+        width: 266px;
+        height: 273px;
+        transition: all 0.2s ease;
+        background-color: rgb(201, 97, 97);
+        color: #aa4545;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        font-size: 220px;
+        line-height: 200px;
+        font-weight: 400;
+        font-family: sans-serif;
+    }
+
+    .animation-wrap:hover {
+        background-color: #aa4545;
+        color: rgb(201, 97, 97);
+    }
+
+    .animate {
+        position: absolute;
+        text-align: center;
+        animation-fill-mode: forwards;
+        animation-duration: 3s;
+        animation-iteration-count: 1;
+        animation-timing-function: cubic-bezier(0.83, 0, 0.17, 1);
+        transform: translate(0px, 0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    }
+
+    .layer1-english {
+        animation-name: layer1-english;
+    }
+
+    .layer2-english {
+        animation-name: layer2-english;
+    }
+
+    .layer3-english {
+        animation-name: layer3-english;
+    }
+    .layer4-english {
+        animation-name: layer4-english;
+    }
+    .layer5-english {
+        animation-name: layer5-english;
+    }
+
+    .layerX-english {
+        animation-name: layerX-english;
+    }
+
+    @keyframes layer1-english {
+        0% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateZ(0deg);
+        }
+        20% {
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(-90deg);
+        }
+        100% {
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(-90deg);
+        }
+    }
+
+    @keyframes layer2-english {
+        0% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateZ(-180deg);
+        }
+        20% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateZ(0deg);
+        }
+        40% {
+            transform: translate(-133px, 0px) rotateY(-90deg) rotateZ(-180deg);
+        }
+        100% {
+            transform: translate(-133px, 0px) rotateY(-90deg) rotateZ(-180deg);
+        }
+    }
+
+    @keyframes layer3-english {
+        0% {
+            transform: translate(133px, 0px) rotateX(-90deg) rotateY(-90deg)
+                rotateZ(0deg);
+        }
+
+        20% {
+            transform: translate(133px, 0px) rotateX(-90deg) rotateY(-90deg)
+                rotateZ(0deg);
+        }
+
+        40% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateY(0deg)
+                rotateZ(0deg);
+        }
+        60% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateY(0deg)
+                rotateZ(-90deg);
+        }
+        100% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateY(0deg)
+                rotateZ(-90deg);
+        }
+    }
+
+    @keyframes layerX-english {
+        0% {
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(180deg);
+        }
+        40% {
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(180deg);
+        }
+        60% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateY(0deg)
+                rotateZ(0deg);
+        }
+        80% {
+            transform: translate(133px, 0px) rotateX(0deg) rotateY(90deg)
+                rotateZ(180deg);
+        }
+        100% {
+            transform: translate(133px, 0px) rotateX(0deg) rotateY(90deg)
+                rotateZ(180deg);
+        }
+    }
+
+    @keyframes layer4-english {
+        0% {
+            transform: translate(-133px, 0px) rotateY(90deg) rotateZ(-90deg);
+        }
+        60% {
+            transform: translate(-133px, 0px) rotateY(90deg) rotateZ(-90deg);
+        }
+        80% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateZ(0deg);
+        }
+        100% {
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(-90deg);
+        }
+    }
+    @keyframes layer5-english {
+        0% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateZ(-180deg);
+        }
+
+        80% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateZ(-180deg);
+        }
+
+        100% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateZ(0deg);
+        }
+    }
+
+    .layer1-japanese {
+        animation-name: layer1-japanese;
+    }
+
+    .layer2-japanese {
+        animation-name: layer2-japanese;
+    }
+
+    .layer3-japanese {
+        animation-name: layer3-japanese;
+    }
+    .layer4-japanese {
+        animation-name: layer4-japanese;
+    }
+    .layer5-japanese {
+        animation-name: layer5-japanese;
+    }
+
+    .layerX-japanese {
+        animation-name: layerX-japanese;
+    }
+
+    @keyframes layer1-japanese {
+        0% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateZ(0deg);
+        }
+        20% {
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(-90deg);
+        }
+        100% {
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(-90deg);
+        }
+    }
+
+    @keyframes layer2-japanese {
+        0% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateZ(-180deg);
+        }
+        20% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateZ(0deg);
+        }
+        40% {
+            transform: translate(-133px, 0px) rotateY(-90deg) rotateZ(-180deg);
+        }
+        100% {
+            transform: translate(-133px, 0px) rotateY(-90deg) rotateZ(-180deg);
+        }
+    }
+
+    @keyframes layer3-japanese {
+        0% {
+            transform: translate(133px, 0px) rotateX(-90deg) rotateY(-90deg)
+                rotateZ(0deg);
+        }
+
+        20% {
+            transform: translate(133px, 0px) rotateX(-90deg) rotateY(-90deg)
+                rotateZ(0deg);
+        }
+
+        40% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateY(0deg)
+                rotateZ(0deg);
+        }
+        60% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateY(0deg)
+                rotateZ(-90deg);
+        }
+        100% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateY(0deg)
+                rotateZ(-90deg);
+        }
+    }
+
+    @keyframes layerX-japanese {
+        0% {
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(180deg);
+        }
+        40% {
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(180deg);
+        }
+        60% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateY(0deg)
+                rotateZ(0deg);
+        }
+        80% {
+            transform: translate(133px, 0px) rotateX(0deg) rotateY(90deg)
+                rotateZ(180deg);
+        }
+        100% {
+            transform: translate(133px, 0px) rotateX(0deg) rotateY(90deg)
+                rotateZ(180deg);
+        }
+    }
+
+    @keyframes layer4-japanese {
+        0% {
+            transform: translate(-133px, 0px) rotateY(90deg) rotateZ(-90deg);
+        }
+        60% {
+            transform: translate(-133px, 0px) rotateY(90deg) rotateZ(-90deg);
+        }
+        80% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateZ(0deg);
+        }
+        100% {
+            transform: translate(0px, 133px) rotateX(-90deg) rotateZ(-90deg);
+        }
+    }
+    @keyframes layer5-japanese {
+        0% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateZ(-180deg);
+        }
+
+        80% {
+            transform: translate(0px, -133px) rotateX(90deg) rotateZ(-180deg);
+        }
+
+        100% {
+            transform: translate(0px, 0px) rotateX(0deg) rotateZ(0deg);
+        }
     }
 </style>
