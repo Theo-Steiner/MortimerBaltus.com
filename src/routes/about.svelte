@@ -2,10 +2,18 @@
 
 <h1>ABOUT</h1>
 
-<a href="/">GO HOME</a>
+<main>
+	<a href="/">GO HOME</a>
+</main>
 
 <style>
 	* {
-		color: white;
+		color: red;
+	}
+
+	main {
+		width: 100%;
+		height: 100%;
+		background: khaki;
 	}
 </style>

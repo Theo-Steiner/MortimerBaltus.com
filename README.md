@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # MortimerBaltus.com
 ### CREATIVE SERVICES & DIGITAL DEVELOPMENT
 ### c/o MORITZ MORTIMER MÜLLER (DE), THEODOR BALTUS STEINER (JP)
@@ -48,3 +49,7 @@ By default, `npm run build` will generate a Node app that you can run with `node
 
 [See the adapter documentation for more detail](https://kit.svelte.dev/docs#adapters)
 >>>>>>> Transfer svelte site to svelte kit// first attempt at routing
+=======
+### Converting MortimerBaltus.com to svelte-kit
+Routing, yeah yeah
+>>>>>>> add readme
