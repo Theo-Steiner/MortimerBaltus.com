@@ -1,2 +1,10 @@
+<<<<<<< HEAD
 # Local Netlify folder
 .netlify
+=======
+.DS_Store
+node_modules
+/.svelte
+/build
+/functions
+>>>>>>> Transfer svelte site to svelte kit// first attempt at routing

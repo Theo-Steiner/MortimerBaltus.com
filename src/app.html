@@ -1,0 +1,42 @@
+<!DOCTYPE html />
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta
+			name="viewport"
+			content="width=device-width, height=device-height, initial-scale=0.86, minimum-scale=0.86, maximum-scale=5.0"
+			id="viewportmetatag"
+		/>
+		<link
+			rel="preload"
+			href="/fonts/MabryPro-Regular.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+		<style>
+			* {
+				padding: 0;
+				margin: 0;
+				font-family: 'MabryPro';
+				font-weight: 400;
+			}
+
+			body {
+				background-color: #151515;
+			}
+
+			@font-face {
+				font-family: 'MabryPro';
+				src: url('/fonts/MabryPro-Regular.woff2') format('woff');
+				font-display: block;
+			}
+		</style>
+		%svelte.head%
+	</head>
+
+	<body>
+		<div id="svelte">%svelte.body%</div>
+	</body>
+</html>

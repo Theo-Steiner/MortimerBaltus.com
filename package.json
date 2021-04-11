@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "svelte-app",
   "version": "1.0.0",
   "scripts": {
@@ -20,4 +21,28 @@
     "nodemailer": "^6.5.0",
     "sirv-cli": "^1.0.0"
   }
+=======
+	"name": "skmb",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "svelte-kit dev",
+		"build": "svelte-kit build",
+		"start": "svelte-kit start",
+		"lint": "prettier --check . && eslint --ignore-path .gitignore .",
+		"format": "prettier --write ."
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-node": "next",
+		"@sveltejs/adapter-static": "^1.0.0-next.4",
+		"@sveltejs/kit": "next",
+		"eslint": "^7.22.0",
+		"eslint-config-prettier": "^8.1.0",
+		"eslint-plugin-svelte3": "^3.1.0",
+		"prettier": "~2.2.1",
+		"prettier-plugin-svelte": "^2.2.0",
+		"svelte": "^3.29.0",
+		"vite": "^2.1.0"
+	},
+	"type": "module"
+>>>>>>> Transfer svelte site to svelte kit// first attempt at routing
 }
