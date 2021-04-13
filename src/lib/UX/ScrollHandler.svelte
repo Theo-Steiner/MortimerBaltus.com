@@ -1,18 +1,29 @@
 <script>
 	import { onMount } from 'svelte';
+	import { navigating } from '$app/stores';
+	import navState from './nav-state';
 
 	let hasTouchScreen = false;
 	let scroll_element;
 
+	$: if ($navigating) {
+		navState.reportNavigation(scroll_element.scrollLeft, scroll_element.scrollTop);
+	}
+
 	onMount(() => {
 		scroll_element = document.querySelector('.scroller');
 
-		if (history.scrollRestoration) {
-			window.history.scrollRestoration = 'manual';
+		if (!$navState) {
+			if (history.scrollRestoration) {
+				window.history.scrollRestoration = 'manual';
+			}
+			scroll_element.scrollTop = getScrollTo(vh(100));
+			scroll_element.scrollLeft = getScrollTo(vw(100));
+		} else {
+			console.log(`prenavigation x was: ${$navState[0]} & prenavigation y was: ${$navState[0]} `);
+			scroll_element.scrollTop = $navState[1];
+			scroll_element.scrollLeft = $navState[0];
 		}
-
-		scroll_element.scrollTop = getScrollTo(vh(100));
-		scroll_element.scrollLeft = getScrollTo(vw(100));
 
 		if ('maxTouchPoints' in navigator) {
 			hasTouchScreen = navigator.maxTouchPoints > 0;

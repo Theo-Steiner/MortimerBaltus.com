@@ -1,6 +1,14 @@
 <script>
 	import WindowView from '$lib/WindowView.svelte';
 	import PageTransition from '$lib/UX/PageTransition.svelte';
+	import { onMount } from 'svelte';
+
+	let intro = false;
+	onMount(() => {
+		setTimeout(() => {
+			intro = true;
+		}, 200);
+	});
 </script>
 
 <svelte:head>
@@ -92,7 +100,9 @@
 			</div>
 			<div class="scroller">
 				<div class="grid-box">
-					<WindowView />
+					{#if intro}
+						<WindowView />
+					{/if}
 				</div>
 			</div>
 		</div>

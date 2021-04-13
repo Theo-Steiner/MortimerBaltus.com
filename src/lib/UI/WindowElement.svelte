@@ -1,5 +1,5 @@
 <script>
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { scale } from 'svelte/transition';
 	import windowHandler from '../UX/window-state';
 	import Button from './Button.svelte';
@@ -40,6 +40,10 @@
 		}
 	}
 
+	onMount(() => {
+		touched = false;
+	});
+
 	onDestroy(() => {
 		if (unsubscribe) {
 			unsubscribe();
@@ -49,7 +53,8 @@
 
 <section
 	in:scale={{
-		duration: 2500
+		duration: 2000,
+		delay: 100
 	}}
 	class={parallax}
 	style="--windowWidth: {width}; --windowHeight: {height};
