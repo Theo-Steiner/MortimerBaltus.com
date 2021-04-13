@@ -1,9 +1,8 @@
 <script>
-	import { browser } from '$app/env';
 	import { onMount } from 'svelte';
 
-	let scroll_element;
 	let hasTouchScreen = false;
+	let scroll_element;
 
 	onMount(() => {
 		scroll_element = document.querySelector('.scroller');
@@ -11,6 +10,7 @@
 		if (history.scrollRestoration) {
 			window.history.scrollRestoration = 'manual';
 		}
+
 		scroll_element.scrollTop = getScrollTo(vh(100));
 		scroll_element.scrollLeft = getScrollTo(vw(100));
 

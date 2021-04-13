@@ -1,10 +1,18 @@
-<svelte:head>ABOUT</svelte:head>
+<script>
+	import PageTransition from '$lib/UX/PageTransition.svelte';
+	import Navigation from '$lib/UI/Navigation.svelte';
+</script>
 
-<h1>ABOUT</h1>
-
-<main>
-	<a href="/">GO HOME</a>
-</main>
+<svelte:head>
+	<title>ABOUT</title>
+</svelte:head>
+<PageTransition direction="down">
+	<main>
+		<Navigation />
+		<h1>ABOUT</h1>
+		<a href="/">GO HOME</a>
+	</main>
+</PageTransition>
 
 <style>
 	* {
@@ -12,8 +20,8 @@
 	}
 
 	main {
-		width: 100%;
-		height: 100%;
-		background: khaki;
+		width: 100vw;
+		min-height: 100vw;
+		background-color: #a35d24;
 	}
 </style>
