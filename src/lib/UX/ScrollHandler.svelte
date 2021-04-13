@@ -1,8 +1,11 @@
 <script>
 	import { browser } from '$app/env';
+	import { onMount } from 'svelte';
 
 	let scroll_element;
-	if (browser) {
+	let hasTouchScreen = false;
+
+	onMount(() => {
 		scroll_element = document.querySelector('.scroller');
 
 		if (history.scrollRestoration) {
@@ -10,7 +13,26 @@
 		}
 		scroll_element.scrollTop = getScrollTo(vh(100));
 		scroll_element.scrollLeft = getScrollTo(vw(100));
-	}
+
+		if ('maxTouchPoints' in navigator) {
+			hasTouchScreen = navigator.maxTouchPoints > 0;
+		} else if ('msMaxTouchPoints' in navigator) {
+			hasTouchScreen = navigator.msMaxTouchPoints > 0;
+		} else {
+			var mQ = window.matchMedia && matchMedia('(pointer:coarse)');
+			if (mQ && mQ.media === '(pointer:coarse)') {
+				hasTouchScreen = !!mQ.matches;
+			} else if ('orientation' in window) {
+				hasTouchScreen = true; // deprecated, but good fallback
+			} else {
+				// Only as a last resort, fall back to user agent sniffing
+				var UA = navigator.userAgent;
+				hasTouchScreen =
+					/\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+					/\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
+			}
+		}
+	});
 
 	let isMousedown = false;
 	let initialM = { x: 0, y: 0 };
@@ -20,7 +42,6 @@
 	let scrollVelocityY = 0;
 	let momentumID;
 	let scrollInertia = 1;
-	let hasTouchScreen = false;
 
 	function vh(v) {
 		var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
