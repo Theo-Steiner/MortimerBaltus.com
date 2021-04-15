@@ -7,7 +7,7 @@
 	onMount(() => {
 		setTimeout(() => {
 			intro = true;
-		}, 200);
+		}, 400);
 	});
 </script>
 
@@ -15,7 +15,7 @@
 	<title>MortimerBaltus</title>
 </svelte:head>
 
-<PageTransition>
+<PageTransition reverse="true">
 	<main>
 		<div class="container">
 			<div class="mortimer-baltus">

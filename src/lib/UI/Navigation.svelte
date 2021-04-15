@@ -3,14 +3,14 @@
 </script>
 
 <nav>
-	<Button buttonType="minimize" />
+	<Button buttonType="minimize" href="/" />
 	<h1>Title</h1>
 	<Button buttonType="next" />
 </nav>
 
 <style>
 	nav {
-		margin: 20px;
+		margin: 0px;
 		width: calc(100vw - 40px);
 		background-color: #151515;
 		display: flex;

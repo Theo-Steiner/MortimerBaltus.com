@@ -20,7 +20,6 @@
 			scroll_element.scrollTop = getScrollTo(vh(100));
 			scroll_element.scrollLeft = getScrollTo(vw(100));
 		} else {
-			console.log(`prenavigation x was: ${$navState[0]} & prenavigation y was: ${$navState[0]} `);
 			scroll_element.scrollTop = $navState[1];
 			scroll_element.scrollLeft = $navState[0];
 		}

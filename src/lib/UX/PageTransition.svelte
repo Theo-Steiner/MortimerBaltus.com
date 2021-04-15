@@ -1,21 +1,20 @@
 <script>
 	import { slide } from 'svelte/transition';
+	import { onMount } from 'svelte';
 
-	export let direction = 'up';
+	export let reverse = null;
+
+	onMount(() => {
+		if (reverse) {
+			document.body.style.display = 'flex';
+			document.body.style.flexDirection = 'column-reverse';
+		} else {
+			document.body.style.display = 'flex';
+			document.body.style.flexDirection = 'column';
+		}
+	});
 </script>
 
-<div class={direction} transition:slide>
+<div transition:slide>
 	<slot />
 </div>
-
-<style>
-	.down {
-		display: flex;
-		flex-direction: column-reverse;
-	}
-
-	.up {
-		display: flex;
-		flex-direction: column;
-	}
-</style>
