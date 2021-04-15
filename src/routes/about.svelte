@@ -52,7 +52,7 @@
 </svelte:head>
 <PageTransition>
 	<main bind:this={main}>
-		<Navigation />
+		<Navigation title="ABOUT" />
 		<div class="first-paragraph static">
 			<p>
 				MortimerBaltus is a 2021 founded partnership between art director Moritz Müller and web

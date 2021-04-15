@@ -1,10 +1,12 @@
 <script>
 	import Button from './Button.svelte';
+
+	export let title = 'TITLE';
 </script>
 
 <nav>
 	<Button buttonType="previous" href="/" />
-	<h1>Title</h1>
+	<h1>{title}</h1>
 	<Button buttonType="next" />
 </nav>
 
