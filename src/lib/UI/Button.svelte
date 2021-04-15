@@ -66,6 +66,24 @@
 				</g>
 			</g>
 		</svg>
+	{:else if buttonType === 'previous'}
+		<span>Go home, or to the previous subpage!</span>
+		<svg width="54" height="15" viewBox="0 0 54 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<rect
+				id="box"
+				x="0.5"
+				y="0.5"
+				width="53"
+				height="14"
+				rx="2.5"
+				fill="#151515"
+				stroke="#FEFEFE"
+			/>
+			<g id="arrow">
+				<rect x="22" y="7" width="20" height="1" fill="#FEFEFE" />
+				<polygon points="12 7 22 7 22 10" fill="#FEFEFE" />
+			</g>
+		</svg>
 	{/if}
 </a>
 
@@ -142,6 +160,17 @@
 	.next:hover #arrow rect {
 		fill: #151515;
 		width: 31px;
+		transform: translate(-5px, 0);
+	}
+
+	.previous:hover #arrow rect {
+		fill: #151515;
+		transform: translate(-5px, 0);
+		width: 31px;
+	}
+
+	.previous:hover #arrow polygon {
+		fill: #151515;
 		transform: translate(-5px, 0);
 	}
 </style>
