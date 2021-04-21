@@ -1,6 +1,6 @@
 <script>
 	import { onDestroy, onMount } from 'svelte';
-	import { scale } from 'svelte/transition';
+	import { scale, slide } from 'svelte/transition';
 	import windowHandler from '../UX/window-state';
 	import Button from './Button.svelte';
 
@@ -16,7 +16,7 @@
 	export let distanceFromIntersection = 20;
 	export let href = '/about';
 
-	let minimized = false;
+	let isMinimized = false;
 
 	let touched = false;
 	let thisWindowObject;
@@ -43,7 +43,7 @@
 	}
 
 	function toggleMinimize() {
-		minimized = !minimized;
+		isMinimized = !isMinimized;
 	}
 
 	onMount(() => {
@@ -57,55 +57,63 @@
 	});
 </script>
 
-<section
-	in:scale={{
-		duration: 2000,
-		delay: 100
-	}}
-	class={parallax}
-	style="--windowWidth: {width}; --windowHeight: {height};
-    --baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large};"
-	on:click={handleWindowClick}
-	class:trigger-shuffle={!isInForeground && touched}
->
-	<header>
-		<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
-		{#if title}
-			<h1>{title}</h1>
-		{:else}
-			<h1>Title</h1>
+<!-- FIX WINDOW SHUFFLE!!! -->
+<div style="width: {width}px; height: {height}px;" class="parallax-wrapper {parallax}">
+	<section
+		in:scale={{
+			duration: 2000,
+			delay: 100
+		}}
+		style="--windowWidth: {width}; --windowHeight: {height};
+		--baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large};"
+		on:click={handleWindowClick}
+		class:trigger-shuffle={!isInForeground && touched}
+	>
+		<header>
+			<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
+			{#if title}
+				<h1>{title}</h1>
+			{:else}
+				<h1>Title</h1>
+			{/if}
+			{#if enlargeable}
+				<Button buttonType="subpage" {href} />
+			{:else}
+				<Button buttonType="hidden" />
+			{/if}
+		</header>
+		{#if !isMinimized}
+			<div
+				transition:slide
+				class:no-events={!isInForeground}
+				class="content-wrapper"
+				style="height: {height - 36}px; background: {background}; background-size: cover;"
+			>
+				<slot><p>Content goes here</p></slot>
+			</div>
 		{/if}
-		{#if enlargeable}
-			<Button buttonType="subpage" {href} />
-		{:else}
-			<Button buttonType="hidden" />
-		{/if}
-	</header>
-	{#if !minimized}
-		<div
-			class:no-events={!isInForeground}
-			style="background: {background}; background-size: cover;"
-		>
-			<slot><p>Content goes here</p></slot>
-		</div>
-	{/if}
-</section>
+	</section>
+</div>
 
 <style>
+	.parallax-wrapper {
+		transition: transform 0.5s;
+		overflow: visible;
+	}
+
 	section {
 		pointer-events: auto;
 		user-select: none;
 		position: relative;
 		top: 0px;
 		width: calc(var(--windowWidth) * 1px);
-		height: calc(var(--windowHeight) * 1px);
+		max-height: calc(var(--windowHeight) * 1px);
 		border: 1px solid #fefefe;
 		border-radius: 6px;
 		color: #fefefe;
 		overflow: hidden;
 		margin: 0px;
 		padding: 0px;
-		transition: transform 0.5s;
 		box-shadow: 0px 4px 6px -2px rgba(0, 0, 0, 0.66);
 	}
 
@@ -114,7 +122,6 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		border-bottom: 1px solid #fefefe;
 		background-color: #151515;
 		padding: 0px;
 		margin: 0px;
@@ -124,12 +131,14 @@
 		margin: 0;
 		font-size: 13px;
 	}
-	div {
+
+	.content-wrapper {
 		width: 100%;
 		height: 100%;
 		overflow: hidden;
 		padding: 0px;
 		margin: 0px;
+		border-top: 1px solid #fefefe;
 		border-radius: 0px 0px 6px 6px;
 	}
 
