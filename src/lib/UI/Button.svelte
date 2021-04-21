@@ -1,10 +1,14 @@
 <script>
+	import { createEventDispatcher } from 'svelte';
+
 	export let buttonType;
 	export let href = null;
+
+	const dispatch = createEventDispatcher();
 </script>
 
-<a class={buttonType} {href}>
-	{#if buttonType === 'subpage'}
+{#if buttonType === 'subpage'}
+	<a class={buttonType} {href}>
 		<span>Go to the subpage for this window</span>
 		<svg version="1.1" viewBox="0 0 54 15" xmlns="http://www.w3.org/2000/svg">
 			<g fill="none" fill-rule="evenodd">
@@ -28,7 +32,14 @@
 				</g>
 			</g>
 		</svg>
-	{:else if buttonType === 'minimize'}
+	</a>
+{:else if buttonType === 'minimize'}
+	<button
+		class={buttonType}
+		on:click={() => {
+			dispatch('toggleMinimize');
+		}}
+	>
 		<span>Shrink this window</span>
 		<svg version="1.1" viewBox="0 0 54 15" xmlns="http://www.w3.org/2000/svg">
 			<g fill="none" fill-rule="evenodd">
@@ -46,7 +57,9 @@
 				<rect id="lower" x="17" y="9" width="20" height="1" fill="#FEFEFE" />
 			</g>
 		</svg>
-	{:else if buttonType === 'next'}
+	</button>
+{:else if buttonType === 'next'}
+	<a class={buttonType} {href}>
 		<span>Go to the next subpage!</span>
 		<svg version="1.1" viewBox="0 0 54 15" xmlns="http://www.w3.org/2000/svg">
 			<g fill="none" fill-rule="evenodd">
@@ -66,7 +79,9 @@
 				</g>
 			</g>
 		</svg>
-	{:else if buttonType === 'previous'}
+	</a>
+{:else if buttonType === 'previous'}
+	<a class={buttonType} {href}>
 		<span>Go home, or to the previous subpage!</span>
 		<svg width="54" height="15" viewBox="0 0 54 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<rect
@@ -84,14 +99,18 @@
 				<polygon points="12 7 22 7 22 10" fill="#FEFEFE" />
 			</g>
 		</svg>
-	{/if}
-</a>
+	</a>
+{:else}
+	<button class={buttonType} />
+{/if}
 
 <style>
 	.hidden {
 		visibility: hidden;
 	}
-	a {
+
+	a,
+	button {
 		width: 54px;
 		height: 15px;
 		background: none;
@@ -103,7 +122,8 @@
 		padding: 0;
 		margin: 8px;
 	}
-	a:focus {
+	a:focus,
+	button:focus {
 		box-shadow: 0 0 0 1px #a25c24;
 		outline: none;
 	}

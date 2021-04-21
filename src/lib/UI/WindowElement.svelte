@@ -16,6 +16,8 @@
 	export let distanceFromIntersection = 20;
 	export let href = '/about';
 
+	let minimized = false;
+
 	let touched = false;
 	let thisWindowObject;
 	windowHandler.registerWindow({
@@ -38,6 +40,10 @@
 		} else {
 			windowHandler.bringToForeground(id);
 		}
+	}
+
+	function toggleMinimize() {
+		minimized = !minimized;
 	}
 
 	onMount(() => {
@@ -63,7 +69,7 @@
 	class:trigger-shuffle={!isInForeground && touched}
 >
 	<header>
-		<Button buttonType="minimize" />
+		<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
 		{#if title}
 			<h1>{title}</h1>
 		{:else}
@@ -75,10 +81,14 @@
 			<Button buttonType="hidden" />
 		{/if}
 	</header>
-	<div class:no-events={!isInForeground} style="background: {background}; background-size: cover;">
-		<slot><p>Content goes here</p></slot>
-	</div>
-	<footer />
+	{#if !minimized}
+		<div
+			class:no-events={!isInForeground}
+			style="background: {background}; background-size: cover;"
+		>
+			<slot><p>Content goes here</p></slot>
+		</div>
+	{/if}
 </section>
 
 <style>
