@@ -57,7 +57,6 @@
 	});
 </script>
 
-<!-- FIX WINDOW SHUFFLE!!! -->
 <div style="width: {width}px; height: {height}px;" class="parallax-wrapper {parallax}">
 	<section
 		in:scale={{
@@ -67,7 +66,8 @@
 		style="--windowWidth: {width}; --windowHeight: {height};
 		--baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large};"
 		on:click={handleWindowClick}
-		class:trigger-shuffle={!isInForeground && touched}
+		class:trigger-forward-shuffle={!isInForeground && touched}
+		class:trigger-backward-shuffle={isInForeground && touched}
 	>
 		<header>
 			<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
@@ -115,6 +115,7 @@
 		margin: 0px;
 		padding: 0px;
 		box-shadow: 0px 4px 6px -2px rgba(0, 0, 0, 0.66);
+		transform-style: flat;
 	}
 
 	header {
@@ -146,7 +147,7 @@
 		pointer-events: none;
 	}
 
-	@keyframes shuffle {
+	@keyframes forward-shuffle {
 		0% {
 			right: 0;
 		}
@@ -158,8 +159,26 @@
 		}
 	}
 
-	.trigger-shuffle {
-		animation-name: shuffle;
+	@keyframes backward-shuffle {
+		0% {
+			right: 0;
+		}
+		50% {
+			right: calc((var(--baseShuffleDistance) * max(2550px, 250vmax) / 300));
+		}
+		100% {
+			right: 0;
+		}
+	}
+
+	.trigger-forward-shuffle {
+		animation-name: forward-shuffle;
+		animation-duration: 0.8s;
+		animation-timing-function: ease-in-out;
+	}
+
+	.trigger-backward-shuffle {
+		animation-name: backward-shuffle;
 		animation-duration: 0.8s;
 		animation-timing-function: ease-in-out;
 	}
