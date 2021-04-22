@@ -131,16 +131,34 @@
 	button,
 	a {
 		color: #fefefe;
-		font-size: 13px;
+		font-size: 12px;
 		letter-spacing: 0.1px;
 		line-height: 17px;
 		text-decoration: none;
 		border: none;
 		background-color: #151515;
 		cursor: pointer;
+		margin: 0 10px 0 10px;
+		white-space: nowrap;
 	}
 
 	svg {
-		margin-bottom: 31px;
+		margin-bottom: 15px;
+		width: 185px;
+	}
+
+	@media only screen and (min-device-width: 768px) {
+		nav {
+			padding: 10px 15px 0px 15px;
+		}
+
+		button,
+		a {
+			font-size: 13px;
+		}
+
+		svg {
+			margin-bottom: 31px;
+		}
 	}
 </style>

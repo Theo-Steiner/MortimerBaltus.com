@@ -71,21 +71,39 @@
 				know new people – and Yes, we also speak Japanese.
 			</p>
 			<div class="animation-container">
-				<h2 style="--width: 376px; --scroll: {Math.min(relativeScrollToNice, 1)};" bind:this={nice}>
+				<h2
+					style="--width: 188px; --largeWidth: 376px; --scroll: {Math.min(
+						relativeScrollToNice,
+						1
+					)};"
+					bind:this={nice}
+				>
 					NICE
 				</h2>
-				<h2 style="--width: 233px; --scroll: {Math.min(relativeScrollToTo, 1)};" bind:this={to}>
+				<h2
+					style="--width: 117px; --largeWidth: 233px; --scroll: {Math.min(relativeScrollToTo, 1)};"
+					bind:this={to}
+				>
 					TO
 				</h2>
-				<h2 style="--width: 445px; --scroll: {Math.min(relativeScrollToMeet, 1)};" bind:this={meet}>
+				<h2
+					style="--width: 223px; --largeWidth: 445px; --scroll: {Math.min(
+						relativeScrollToMeet,
+						1
+					)};"
+					bind:this={meet}
+				>
 					MEET
 				</h2>
-				<h2 style="--width: 336px; --scroll: {Math.min(relativeScrollToYou, 1)};" bind:this={you}>
+				<h2
+					style="--width: 168px; --largeWidth: 336px; --scroll: {Math.min(relativeScrollToYou, 1)};"
+					bind:this={you}
+				>
 					YOU
 				</h2>
 			</div>
+			<Footer />
 		</div>
-		<Footer />
 	</main>
 </PageTransition>
 
@@ -96,6 +114,7 @@
 		overflow-y: auto;
 		perspective: 2px;
 		background-color: #a35d24;
+		overflow-x: hidden;
 	}
 
 	.parallax {
@@ -129,21 +148,39 @@
 
 	p {
 		color: #151515;
-		font-size: 44px;
-		line-height: 50px;
-		letter-spacing: -0.55px;
-		padding: 15px 20px 0px 20px;
+		font-size: 22px;
+		line-height: 25px;
+		letter-spacing: -0.28px;
+		padding: 15px 10px 0px 10px;
 	}
 
 	h2 {
 		color: #151515;
-		font-size: 150px;
-		letter-spacing: 2.57px;
-		line-height: 128.3px;
+		font-size: 75px;
+		letter-spacing: 1.29px;
+		line-height: 64.1px;
 		transform: translateX(calc(100vw - var(--width) - ((100vw - var(--width)) * var(--scroll))));
 	}
 
 	.animation-container {
-		margin: 150px 0 30px 0;
+		margin: 80px 0 10px 0;
+	}
+
+	@media only screen and (min-device-width: 1000px) {
+		p {
+			font-size: 44px;
+			line-height: 50px;
+			letter-spacing: -0.55px;
+			padding: 15px 20px 0px 20px;
+		}
+
+		h2 {
+			font-size: 150px;
+			letter-spacing: 2.57px;
+			line-height: 128.3px;
+			transform: translateX(
+				calc(100vw - var(--largeWidth) - ((100vw - var(--largeWidth)) * var(--scroll)))
+			);
+		}
 	}
 </style>
