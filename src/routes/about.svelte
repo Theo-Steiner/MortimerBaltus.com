@@ -139,7 +139,7 @@
 	}
 
 	.first-paragraph {
-		padding: 30px 0 30px 0;
+		padding: 20px 0 20px 0;
 	}
 
 	.static {
@@ -166,7 +166,11 @@
 		margin: 80px 0 10px 0;
 	}
 
-	@media only screen and (min-device-width: 1000px) {
+	@media only screen and (min-device-width: 768px) {
+		.first-paragraph {
+			padding: 30px 0 30px 0;
+		}
+
 		p {
 			font-size: 44px;
 			line-height: 50px;

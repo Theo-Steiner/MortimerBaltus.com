@@ -4,6 +4,7 @@
 	import FooterLanguageWindow from '$lib/Windows/FooterWindows/FooterLanguageWindow.svelte';
 
 	let display = 'overview';
+	let nav;
 
 	function toggleContactWindow() {
 		display = display === 'contact' ? 'overview' : 'contact';
@@ -121,11 +122,27 @@
 		overflow: visible;
 	}
 
+	nav::-webkit-scrollbar {
+		display: none;
+	}
+
 	nav {
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
 		width: 100vw;
-		padding: 10px 15px 0px 15px;
+		overflow: scroll;
+		padding: 10px 10px 0px 10px;
 		display: flex;
 		justify-content: space-between;
+	}
+
+	@keyframes marquee-frame {
+		0% {
+			transform: translateX(0px);
+		}
+		100% {
+			transform: translateX(-100%);
+		}
 	}
 
 	button,
@@ -144,7 +161,7 @@
 
 	svg {
 		margin-bottom: 15px;
-		width: 185px;
+		width: 57vw;
 	}
 
 	@media only screen and (min-device-width: 768px) {
@@ -158,6 +175,7 @@
 		}
 
 		svg {
+			width: 38.5vw;
 			margin-bottom: 31px;
 		}
 	}
