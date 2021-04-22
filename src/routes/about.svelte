@@ -20,6 +20,8 @@
 	let youOffset = 0;
 	let relativeScrollToYou = 0;
 
+	let viewport = 0;
+
 	function textScroll() {
 		if (main && nice && to && meet && you) {
 			scrollTop = main.scrollTop + main.clientHeight;
@@ -29,10 +31,10 @@
 			);
 			relativeScrollToTo = Math.max((scrollTop - toOffset + 200) / (mainHeight - toOffset), 0);
 			relativeScrollToMeet = Math.max(
-				(scrollTop - meetOffset + 100) / (mainHeight - meetOffset),
+				(scrollTop - meetOffset + 150) / (mainHeight - meetOffset),
 				0
 			);
-			relativeScrollToYou = Math.max((scrollTop - youOffset) / (mainHeight - youOffset), 0);
+			relativeScrollToYou = Math.max((scrollTop - youOffset + 100) / (mainHeight - youOffset), 0);
 		}
 		requestAnimationFrame(textScroll);
 	}
@@ -43,6 +45,7 @@
 		toOffset = to.offsetTop;
 		meetOffset = to.offsetTop;
 		youOffset = to.offsetTop;
+
 		textScroll();
 	});
 </script>
@@ -50,8 +53,10 @@
 <svelte:head>
 	<title>ABOUT</title>
 </svelte:head>
+
+<svelte:window bind:innerHeight={viewport} />
 <PageTransition>
-	<main bind:this={main}>
+	<main bind:this={main} style="--height: {viewport}px;">
 		<Navigation title="ABOUT" />
 		<div class="first-paragraph static">
 			<p>
@@ -96,7 +101,7 @@
 					MEET
 				</h2>
 				<h2
-					style="--width: 168px; --largeWidth: 336px; --scroll: {Math.min(relativeScrollToYou, 1)};"
+					style="--width: 178px; --largeWidth: 336px; --scroll: {Math.min(relativeScrollToYou, 1)};"
 					bind:this={you}
 				>
 					YOU
@@ -110,11 +115,13 @@
 <style>
 	main {
 		height: 100vh;
+		height: var(--height);
 		overflow-x: hidden;
 		overflow-y: auto;
 		perspective: 2px;
-		background-color: #a35d24;
-		overflow-x: hidden;
+		background-image: linear-gradient(#a35d24, #a35d24, #151515, #151515, #151515);
+		overscroll-behavior: none;
+		padding-bottom: 100px;
 	}
 
 	.parallax {
@@ -163,7 +170,7 @@
 	}
 
 	.animation-container {
-		margin: 80px 0 10px 0;
+		padding: 90px 0 50px 0;
 	}
 
 	@media only screen and (min-device-width: 768px) {

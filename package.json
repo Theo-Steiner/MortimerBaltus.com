@@ -25,7 +25,7 @@
 	"name": "skmb",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
+		"dev": "svelte-kit dev --host",
 		"build": "svelte-kit build",
 		"start": "svelte-kit start",
 		"lint": "prettier --check . && eslint --ignore-path .gitignore .",
@@ -44,5 +44,9 @@
 		"vite": "^2.1.0"
 	},
 	"type": "module"
+<<<<<<< HEAD
 >>>>>>> Transfer svelte site to svelte kit// first attempt at routing
 }
+=======
+}
+>>>>>>> fix iOS 100vh scroll behavior with svelte:window innerHeight

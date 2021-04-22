@@ -14,7 +14,7 @@
 	nav {
 		position: sticky;
 		z-index: 9999;
-		top: 10px;
+		top: 15px;
 		margin: 0 10px 0 10px;
 		width: calc(100vw - 20px);
 		background-color: #151515;
