@@ -123,7 +123,6 @@
 		pointer-events: auto;
 		user-select: none;
 		position: relative;
-		top: 0px;
 		width: calc(var(--windowWidth) * 1px);
 		max-height: calc(var(--windowHeight) * 1px);
 		border: 1px solid #fefefe;
@@ -133,7 +132,6 @@
 		margin: 0px;
 		padding: 0px;
 		box-shadow: 0px 4px 6px -2px rgba(0, 0, 0, 0.66);
-		transform-style: flat;
 	}
 
 	header {
