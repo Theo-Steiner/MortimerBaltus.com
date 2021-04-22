@@ -116,6 +116,7 @@
 	main {
 		height: 100vh;
 		height: var(--height);
+		width: 100%;
 		overflow-x: hidden;
 		overflow-y: auto;
 		perspective: 2px;
