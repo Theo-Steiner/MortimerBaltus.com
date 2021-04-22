@@ -1,27 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "svelte-app",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public --host"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^17.0.0",
-    "@rollup/plugin-node-resolve": "^11.0.0",
-    "rollup": "^2.3.4",
-    "rollup-plugin-css-only": "^3.1.0",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-svelte": "^7.0.0",
-    "rollup-plugin-terser": "^7.0.0",
-    "svelte": "^3.0.0"
-  },
-  "dependencies": {
-    "nodemailer": "^6.5.0",
-    "sirv-cli": "^1.0.0"
-  }
-=======
 	"name": "skmb",
 	"version": "0.0.1",
 	"scripts": {
@@ -44,9 +21,4 @@
 		"vite": "^2.1.0"
 	},
 	"type": "module"
-<<<<<<< HEAD
->>>>>>> Transfer svelte site to svelte kit// first attempt at routing
 }
-=======
-}
->>>>>>> fix iOS 100vh scroll behavior with svelte:window innerHeight
