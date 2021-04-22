@@ -28,13 +28,22 @@ function windowHandler() {
                 intersectingWindow.parallax = toForegroundParallax;
                 intersectingWindow.isInForeground = false;
                 intersectingWindow.touched = true;
-                console.log(`swapped parallaxA:"${toBackgroundParallax}" with parallaxB: "${toForegroundParallax}"`)
                 let updatedWindowObjects = [...windowObjects]
                 updatedWindowObjects[windowIndex] = window;
                 updatedWindowObjects[intersectingWindowIndex] = intersectingWindow;
                 return updatedWindowObjects;
             })
-
+        },
+        updateIsMinimized: windowID => {
+            windowStore.update(windowObjects => {
+                let window = windowObjects.find(wndw => wndw.id === windowID);
+                let intersectingWindow = windowObjects.find(wndw => wndw.id === window.intersections[0]);
+                const intersectingWindowIndex = windowObjects.indexOf(intersectingWindow);
+                intersectingWindow.intersectionIsMinimized = !intersectingWindow.intersectionIsMinimized;
+                let updatedWindowObjects = [...windowObjects];
+                updatedWindowObjects[intersectingWindowIndex] = intersectingWindow;
+                return updatedWindowObjects;
+            })
         }
     }
 }

@@ -17,14 +17,17 @@
 	export let href = '/about';
 
 	let isMinimized = false;
+	let intersectionIsMinimized = false;
 
 	let touched = false;
 	let thisWindowObject;
+
 	windowHandler.registerWindow({
 		id: id,
 		parallax: parallax,
 		isInForeground: isInForeground,
 		intersections: intersections,
+		intersectionIsMinimized: false,
 		touched: touched
 	});
 
@@ -33,17 +36,20 @@
 		isInForeground = thisWindowObject.isInForeground;
 		parallax = thisWindowObject.parallax;
 		touched = thisWindowObject.touched;
+		intersectionIsMinimized = thisWindowObject.intersectionIsMinimized;
 	});
 
 	function handleWindowClick() {
-		if (isInForeground) {
-		} else {
+		if (!isInForeground && !isMinimized) {
 			windowHandler.bringToForeground(id);
 		}
 	}
 
 	function toggleMinimize() {
 		isMinimized = !isMinimized;
+		if (intersections.length != 0) {
+			windowHandler.updateIsMinimized(id);
+		}
 	}
 
 	onMount(() => {
@@ -57,17 +63,26 @@
 	});
 </script>
 
-<div style="width: {width}px; height: {height}px;" class="parallax-wrapper {parallax}">
+<div
+	style="width: {width}px; height: {height}px;"
+	class:minimized-notransition={isMinimized | intersectionIsMinimized}
+	class="parallax-wrapper {parallax}"
+>
 	<section
 		in:scale={{
 			duration: 2000,
 			delay: 100
 		}}
 		style="--windowWidth: {width}; --windowHeight: {height};
-		--baseShuffleDistance: {distanceFromIntersection.base}; --largeShuffleDistance: {distanceFromIntersection.large};"
+		--baseShuffleDistance: {isMinimized |
+		intersectionIsMinimized
+			? 0
+			: distanceFromIntersection.base}; --largeShuffleDistance: {isMinimized |
+		intersectionIsMinimized
+			? 0
+			: distanceFromIntersection.large};"
 		on:click={handleWindowClick}
 		class:trigger-forward-shuffle={!isInForeground && touched}
-		class:trigger-backward-shuffle={isInForeground && touched}
 	>
 		<header>
 			<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
@@ -97,8 +112,11 @@
 
 <style>
 	.parallax-wrapper {
-		transition: transform 0.5s;
+		transition: transform 0.8s;
 		overflow: visible;
+	}
+	.minimized-notransition {
+		transition: transform 0.2s;
 	}
 
 	section {
@@ -159,26 +177,8 @@
 		}
 	}
 
-	@keyframes backward-shuffle {
-		0% {
-			right: 0;
-		}
-		50% {
-			right: calc((var(--baseShuffleDistance) * max(2550px, 250vmax) / 300));
-		}
-		100% {
-			right: 0;
-		}
-	}
-
 	.trigger-forward-shuffle {
 		animation-name: forward-shuffle;
-		animation-duration: 0.8s;
-		animation-timing-function: ease-in-out;
-	}
-
-	.trigger-backward-shuffle {
-		animation-name: backward-shuffle;
 		animation-duration: 0.8s;
 		animation-timing-function: ease-in-out;
 	}
@@ -213,12 +213,12 @@
 	}
 
 	@media only screen and (min-width: 1440px) {
-		@keyframes shuffle {
+		@keyframes forward-shuffle {
 			0% {
 				right: 0;
 			}
 			50% {
-				right: calc((var(--largeShuffleDistance) * max(2880px, 120vmax) / 200 * 1.25));
+				right: calc((var(--largeShuffleDistance) * max(2880px, 120vmax) / 200));
 			}
 			100% {
 				right: 0;
