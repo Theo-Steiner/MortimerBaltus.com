@@ -1,7 +1,33 @@
+<script>
+	import { slide } from 'svelte/transition';
+	import FooterContactWindow from '$lib/Windows/FooterWindows/FooterContactWindow.svelte';
+	import FooterLanguageWindow from '$lib/Windows/FooterWindows/FooterLanguageWindow.svelte';
+
+	let display = 'overview';
+
+	function toggleContactWindow() {
+		display = display === 'contact' ? 'overview' : 'contact';
+	}
+
+	function toggleLanguageWindow() {
+		display = display === 'language' ? 'overview' : 'language';
+	}
+</script>
+
 <footer>
+	{#if display === 'contact'}
+		<div class="overlay" transition:slide>
+			<FooterContactWindow on:toggleMinimize={toggleContactWindow} />
+		</div>
+	{:else if display === 'language'}
+		<div style="transform: translateZ(0px) scale(1);" class="overlay" transition:slide>
+			<FooterLanguageWindow on:toggleMinimize={toggleLanguageWindow} />
+		</div>
+	{/if}
+
 	<nav>
-		<a href="/">GET IN TOUCH</a>
-		<a href="/">LANGUAGE</a>
+		<button on:click={toggleContactWindow}>GET IN TOUCH</button>
+		<button on:click={toggleLanguageWindow}>LANGUAGE</button>
 		<a href="/">INSTAGRAM</a>
 		<a href="/">PRIVACY POLICY</a>
 		<a href="/">LEGAL NOTICE</a>
@@ -70,7 +96,21 @@
 </footer>
 
 <style>
+	.overlay {
+		background-color: transparent;
+		position: absolute;
+		top: -200px;
+		z-index: 9999;
+		display: flex;
+		width: 100vw;
+		justify-content: center;
+		height: 315px;
+		pointer-events: none;
+		overflow: hidden;
+	}
+
 	footer {
+		position: relative;
 		width: 100vw;
 		height: 300px;
 		background-color: #151515;
@@ -78,6 +118,7 @@
 		flex-direction: column;
 		justify-content: space-between;
 		align-items: center;
+		overflow: visible;
 	}
 
 	nav {
@@ -87,12 +128,16 @@
 		justify-content: space-between;
 	}
 
+	button,
 	a {
 		color: #fefefe;
 		font-size: 13px;
 		letter-spacing: 0.1px;
 		line-height: 17px;
 		text-decoration: none;
+		border: none;
+		background-color: #151515;
+		cursor: pointer;
 	}
 
 	svg {

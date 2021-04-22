@@ -17,10 +17,7 @@
 		{/if}
 		<Button buttonType="hidden" />
 	</header>
-	<div
-		class="content-wrapper"
-		style="height: {height - 36}px; background: {background}; background-size: cover;"
-	>
+	<div class="content-wrapper" style="background: {background}; background-size: cover;">
 		<slot><p>Content goes here</p></slot>
 	</div>
 </section>
