@@ -61,8 +61,8 @@
 		};
 	}
 
-	const moritzmoji = '/images/moritzmemoji.jpg';
-	const theomoji = '/images/theomemoji.png';
+	const moritzmoji = '/Images/moritzmemoji.jpg';
+	const theomoji = '/Images/theomemoji.png';
 	function resetView() {
 		setTimeout(() => {
 			view = 'overview';
