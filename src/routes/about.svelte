@@ -20,7 +20,7 @@
 	let youOffset = 0;
 	let relativeScrollToYou = 0;
 
-	let viewport = 0;
+	let viewport;
 
 	function textScroll() {
 		if (main && nice && to && meet && you) {
@@ -114,6 +114,7 @@
 
 <style>
 	main {
+		min-height: 80vh;
 		height: 100vh;
 		height: var(--height);
 		width: 100%;
