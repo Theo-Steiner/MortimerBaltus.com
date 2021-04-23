@@ -9,6 +9,10 @@
 		main {
 			height: 100vh;
 			width: 100%;
+
+			backface-visibility: hidden;
+			-webkit-backface-visibility: hidden;
+			-moz-backface-visibility: hidden;
 		}
 
 		.container {
