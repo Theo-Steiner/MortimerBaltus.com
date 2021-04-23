@@ -20,10 +20,15 @@
 	let youOffset = 0;
 	let relativeScrollToYou = 0;
 
-	let viewport;
+	let viewport = 1000;
 
 	function textScroll() {
 		if (main && nice && to && meet && you) {
+			mainHeight = main.scrollHeight;
+			niceOffset = nice.offsetTop;
+			toOffset = to.offsetTop;
+			meetOffset = meet.offsetTop;
+			youOffset = you.offsetTop;
 			scrollTop = main.scrollTop + main.clientHeight;
 			relativeScrollToNice = Math.max(
 				(scrollTop - niceOffset + 300) / (mainHeight - niceOffset),
@@ -40,12 +45,6 @@
 	}
 
 	onMount(() => {
-		mainHeight = main.scrollHeight;
-		niceOffset = nice.offsetTop;
-		toOffset = to.offsetTop;
-		meetOffset = to.offsetTop;
-		youOffset = to.offsetTop;
-
 		textScroll();
 	});
 </script>
@@ -114,7 +113,6 @@
 
 <style>
 	main {
-		min-height: 80vh;
 		height: 100vh;
 		height: var(--height);
 		width: 100%;
