@@ -1,18 +1,137 @@
 <script>
 	import WindowView from '$lib/WindowView.svelte';
 	import PageTransition from '$lib/UX/PageTransition.svelte';
-	import { onMount } from 'svelte';
-
-	let intro = false;
-	onMount(() => {
-		setTimeout(() => {
-			intro = true;
-		}, 400);
-	});
 </script>
 
 <svelte:head>
 	<title>MortimerBaltus</title>
+	<style>
+		main {
+			height: 100vh;
+			width: 100%;
+		}
+
+		.container {
+			width: 100%;
+			height: 100%;
+		}
+
+		.scroller {
+			width: 100%;
+			height: 100vh;
+			overflow: scroll;
+			perspective-origin: center;
+			perspective: 10px;
+		}
+
+		.grid-box {
+			width: max(2550px, 250vmax);
+			height: max(2550px, 250vmax);
+			display: grid;
+			grid-template-columns: repeat(200, 1fr);
+			grid-template-rows: repeat(200, 1fr);
+			margin: 0;
+		}
+
+		@font-face {
+			font-family: 'MabryPro';
+			src: url('/fonts/MabryPro-Regular.woff2') format('woff');
+			font-display: block;
+		}
+
+		.intro-animation {
+			transform: translateY(100px);
+			animation-fill-mode: forwards;
+			animation-name: slideIn;
+			animation-duration: 1000ms;
+			animation-delay: calc(var(--animation-order) * 200ms);
+		}
+
+		@keyframes slideIn {
+			0% {
+				transform: translateY(100px);
+			}
+
+			100% {
+				transform: translateY(0px);
+			}
+		}
+
+		.masking {
+			height: calc(1.4vh * 1.6);
+			overflow: hidden;
+		}
+
+		.mortimer-baltus h1 {
+			text-align: center;
+			color: white;
+			font-size: 1.4vh;
+			line-height: 1.6;
+			padding: 0;
+		}
+
+		.desktop {
+			display: none;
+		}
+
+		.mortimer-baltus svg {
+			margin-top: 43vh;
+			margin-bottom: 3.2vh;
+			width: 68vw;
+			height: auto;
+		}
+
+		.mortimer-baltus {
+			pointer-events: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-items: center;
+			width: 100vw;
+			height: 100vh;
+		}
+
+		.grid-box {
+			transform-style: preserve-3d;
+		}
+
+		@media only screen and (min-width: 1020px) {
+			.masking {
+				height: calc(1.7vh * 1.35);
+			}
+
+			.mortimer-baltus h1 {
+				line-height: 1.35;
+				font-size: 1.7vh;
+				padding: 0;
+			}
+
+			.mobile {
+				display: none;
+			}
+
+			.desktop {
+				display: inline;
+			}
+
+			.mortimer-baltus svg {
+				margin-top: 43vh;
+				margin-bottom: 2.5vh;
+				width: 40vw;
+			}
+		}
+
+		@media only screen and (min-width: 1440px) {
+			.grid-box {
+				width: max(2880px, 120vmax);
+				height: max(2880px, 120vmax);
+			}
+		}
+	</style>
 </svelte:head>
 
 <PageTransition reverse="true">
@@ -100,139 +219,9 @@
 			</div>
 			<div class="scroller">
 				<div class="grid-box">
-					{#if intro}
-						<WindowView />
-					{/if}
+					<WindowView />
 				</div>
 			</div>
 		</div>
 	</main>
 </PageTransition>
-
-<style>
-	main {
-		height: 100vh;
-		width: 100%;
-	}
-
-	.container {
-		width: 100%;
-		height: 100%;
-	}
-
-	.scroller {
-		width: 100%;
-		height: 100vh;
-		overflow: scroll;
-		perspective-origin: center;
-		perspective: 10px;
-	}
-
-	.grid-box {
-		width: max(2550px, 250vmax);
-		height: max(2550px, 250vmax);
-		display: grid;
-		grid-template-columns: repeat(200, 1fr);
-		grid-template-rows: repeat(200, 1fr);
-		margin: 0;
-	}
-
-	@font-face {
-		font-family: 'MabryPro';
-		src: url('/fonts/MabryPro-Regular.woff2') format('woff');
-		font-display: block;
-	}
-
-	.intro-animation {
-		transform: translateY(100px);
-		animation-fill-mode: forwards;
-		animation-name: slideIn;
-		animation-duration: 1000ms;
-		animation-delay: calc(var(--animation-order) * 200ms);
-	}
-
-	@keyframes slideIn {
-		0% {
-			transform: translateY(100px);
-		}
-
-		100% {
-			transform: translateY(0px);
-		}
-	}
-
-	.masking {
-		height: calc(1.4vh * 1.6);
-		overflow: hidden;
-	}
-
-	.mortimer-baltus h1 {
-		text-align: center;
-		color: white;
-		font-size: 1.4vh;
-		line-height: 1.6;
-		padding: 0;
-	}
-
-	.desktop {
-		display: none;
-	}
-
-	.mortimer-baltus svg {
-		margin-top: 43vh;
-		margin-bottom: 3.2vh;
-		width: 68vw;
-		height: auto;
-	}
-
-	.mortimer-baltus {
-		pointer-events: none;
-		position: fixed;
-		top: 0;
-		left: 0;
-		z-index: 0;
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-start;
-		align-items: center;
-		width: 100vw;
-		height: 100vh;
-	}
-
-	.grid-box {
-		transform-style: preserve-3d;
-	}
-
-	@media only screen and (min-width: 1020px) {
-		.masking {
-			height: calc(1.7vh * 1.35);
-		}
-
-		.mortimer-baltus h1 {
-			line-height: 1.35;
-			font-size: 1.7vh;
-			padding: 0;
-		}
-
-		.mobile {
-			display: none;
-		}
-
-		.desktop {
-			display: inline;
-		}
-
-		.mortimer-baltus svg {
-			margin-top: 43vh;
-			margin-bottom: 2.5vh;
-			width: 40vw;
-		}
-	}
-
-	@media only screen and (min-width: 1440px) {
-		.grid-box {
-			width: max(2880px, 120vmax);
-			height: max(2880px, 120vmax);
-		}
-	}
-</style>
