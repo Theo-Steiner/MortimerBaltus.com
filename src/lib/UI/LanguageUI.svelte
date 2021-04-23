@@ -60,6 +60,9 @@
 		align-items: center;
 		overflow: hidden;
 		cursor: pointer;
+		width: 266px;
+		height: 273px;
+		transform: translateZ(0px) scale(1);
 	}
 
 	.animation-wrap {
