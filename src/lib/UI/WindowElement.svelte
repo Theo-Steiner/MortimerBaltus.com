@@ -1,6 +1,6 @@
 <script>
 	import { onDestroy, onMount } from 'svelte';
-	import { scale, slide } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	import windowHandler from '../UX/window-state';
 	import Button from './Button.svelte';
 
@@ -64,25 +64,19 @@
 </script>
 
 <div
-	style="width: {width}px; height: {height}px;"
+	style="width: {width}px; height: {height}px; --baseShuffleDistance: {isMinimized |
+	intersectionIsMinimized
+		? 0
+		: distanceFromIntersection.base}; --largeShuffleDistance: {isMinimized | intersectionIsMinimized
+		? 0
+		: distanceFromIntersection.large};"
+	class:trigger-forward-shuffle={!isInForeground && touched}
 	class:minimized-notransition={isMinimized | intersectionIsMinimized}
 	class="parallax-wrapper {parallax}"
 >
 	<section
-		in:scale={{
-			duration: 2000,
-			delay: 100
-		}}
-		style="--windowWidth: {width}; --windowHeight: {height};
-		--baseShuffleDistance: {isMinimized |
-		intersectionIsMinimized
-			? 0
-			: distanceFromIntersection.base}; --largeShuffleDistance: {isMinimized |
-		intersectionIsMinimized
-			? 0
-			: distanceFromIntersection.large};"
+		style="--windowWidth: {width}; --windowHeight: {height}; --order: {id / 10};"
 		on:click={handleWindowClick}
-		class:trigger-forward-shuffle={!isInForeground && touched}
 	>
 		<header>
 			<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
@@ -113,6 +107,7 @@
 <style>
 	.parallax-wrapper {
 		transition: transform 0.8s;
+		position: relative;
 		overflow: visible;
 	}
 	.minimized-notransition {
@@ -132,6 +127,25 @@
 		margin: 0px;
 		padding: 0px;
 		box-shadow: 0px 4px 6px -2px rgba(0, 0, 0, 0.66);
+		filter: blur(0px);
+		transform: scale(1);
+		opacity: 0;
+		animation: 0.5s cubic-bezier(0.22, 1, 0.36, 1) calc(1.5s + 1s * var(--order)) 1 normal forwards
+			running pimmelkanone;
+	}
+
+	@keyframes pimmelkanone {
+		0% {
+			filter: blur(5px);
+			transform: scale(1.2);
+			opacity: 0;
+		}
+
+		100% {
+			filter: blur(0px);
+			transform: scale(1);
+			opacity: 1;
+		}
 	}
 
 	header {
@@ -163,6 +177,10 @@
 		pointer-events: none;
 	}
 
+	.trigger-forward-shuffle {
+		animation: 0.8s ease-in-out 0s forward-shuffle;
+	}
+
 	@keyframes forward-shuffle {
 		0% {
 			right: 0;
@@ -173,12 +191,6 @@
 		100% {
 			right: 0;
 		}
-	}
-
-	.trigger-forward-shuffle {
-		animation-name: forward-shuffle;
-		animation-duration: 0.8s;
-		animation-timing-function: ease-in-out;
 	}
 
 	/* Different parallax speeds. translateZ has to be a positive value in order to prevent Safari rendering bug*/

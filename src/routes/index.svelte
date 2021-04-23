@@ -134,7 +134,7 @@
 	</style>
 </svelte:head>
 
-<PageTransition reverse="true">
+<PageTransition reverse={true}>
 	<main>
 		<div class="container">
 			<div class="mortimer-baltus">
