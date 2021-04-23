@@ -38,7 +38,7 @@
 	<svg width="462" height="50" viewBox="0 0 462 50" xmlns="http://www.w3.org/2000/svg">
 		<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 			<path fill="none" d="M0 0h768v300H0z" />
-			<g id="Mortimer" style="--animation-order: 0;" class="intro-animation">
+			<g>
 				<path
 					id="Path"
 					fill="#FEFEFE"
