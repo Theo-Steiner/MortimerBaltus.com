@@ -51,6 +51,7 @@
 
 <svelte:head>
 	<title>ABOUT</title>
+	<meta name="description" content="We are MortimerBaltus. Nice to meet you!" />
 </svelte:head>
 
 <svelte:window bind:innerHeight={viewport} />

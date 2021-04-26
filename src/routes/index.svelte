@@ -12,17 +12,10 @@
 
 <svelte:head>
 	<title>MortimerBaltus</title>
-	<noscript>
-		<style>
-			.mask {
-				transform: translateY(100px);
-				animation-fill-mode: forwards;
-				animation-name: slideIn;
-				animation-duration: 1000ms;
-				animation-delay: calc(var(--animation-order) * 200ms);
-			}
-		</style>
-	</noscript>
+	<meta
+		name="description"
+		content="MortimerBaltus provides creative services & solutions for digital development. Founded in 2021, MortimerBaltus is based in Hamburg (DE) and Tokyo (JP)."
+	/>
 </svelte:head>
 
 <PageTransition reverse={true}>
