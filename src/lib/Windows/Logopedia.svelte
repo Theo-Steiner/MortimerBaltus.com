@@ -26,8 +26,9 @@
 		align-items: center;
 	}
 	img {
-		margin-top: 80px;
 		height: 127px;
+		width: 446px;
+		margin: 80px auto;
 		display: block;
 	}
 
