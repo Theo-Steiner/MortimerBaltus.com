@@ -125,7 +125,6 @@
 				</h1>
 				<hr />
 				<button
-					ontouchstart=""
 					class="contact"
 					on:click={() => {
 						view = 'moritz';
@@ -136,7 +135,6 @@
 				</button>
 				<hr />
 				<button
-					ontouchstart=""
 					class="contact"
 					on:click={() => {
 						view = 'theo';
