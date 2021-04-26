@@ -22,6 +22,8 @@
 	let touched = false;
 	let thisWindowObject;
 
+	let triggerIntroAnimation = false;
+
 	windowHandler.registerWindow({
 		id: id,
 		parallax: parallax,
@@ -54,6 +56,7 @@
 
 	onMount(() => {
 		touched = false;
+		triggerIntroAnimation = true;
 	});
 
 	onDestroy(() => {
@@ -77,6 +80,7 @@
 	<section
 		style="--windowWidth: {width}; --windowHeight: {height}; --order: {id / 10};"
 		on:click={handleWindowClick}
+		class:blur-intro={triggerIntroAnimation}
 	>
 		<header>
 			<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
@@ -130,11 +134,14 @@
 		filter: blur(0px);
 		transform: scale(1);
 		opacity: 0;
-		animation: 0.5s cubic-bezier(0.22, 1, 0.36, 1) calc(1.5s + 1s * var(--order)) 1 normal forwards
-			running pimmelkanone;
 	}
 
-	@keyframes pimmelkanone {
+	.blur-intro {
+		animation: 0.5s cubic-bezier(0.22, 1, 0.36, 1) calc(1.5s + 1s * var(--order)) 1 normal forwards
+			running blur-effect;
+	}
+
+	@keyframes blur-effect {
 		0% {
 			filter: blur(5px);
 			transform: scale(1.2);
