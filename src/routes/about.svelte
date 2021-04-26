@@ -166,6 +166,7 @@
 		font-size: 75px;
 		letter-spacing: 1.29px;
 		line-height: 64.1px;
+		transition: transform 0.2s ease-out;
 		transform: translateX(calc(100vw - var(--width) - ((100vw - var(--width)) * var(--scroll))));
 	}
 
