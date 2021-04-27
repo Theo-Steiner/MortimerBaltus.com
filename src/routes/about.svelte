@@ -4,56 +4,33 @@
 	import Footer from '$lib/UI/Footer.svelte';
 	import { onMount } from 'svelte';
 
-	let main;
-	let mainHeight = 1;
-	let scrollTop = 0;
+	let innerHeight = 1;
 	let nice;
-	let niceOffset = 0;
-	let relativeScrollToNice = 0;
+	let niceY = 0;
 	let to;
-	let toOffset = 0;
-	let relativeScrollToTo = 0;
+	let toY = 0;
 	let meet;
-	let meetOffset = 0;
-	let relativeScrollToMeet = 0;
+	let meetY = 0;
 	let you;
-	let youOffset = 0;
-	let relativeScrollToYou = 0;
-
-	let imageContainer;
-	let imageContainerOffset = 0;
-	let relativeScrollToImageContainer = 0;
-
-	let viewport = 1000;
+	let youY = 0;
 
 	function textScroll() {
-		if (main && nice && to && meet && you) {
-			mainHeight = main.scrollHeight;
-			niceOffset = nice.offsetTop;
-			toOffset = to.offsetTop;
-			meetOffset = meet.offsetTop;
-			youOffset = you.offsetTop;
-			imageContainerOffset = imageContainer.offsetTop;
-			relativeScrollToImageContainer = Math.max(
-				(main.scrollTop - imageContainerOffset) / (mainHeight - imageContainerOffset),
-				0
-			);
-			let newScrollTop = main.scrollTop + main.clientHeight;
-			let scrollDelta = newScrollTop - scrollTop;
-			if ((scrollDelta > 15) | (scrollDelta < -15)) {
-				scrollTop = newScrollTop;
+		if (nice && to && meet && you) {
+			const newNiceY = nice.getBoundingClientRect().y;
+			const deltaNiceY = niceY - newNiceY;
+			niceY = (deltaNiceY > 15) | (deltaNiceY < -15) ? newNiceY : niceY;
+			const newToY = to.getBoundingClientRect().y;
+			const deltaToY = toY - newToY;
+			toY = (deltaToY > 15) | (deltaToY < -15) ? newToY : toY;
 
-				relativeScrollToNice = Math.max(
-					(scrollTop - niceOffset + 300) / (mainHeight - niceOffset),
-					0
-				);
-				relativeScrollToTo = Math.max((scrollTop - toOffset + 200) / (mainHeight - toOffset), 0);
-				relativeScrollToMeet = Math.max(
-					(scrollTop - meetOffset + 150) / (mainHeight - meetOffset),
-					0
-				);
-				relativeScrollToYou = Math.max((scrollTop - youOffset + 100) / (mainHeight - youOffset), 0);
-			}
+			const newMeetY = meet.getBoundingClientRect().y;
+			const deltaMeetY = meetY - newMeetY;
+			meetY = (deltaMeetY > 15) | (deltaMeetY < -15) ? newMeetY : meetY;
+
+			const newYouY = you.getBoundingClientRect().y;
+			const deltaYouY = youY - newYouY;
+			youY = (deltaYouY > 15) | (deltaYouY < -15) ? newYouY : youY;
+			youY = you.getBoundingClientRect().y;
 		}
 		requestAnimationFrame(textScroll);
 	}
@@ -63,33 +40,30 @@
 	});
 </script>
 
+<svelte:window bind:innerHeight />
+
 <svelte:head>
 	<title>ABOUT</title>
 	<meta name="description" content="We are MortimerBaltus. Nice to meet you!" />
 </svelte:head>
 
-<svelte:window bind:innerHeight={viewport} />
 <PageTransition>
-	<main bind:this={main} style="--height: {viewport}px;">
+	<main>
 		<Navigation title="ABOUT" />
-		<div class="first-paragraph">
-			<p>
-				MortimerBaltus is a 2021 founded partnership between art director Moritz Müller and web
-				developer Theodor Steiner with the purpose of realizing holistic brand experiences by
-				utilizing knowledge and techniques from different fields of profession. <br /> We work
-				individually or as a team for agencies, companies and start up businesses. <br /> For our clients
-				we aspire new concepts and favour the unconventional over the trend. This way we find individual
-				solutions that can make lasting impressions in an otherwise boringly standardized world.
-			</p>
+		<div class="container">
+			<div class="first-paragraph">
+				<p>
+					MortimerBaltus is a 2021 founded partnership between art director Moritz Müller and web
+					developer Theodor Steiner with the purpose of realizing holistic brand experiences by
+					utilizing knowledge and techniques from different fields of profession. <br /> We work
+					individually or as a team for agencies, companies and start up businesses. <br /> For our clients
+					we aspire new concepts and favour the unconventional over the trend. This way we find individual
+					solutions that can make lasting impressions in an otherwise boringly standardized world.
+				</p>
+			</div>
 		</div>
-		<!-- Hier eine logik einbauen, so dass das bild schrumpft, ab dem zeitpunkt, an dem es die obere bildschirmkante berührt-->
-		<div class="image-container" bind:this={imageContainer}>
-			<div
-				class="image"
-				style="--height: {Math.max(800 - 800 * relativeScrollToImageContainer, 0)}px"
-			/>
-		</div>
-		<div>
+		<div class="image-container" />
+		<div class="container">
 			<p>
 				Located in Hamburg and Tokyo we are able to work closely with our partners from both markets
 				and can provide intercultural guidance if needed. We are always looking forward to get to
@@ -98,7 +72,7 @@
 			<div class="animation-container">
 				<h2
 					style="--width: 188px; --largeWidth: 376px; --scroll: {Math.min(
-						relativeScrollToNice,
+						Math.max((niceY - (innerHeight - 300)) / 300, 0),
 						1
 					)};"
 					bind:this={nice}
@@ -106,14 +80,17 @@
 					NICE
 				</h2>
 				<h2
-					style="--width: 117px; --largeWidth: 233px; --scroll: {Math.min(relativeScrollToTo, 1)};"
+					style="--width: 117px; --largeWidth: 233px; --scroll: {Math.min(
+						Math.max((toY - (innerHeight - 300)) / 300, 0),
+						1
+					)};"
 					bind:this={to}
 				>
 					TO
 				</h2>
 				<h2
 					style="--width: 223px; --largeWidth: 445px; --scroll: {Math.min(
-						relativeScrollToMeet,
+						Math.max((meetY - (innerHeight - 300)) / 300, 0),
 						1
 					)};"
 					bind:this={meet}
@@ -121,43 +98,42 @@
 					MEET
 				</h2>
 				<h2
-					style="--width: 178px; --largeWidth: 336px; --scroll: {Math.min(relativeScrollToYou, 1)};"
+					style="--width: 178px; --largeWidth: 336px; --scroll: {Math.min(
+						Math.max((youY - (innerHeight - 300)) / 300, 0),
+						1
+					)};"
 					bind:this={you}
 				>
 					YOU
 				</h2>
 			</div>
-			<Footer />
 		</div>
+		<Footer />
 	</main>
 </PageTransition>
 
 <style>
 	main {
-		height: 100vh;
-		height: var(--height);
-		width: 100%;
-		overflow-x: hidden;
-		overflow-y: auto;
-		background-color: #a35d24;
-		overscroll-behavior: none;
+		background-image: linear-gradient(#a25c24, #151515);
+	}
+
+	.container {
+		background-color: #a25c24;
+		position: relative;
+		z-index: 1;
 	}
 
 	.image-container {
 		height: 800px;
 		width: 100vw;
-		display: flex;
-		align-items: flex-end;
-	}
-
-	.image {
-		height: var(--height);
-		width: 100vw;
+		position: sticky;
+		top: 0px;
+		z-index: 0;
 		background-size: 100%;
 		background-image: url('https://res.cloudinary.com/thdrstnr/image/upload/v1618455027/MortimerBaltus/About/polaroid_jymdbi.png');
 		background-position: center;
 		background-repeat: no-repeat;
-		background-size: auto 800px;
+		background-size: cover;
 	}
 
 	.first-paragraph {
@@ -178,10 +154,13 @@
 		letter-spacing: 1.29px;
 		line-height: 64.1px;
 		transition: transform 0.2s ease-out;
-		transform: translateX(calc(100vw - var(--width) - ((100vw - var(--width)) * var(--scroll))));
+		transform: translateX(
+			calc(100vw - var(--width) - ((100vw - var(--width)) * (1 - var(--scroll))))
+		);
 	}
 
 	.animation-container {
+		width: 100vw;
 		padding: 90px 10px 50px 10px;
 	}
 
@@ -202,7 +181,7 @@
 			letter-spacing: 2.57px;
 			line-height: 128.3px;
 			transform: translateX(
-				calc(100vw - var(--largeWidth) - ((100vw - var(--largeWidth)) * var(--scroll)))
+				calc(100vw - var(--largeWidth) - ((100vw - var(--largeWidth)) * (1 - var(--scroll))))
 			);
 		}
 	}
