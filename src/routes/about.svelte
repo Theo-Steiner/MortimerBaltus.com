@@ -20,6 +20,10 @@
 	let youOffset = 0;
 	let relativeScrollToYou = 0;
 
+	let imageContainer;
+	let imageContainerOffset = 0;
+	let relativeScrollToImageContainer = 0;
+
 	let viewport = 1000;
 
 	function textScroll() {
@@ -29,17 +33,27 @@
 			toOffset = to.offsetTop;
 			meetOffset = meet.offsetTop;
 			youOffset = you.offsetTop;
-			scrollTop = main.scrollTop + main.clientHeight;
-			relativeScrollToNice = Math.max(
-				(scrollTop - niceOffset + 300) / (mainHeight - niceOffset),
+			imageContainerOffset = imageContainer.offsetTop;
+			relativeScrollToImageContainer = Math.max(
+				(main.scrollTop - imageContainerOffset) / (mainHeight - imageContainerOffset),
 				0
 			);
-			relativeScrollToTo = Math.max((scrollTop - toOffset + 200) / (mainHeight - toOffset), 0);
-			relativeScrollToMeet = Math.max(
-				(scrollTop - meetOffset + 150) / (mainHeight - meetOffset),
-				0
-			);
-			relativeScrollToYou = Math.max((scrollTop - youOffset + 100) / (mainHeight - youOffset), 0);
+			let newScrollTop = main.scrollTop + main.clientHeight;
+			let scrollDelta = newScrollTop - scrollTop;
+			if ((scrollDelta > 15) | (scrollDelta < -15)) {
+				scrollTop = newScrollTop;
+
+				relativeScrollToNice = Math.max(
+					(scrollTop - niceOffset + 300) / (mainHeight - niceOffset),
+					0
+				);
+				relativeScrollToTo = Math.max((scrollTop - toOffset + 200) / (mainHeight - toOffset), 0);
+				relativeScrollToMeet = Math.max(
+					(scrollTop - meetOffset + 150) / (mainHeight - meetOffset),
+					0
+				);
+				relativeScrollToYou = Math.max((scrollTop - youOffset + 100) / (mainHeight - youOffset), 0);
+			}
 		}
 		requestAnimationFrame(textScroll);
 	}
@@ -58,7 +72,7 @@
 <PageTransition>
 	<main bind:this={main} style="--height: {viewport}px;">
 		<Navigation title="ABOUT" />
-		<div class="first-paragraph static">
+		<div class="first-paragraph">
 			<p>
 				MortimerBaltus is a 2021 founded partnership between art director Moritz Müller and web
 				developer Theodor Steiner with the purpose of realizing holistic brand experiences by
@@ -68,8 +82,14 @@
 				solutions that can make lasting impressions in an otherwise boringly standardized world.
 			</p>
 		</div>
-		<div class="parallax" />
-		<div class="static">
+		<!-- Hier eine logik einbauen, so dass das bild schrumpft, ab dem zeitpunkt, an dem es die obere bildschirmkante berührt-->
+		<div class="image-container" bind:this={imageContainer}>
+			<div
+				class="image"
+				style="--height: {Math.max(800 - 800 * relativeScrollToImageContainer, 0)}px"
+			/>
+		</div>
+		<div>
 			<p>
 				Located in Hamburg and Tokyo we are able to work closely with our partners from both markets
 				and can provide intercultural guidance if needed. We are always looking forward to get to
@@ -119,39 +139,29 @@
 		width: 100%;
 		overflow-x: hidden;
 		overflow-y: auto;
-		perspective: 2px;
-		background-image: linear-gradient(#a35d24, #a35d24, #151515, #151515, #151515);
+		background-color: #a35d24;
 		overscroll-behavior: none;
-		padding-bottom: 100px;
 	}
 
-	.parallax {
+	.image-container {
 		height: 800px;
-		position: relative;
+		width: 100vw;
+		display: flex;
+		align-items: flex-end;
 	}
 
-	.parallax::after {
-		content: '';
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		transform: translateZ(-1px) scale(1.5);
-		z-index: -1;
+	.image {
+		height: var(--height);
+		width: 100vw;
 		background-size: 100%;
 		background-image: url('https://res.cloudinary.com/thdrstnr/image/upload/v1618455027/MortimerBaltus/About/polaroid_jymdbi.png');
 		background-position: center;
 		background-repeat: no-repeat;
-		background-size: cover;
+		background-size: auto 800px;
 	}
 
 	.first-paragraph {
 		padding: 20px 0 20px 0;
-	}
-
-	.static {
-		background-color: #a35d24;
 	}
 
 	p {
@@ -172,7 +182,7 @@
 	}
 
 	.animation-container {
-		padding: 90px 0 50px 0;
+		padding: 90px 10px 50px 10px;
 	}
 
 	@media only screen and (min-device-width: 768px) {
