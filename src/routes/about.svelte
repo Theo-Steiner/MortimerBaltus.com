@@ -7,35 +7,17 @@
 	let innerHeight = 1;
 	let nice;
 	let niceY = 0;
-	let to;
-	let toY = 0;
-	let meet;
-	let meetY = 0;
-	let you;
-	let youY = 0;
+	let lineHeight = 64;
 
 	function textScroll() {
-		if (nice && to && meet && you) {
-			const newNiceY = nice.getBoundingClientRect().y;
-			const deltaNiceY = niceY - newNiceY;
-			niceY = (deltaNiceY > 15) | (deltaNiceY < -15) ? newNiceY : niceY;
-			const newToY = to.getBoundingClientRect().y;
-			const deltaToY = toY - newToY;
-			toY = (deltaToY > 15) | (deltaToY < -15) ? newToY : toY;
-
-			const newMeetY = meet.getBoundingClientRect().y;
-			const deltaMeetY = meetY - newMeetY;
-			meetY = (deltaMeetY > 15) | (deltaMeetY < -15) ? newMeetY : meetY;
-
-			const newYouY = you.getBoundingClientRect().y;
-			const deltaYouY = youY - newYouY;
-			youY = (deltaYouY > 15) | (deltaYouY < -15) ? newYouY : youY;
-			youY = you.getBoundingClientRect().y;
+		if (nice) {
+			niceY = nice.getBoundingClientRect().y;
 		}
 		requestAnimationFrame(textScroll);
 	}
 
 	onMount(() => {
+		lineHeight = window.matchMedia('(min-width: 768px)').matches ? 128 : lineHeight;
 		textScroll();
 	});
 </script>
@@ -81,38 +63,39 @@
 				</h2>
 				<h2
 					style="--width: 117px; --largeWidth: 233px; --scroll: {Math.min(
-						Math.max((toY - (innerHeight - 300)) / 300, 0),
+						Math.max((niceY + lineHeight - (innerHeight - 300)) / 300, 0),
 						1
 					)};"
-					bind:this={to}
 				>
 					TO
 				</h2>
 				<h2
 					style="--width: 223px; --largeWidth: 445px; --scroll: {Math.min(
-						Math.max((meetY - (innerHeight - 300)) / 300, 0),
+						Math.max((niceY + 2 * lineHeight - (innerHeight - 300)) / 300, 0),
 						1
 					)};"
-					bind:this={meet}
 				>
 					MEET
 				</h2>
 				<h2
 					style="--width: 178px; --largeWidth: 336px; --scroll: {Math.min(
-						Math.max((youY - (innerHeight - 300)) / 300, 0),
+						Math.max((niceY + 3 * lineHeight - (innerHeight - 300)) / 300, 0),
 						1
 					)};"
-					bind:this={you}
 				>
 					YOU
 				</h2>
 			</div>
+			<Footer />
 		</div>
-		<Footer />
 	</main>
 </PageTransition>
 
 <style>
+	main::-webkit-scrollbar {
+		display: none;
+	}
+
 	main {
 		background-image: linear-gradient(#a25c24, #151515);
 	}
@@ -162,6 +145,7 @@
 	.animation-container {
 		width: 100vw;
 		padding: 90px 10px 50px 10px;
+		overflow: hidden;
 	}
 
 	@media only screen and (min-device-width: 768px) {
