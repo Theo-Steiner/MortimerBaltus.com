@@ -17,7 +17,6 @@
 		content="MortimerBaltus provides creative services & solutions for digital development. Founded in 2021, MortimerBaltus is based in Hamburg (DE) and Tokyo (JP)."
 	/>
 </svelte:head>
-
 <PageTransition reverse={true}>
 	<main>
 		<div class="container">
@@ -142,7 +141,6 @@
 	main {
 		height: 100vh;
 		width: 100%;
-
 		backface-visibility: hidden;
 		-webkit-backface-visibility: hidden;
 		-moz-backface-visibility: hidden;
