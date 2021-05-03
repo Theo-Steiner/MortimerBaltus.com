@@ -14,7 +14,7 @@
 	export let isInForeground = true;
 	export let intersections = [];
 	export let distanceFromIntersection = 20;
-	export let href = '/about';
+	export let href = '/pages/about';
 
 	let isMinimized = false;
 	let intersectionIsMinimized = false;
