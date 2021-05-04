@@ -84,7 +84,7 @@
 
 <style>
 	:global(.about-subpage-color) {
-		background-color: #a25c24;
+		background-image: linear-gradient(#a25c24, #151515);
 	}
 
 	.container {
