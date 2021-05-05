@@ -9,7 +9,7 @@
 	<h1>INFORMATION PURSUANT TO SEC. 5 TMG AND ART. 13 DSGVO</h1>
 	<div class="contact-container">
 		<ul>
-			<li>MortimerBaltus is represented by</li>
+			<li>MortimerBaltus is represented by:</li>
 			<li>Moritz Mortimer Müller</li>
 			<li>Schlankreye 11</li>
 			<li>20144 Hamburg</li>
@@ -127,16 +127,21 @@
 
 	.contact-container {
 		display: flex;
-		flex-direction: column;
+		flex-flow: row wrap;
 		padding: 0 10px 30px 10px;
 	}
 
 	li {
 		color: #fefefe;
+		white-space: nowrap;
 		line-height: 24px;
 		font-size: 18px;
 		letter-spacing: -0.55px;
 		list-style: none;
+	}
+
+	ul {
+		margin-right: auto;
 	}
 
 	li:first-child,
@@ -165,12 +170,7 @@
 		}
 
 		.contact-container {
-			flex-direction: row;
 			padding: 0 20px 80px 20px;
-		}
-
-		ul {
-			width: 50%;
 		}
 
 		li {
@@ -187,7 +187,7 @@
 		h1,
 		.contact-container,
 		p {
-			max-width: 1129px;
+			max-width: 1200px;
 		}
 	}
 </style>
