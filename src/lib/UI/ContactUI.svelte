@@ -86,7 +86,7 @@
 
 	function submitForm() {
 		isLoading = true;
-		fetch('/api/sendmail', {
+		fetch('https://mail-handler.theosteiner.workers.dev', {
 			method: 'POST',
 			body: JSON.stringify({
 				userEmail: userEmail,
@@ -94,7 +94,6 @@
 				message: userBody
 			}),
 			headers: {
-				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			}
 		})
