@@ -6,12 +6,22 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	let title = 'title';
-	let formattedTitle = 'title';
+	let title = 'Title';
+	let formattedTitle = 'Title';
+
+	function formatTitle(unformattedTitle) {
+		if (unformattedTitle === 'legal') {
+			return unformattedTitle.concat(' NOTICE').toUpperCase();
+		} else if (unformattedTitle === 'privacy') {
+			return unformattedTitle.concat(' POLICY').toUpperCase();
+		} else {
+			return unformattedTitle.toUpperCase();
+		}
+	}
+
 	onMount(() => {
 		title = $page.path.split('/')[2];
-		formattedTitle =
-			title === 'legal' ? title.concat(' NOTICE').toUpperCase() : title.toUpperCase();
+		formattedTitle = formatTitle(title);
 	});
 </script>
 
