@@ -72,7 +72,7 @@
 				consent of the respective owner of the rights. Individual reproductions of a work are
 				allowed only for private use, so must not serve either directly or indirectly for earnings.
 				Unauthorized utilization of copyrighted works is punishable (§ 106 of the copyright law). <br
-				/> <br />© 2021 MortimerBaltus. All rights reserved.
+				/> <br />© {new Date().getFullYear()} MortimerBaltus. All rights reserved.
 			</p>
 		{/if}
 	</section>
