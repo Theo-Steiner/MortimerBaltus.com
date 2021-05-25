@@ -12,7 +12,7 @@
 
 <style>
 	nav {
-		transform: translateZ(500px);
+		transform: translateZ(999px);
 		position: sticky;
 		z-index: 9999;
 		top: 15px;
