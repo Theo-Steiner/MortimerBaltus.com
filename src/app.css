@@ -1,8 +1,10 @@
 html {
 	box-sizing: border-box;
 	-webkit-font-smoothing: antialiased;
-  }
-  *, *::before, *::after {
+}
+*,
+*::before,
+*::after {
 	box-sizing: inherit;
 }
 
@@ -16,8 +18,8 @@ body::-webkit-scrollbar {
 	display: none;
 }
 
-  /* Hide scrollbar for IE, Edge and Firefox */
+/* Hide scrollbar for IE, Edge and Firefox */
 body {
-	-ms-overflow-style: none;  /* IE and Edge */
-	scrollbar-width: none;  /* Firefox */
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
 }

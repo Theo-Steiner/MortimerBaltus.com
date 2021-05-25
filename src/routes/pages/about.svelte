@@ -45,7 +45,7 @@
 		can provide intercultural guidance if needed. We are always looking forward to get to know new
 		people – and Yes, we also speak Japanese.
 	</p>
-	<div class="animation-container">
+				<div class="animation-container">
 		<h2
 			style="--width: 188px; --largeWidth: 376px; --scroll: {Math.min(
 				Math.max((niceY - (innerHeight - 300)) / 300, 0),
@@ -113,7 +113,7 @@
 	p {
 		color: #151515;
 		font-size: clamp(22px, 3.5vw, 44px);
-		line-height: clamp(25px, 0.35vw, 50px);
+		line-height: clamp(25px, 3.6vw, 50px);
 		letter-spacing: -0.28px;
 		padding: 15px 10px 0px 10px;
 	}
