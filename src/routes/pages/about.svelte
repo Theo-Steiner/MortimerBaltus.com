@@ -38,14 +38,19 @@
 		</p>
 	</div>
 </div>
-<div class="image-container" />
-<div class="container">
+<div class="image-container">
+	<img
+		src="https://res.cloudinary.com/thdrstnr/image/upload/h_800/v1618455027/MortimerBaltus/About/polaroid_jymdbi.png"
+		alt="Polaroid Photograph"
+	/>
+</div>
+<div class="lower-container">
 	<p>
 		Located in Hamburg and Tokyo we are able to work closely with our partners from both markets and
 		can provide intercultural guidance if needed. We are always looking forward to get to know new
 		people – and Yes, we also speak Japanese.
 	</p>
-				<div class="animation-container">
+	<div class="animation-container">
 		<h2
 			style="--width: 188px; --largeWidth: 376px; --scroll: {Math.min(
 				Math.max((niceY - (innerHeight - 300)) / 300, 0),
@@ -89,8 +94,20 @@
 
 	.container {
 		background-color: #a25c24;
+	}
+	.lower-container {
+		background-color: #a25c24;
 		position: relative;
-		z-index: 1;
+		transform: translateZ(500px);
+	}
+
+	img {
+		height: 800px;
+		margin: 0 auto;
+		display: block;
+		width: 100vw;
+		overflow: hidden;
+		object-fit: cover;
 	}
 
 	.image-container {
@@ -98,12 +115,6 @@
 		width: 100vw;
 		position: sticky;
 		top: 0px;
-		z-index: 0;
-		background-size: 100%;
-		background-image: url('https://res.cloudinary.com/thdrstnr/image/upload/v1618455027/MortimerBaltus/About/polaroid_jymdbi.png');
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: cover;
 	}
 
 	.first-paragraph {
@@ -111,8 +122,6 @@
 	}
 
 	p {
-		color: #151515;
-		font-size: clamp(22px, 3.5vw, 44px);
 		line-height: clamp(25px, 3.6vw, 50px);
 		letter-spacing: -0.28px;
 		padding: 15px 10px 0px 10px;
@@ -123,7 +132,7 @@
 		font-size: 75px;
 		letter-spacing: 1.29px;
 		line-height: 64.1px;
-		transition: transform 0.2s ease-out;
+		transition: transform 0.4s ease-out;
 		transform: translateX(
 			calc(100vw - var(--width) - ((100vw - var(--width)) * (1 - var(--scroll))))
 		);

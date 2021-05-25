@@ -112,6 +112,7 @@
 
 	footer {
 		position: relative;
+		transform: translateZ(500px);
 		width: 100vw;
 		height: 300px;
 		background-color: #151515;

@@ -13,6 +13,11 @@ html {
 	transform-style: preserve-3d;
 }
 
+p {
+	color: #151515;
+	font-size: clamp(22px, 3.5vw, 44px);
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 body::-webkit-scrollbar {
 	display: none;

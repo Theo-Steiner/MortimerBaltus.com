@@ -32,6 +32,8 @@
 	p {
 		color: #151515;
 		font-size: 16px;
+		line-height: 18.5px;
+		letter-spacing: -0.17px;
 		margin: 0px;
 		padding: 7px;
 	}

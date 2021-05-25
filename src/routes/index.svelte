@@ -1,13 +1,6 @@
 <script>
 	import WindowView from '$lib/WindowView.svelte';
 	import PageTransition from '$lib/UX/PageTransition.svelte';
-	import { onMount } from 'svelte';
-
-	let triggerIntroAnimation = false;
-
-	onMount(() => {
-		triggerIntroAnimation = true;
-	});
 </script>
 
 <svelte:head>
@@ -24,12 +17,7 @@
 				<svg width="462" height="50" viewBox="0 0 462 50" xmlns="http://www.w3.org/2000/svg">
 					<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 						<path fill="none" d="M0 0h768v300H0z" />
-						<g
-							id="Mortimer"
-							style="--animation-order: 0;"
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-						>
+						<g id="Mortimer" style="--animation-order: 0;" class="mask intro-animation">
 							<path
 								id="Path"
 								fill="#FEFEFE"
@@ -56,12 +44,7 @@
 								fill="#FEFEFE"
 							/>
 						</g>
-						<g
-							id="Baltus"
-							style="--animation-order: 1;"
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-						>
+						<g id="Baltus" style="--animation-order: 1;" class="mask intro-animation">
 							<g transform="translate(278.3)">
 								<path
 									d="M0 0h22.88667C30.515 0 38.49 4.43833 38.49 12.82833c0 5.20167-2.98333 8.73834-7.62833 10.75 5.895 1.45667 9.36166 5.68834 9.36166 11.79 0 8.6-8.25166 13.17667-15.95 13.17667H0V0z"
@@ -99,31 +82,19 @@
 					</h1>
 				</noscript>
 				<div class="masking">
-					<h1
-						class="mask"
-						class:intro-animation={triggerIntroAnimation}
-						style="--animation-order: 2;"
-					>
+					<h1 class="mask intro-animation" style="--animation-order: 2;">
 						CREATIVE SERVICES & DIGITAL DEVELOPMENT
 						<span class="desktop" />
 					</h1>
 				</div>
 				<div class="masking">
-					<h1
-						class="mask"
-						class:intro-animation={triggerIntroAnimation}
-						style="--animation-order: 2;"
-					>
+					<h1 class="mask intro-animation" style="--animation-order: 2;">
 						<span class="mobile">&copy;2021</span>c/o MORITZ MORTIMER MÜLLER (DE),
 						<span class="desktop">THEODOR BALTUS STEINER (JP)</span>
 					</h1>
 				</div>
 				<div class="masking mobile">
-					<h1
-						class="mobile mask"
-						class:intro-animation={triggerIntroAnimation}
-						style="--animation-order: 2;"
-					>
+					<h1 class="mobile mask intro-animation" style="--animation-order: 2;">
 						THEODOR BALTUS STEINER (JP)
 					</h1>
 				</div>
