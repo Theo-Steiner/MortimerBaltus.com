@@ -2,24 +2,48 @@
 	import { onMount } from 'svelte';
 
 	let innerHeight = 1;
+	let innerWidth = 1;
 	let nice;
+	let to;
+	let meet;
+	let you;
 	let niceY = 0;
 	let lineHeight = 64;
+	let offsetWidth = { nice: 188, to: 177, meet: 223, you: 178 };
 
 	function textScroll() {
 		if (nice) {
 			niceY = nice.getBoundingClientRect().y;
+			nice.style.transform = `translateX(${
+				innerWidth - offsetWidth.nice - (innerWidth - offsetWidth.nice) * (1 - getScroll())
+			}px)`;
+			to.style.transform = `translateX(${
+				innerWidth - offsetWidth.to - (innerWidth - offsetWidth.to) * (1 - getScroll(1))
+			}px)`;
+			meet.style.transform = `translateX(${
+				innerWidth - offsetWidth.meet - (innerWidth - offsetWidth.meet) * (1 - getScroll(2))
+			}px)`;
+			you.style.transform = `translateX(${
+				innerWidth - offsetWidth.you - (innerWidth - offsetWidth.you) * (1 - getScroll(3))
+			}px)`;
 		}
 		requestAnimationFrame(textScroll);
+	}
+	function getScroll(lineCount = 0) {
+		const lineOffset = lineCount * lineHeight;
+		return Math.min(Math.max((niceY + lineOffset - (innerHeight - 300)) / 300, 0), 1);
 	}
 
 	onMount(() => {
 		lineHeight = window.matchMedia('(min-width: 768px)').matches ? 128 : lineHeight;
+		offsetWidth = window.matchMedia('(min-width: 768px)').matches
+			? { nice: 376, to: 233, meet: 445, you: 336 }
+			: offsetWidth;
 		textScroll();
 	});
 </script>
 
-<svelte:window bind:innerHeight />
+<svelte:window bind:innerHeight bind:innerWidth />
 
 <svelte:head>
 	<title>ABOUT</title>
@@ -40,7 +64,9 @@
 </div>
 <div class="image-container">
 	<img
-		src="https://res.cloudinary.com/thdrstnr/image/upload/h_800/v1618455027/MortimerBaltus/About/polaroid_jymdbi.png"
+		src="https://res.cloudinary.com/thdrstnr/image/upload/h_800/q_auto:low/v1618455027/MortimerBaltus/About/polaroid_jymdbi.png"
+		width="100vw"
+		height="800px"
 		alt="Polaroid Photograph"
 	/>
 </div>
@@ -51,39 +77,10 @@
 		people – and Yes, we also speak Japanese.
 	</p>
 	<div class="animation-container">
-		<h2
-			style="--width: 188px; --largeWidth: 376px; --scroll: {Math.min(
-				Math.max((niceY - (innerHeight - 300)) / 300, 0),
-				1
-			)};"
-			bind:this={nice}
-		>
-			NICE
-		</h2>
-		<h2
-			style="--width: 117px; --largeWidth: 233px; --scroll: {Math.min(
-				Math.max((niceY + lineHeight - (innerHeight - 300)) / 300, 0),
-				1
-			)};"
-		>
-			TO
-		</h2>
-		<h2
-			style="--width: 223px; --largeWidth: 445px; --scroll: {Math.min(
-				Math.max((niceY + 2 * lineHeight - (innerHeight - 300)) / 300, 0),
-				1
-			)};"
-		>
-			MEET
-		</h2>
-		<h2
-			style="--width: 178px; --largeWidth: 336px; --scroll: {Math.min(
-				Math.max((niceY + 3 * lineHeight - (innerHeight - 300)) / 300, 0),
-				1
-			)};"
-		>
-			YOU
-		</h2>
+		<h2 bind:this={nice}>NICE</h2>
+		<h2 bind:this={to}>TO</h2>
+		<h2 bind:this={meet}>MEET</h2>
+		<h2 bind:this={you}>YOU</h2>
 	</div>
 </div>
 
@@ -113,6 +110,7 @@
 	.image-container {
 		height: 800px;
 		width: 100vw;
+		background-color: #e1e2e4;
 		position: sticky;
 		top: 0px;
 	}
@@ -132,10 +130,7 @@
 		font-size: 75px;
 		letter-spacing: 1.29px;
 		line-height: 64.1px;
-		transition: transform 0.4s ease-out;
-		transform: translateX(
-			calc(100vw - var(--width) - ((100vw - var(--width)) * (1 - var(--scroll))))
-		);
+		transition: transform 200ms ease-out;
 	}
 
 	.animation-container {
@@ -158,9 +153,6 @@
 			font-size: 150px;
 			letter-spacing: 2.57px;
 			line-height: 128.3px;
-			transform: translateX(
-				calc(100vw - var(--largeWidth) - ((100vw - var(--largeWidth)) * (1 - var(--scroll))))
-			);
 		}
 	}
 </style>
