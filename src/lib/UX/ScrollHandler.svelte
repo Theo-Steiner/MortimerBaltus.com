@@ -5,9 +5,10 @@
 
 	let hasTouchScreen = false;
 	let scroll_element;
-
+	let navStart = false;
 	$: if ($navigating) {
 		navState.reportNavigation(scroll_element.scrollLeft, scroll_element.scrollTop);
+		navStart = true;
 	}
 
 	onMount(() => {
@@ -110,11 +111,16 @@
 
 	// Slow down scroll speed with mousewheel
 	function wheelHandler(event) {
-		cancelMomentumTracking();
-		let reducedDeltaY = Math.round(event.deltaY / 2);
-		let reducedDeltaX = Math.round(event.deltaX / 2);
-		scroll_element.scrollLeft = scroll_element.scrollLeft + reducedDeltaX;
-		scroll_element.scrollTop = scroll_element.scrollTop + reducedDeltaY;
+		if (navStart) {
+			window.removeEventListener('wheel', wheelHandler);
+		} else {
+			cancelMomentumTracking();
+			event.preventDefault();
+			let reducedDeltaY = Math.round(event.deltaY / 2);
+			let reducedDeltaX = Math.round(event.deltaX / 2);
+			scroll_element.scrollLeft = scroll_element.scrollLeft + reducedDeltaX;
+			scroll_element.scrollTop = scroll_element.scrollTop + reducedDeltaY;
+		}
 	}
 
 	// The following functions take care of the grab handling
@@ -145,7 +151,7 @@
 	}
 </script>
 
-<svelte:window on:wheel|nonpassive|preventDefault|stopPropagation={wheelHandler} />
+<svelte:window on:wheel|nonpassive|stopPropagation={wheelHandler} />
 
 {#if !hasTouchScreen}
 	<div
