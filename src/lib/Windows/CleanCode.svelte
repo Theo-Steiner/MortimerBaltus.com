@@ -148,7 +148,7 @@
 				<li transition:matrix class="indented">&#125;</li>
 				<li transition:matrix class="indented">
 					<span class="highlight-yellow">return</span>
-					<span class="highlight-cyan">comprehensiveConsultaion</span>
+					<span class="highlight-cyan">comprehensiveConsulting</span>
 				</li>
 				<li transition:matrix>&lt;/<span class="highlight-red">script</span>&gt;</li>
 			{/if}
