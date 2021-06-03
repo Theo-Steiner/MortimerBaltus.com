@@ -11,7 +11,7 @@
 	import GermanyJPG from './Windows/GermanyJPG.svelte';
 	import JapanJPG from './Windows/JapanJPG.svelte';
 	import CleanCode from './Windows/CleanCode.svelte';
-	import Logopedia from './Windows/Logopedia.svelte';
+	import ProjectSoe from './Windows/ProjectSoe.svelte';
 	import Language from './Windows/LanguageWindow.svelte';
 	import Contact from './Windows/ContactWindow.svelte';
 </script>
@@ -29,6 +29,6 @@
 <CleanCode />
 <GermanyJPG />
 <ReferencesWindow />
-<Logopedia />
+<ProjectSoe />
 <Language />
 <Contact />
