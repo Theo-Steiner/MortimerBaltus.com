@@ -5,6 +5,7 @@
 	import { prefetchRoutes } from '$app/navigation';
 
 	let triggerIntroAnimation = false;
+	let innerHeight;
 
 	onMount(() => {
 		prefetchRoutes();
@@ -19,8 +20,9 @@
 		content="MortimerBaltus provides creative services & solutions for digital development. Founded in 2021, MortimerBaltus is based in Hamburg (DE) and Tokyo (JP)."
 	/>
 </svelte:head>
+<svelte:window bind:innerHeight />
 <PageTransition reverse={true}>
-	<main>
+	<main style="--windowInnerHeight: {innerHeight}px;">
 		<div class="container">
 			<div class="mortimer-baltus">
 				<svg width="462" height="50" viewBox="0 0 462 50" xmlns="http://www.w3.org/2000/svg">
@@ -142,6 +144,7 @@
 <style>
 	main {
 		height: 100vh;
+		height: var(--windowInnerHeight);
 		width: 100%;
 		backface-visibility: hidden;
 		-webkit-backface-visibility: hidden;
@@ -155,7 +158,8 @@
 
 	.scroller {
 		width: 100%;
-		height: 100vh;
+		height: 100vw;
+		height: var(--windowInnerHeight);
 		overflow: scroll;
 		perspective-origin: center;
 		perspective: 10px;

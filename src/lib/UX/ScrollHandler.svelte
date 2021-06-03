@@ -13,6 +13,7 @@
 
 	onMount(() => {
 		scroll_element = document.querySelector('.scroller');
+		window.addEventListener('wheel', wheelHandler, { passive: false });
 		navStart = false;
 
 		if (!$navState) {
@@ -115,6 +116,7 @@
 		if (!navStart) {
 			cancelMomentumTracking();
 			event.preventDefault();
+			event.stopPropagation();
 			let reducedDeltaY = Math.round(event.deltaY / 2);
 			let reducedDeltaX = Math.round(event.deltaX / 2);
 			scroll_element.scrollLeft = scroll_element.scrollLeft + reducedDeltaX;
@@ -149,8 +151,6 @@
 		initialM.y = event.clientY;
 	}
 </script>
-
-<svelte:window on:wheel|nonpassive|stopPropagation={wheelHandler} />
 
 {#if !hasTouchScreen}
 	<div
