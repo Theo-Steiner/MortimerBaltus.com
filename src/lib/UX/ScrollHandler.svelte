@@ -13,6 +13,7 @@
 
 	onMount(() => {
 		scroll_element = document.querySelector('.scroller');
+		navStart = false;
 
 		if (!$navState) {
 			if (history.scrollRestoration) {
@@ -111,9 +112,7 @@
 
 	// Slow down scroll speed with mousewheel
 	function wheelHandler(event) {
-		if (navStart) {
-			window.removeEventListener('wheel', wheelHandler);
-		} else {
+		if (!navStart) {
 			cancelMomentumTracking();
 			event.preventDefault();
 			let reducedDeltaY = Math.round(event.deltaY / 2);

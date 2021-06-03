@@ -2,10 +2,12 @@
 	import WindowView from '$lib/WindowView.svelte';
 	import PageTransition from '$lib/UX/PageTransition.svelte';
 	import { onMount } from 'svelte';
+	import { prefetchRoutes } from '$app/navigation';
 
 	let triggerIntroAnimation = false;
 
 	onMount(() => {
+		prefetchRoutes();
 		triggerIntroAnimation = true;
 	});
 </script>

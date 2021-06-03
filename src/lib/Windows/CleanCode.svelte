@@ -98,7 +98,7 @@
 					&lt;<span class="highlight-red">style</span>&gt;
 				</li>
 				<li transition:matrix class="indented">
-					<span class="highlight-yellow">pristine-design</span> &#123;
+					<span class="highlight-yellow">.pristine-design</span> &#123;
 				</li>
 				<li transition:matrix class="twice-indented">
 					<span class="highlight-cyan">generic-templates</span>: none;
