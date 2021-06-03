@@ -1,5 +1,4 @@
 <script>
-	import ScrollHandler from './UX/ScrollHandler.svelte';
 	import AboutWindow from './Windows/AboutWindow.svelte';
 	import ProjectCorazon from './Windows/ProjectCorazon.svelte';
 	import ProjectRaceworx from './Windows/ProjectRaceworx.svelte';
@@ -15,8 +14,6 @@
 	import Language from './Windows/LanguageWindow.svelte';
 	import Contact from './Windows/ContactWindow.svelte';
 </script>
-
-<ScrollHandler />
 
 <ProjectCorazon />
 <AboutWindow />

@@ -4,7 +4,7 @@
 	import navState from './nav-state';
 
 	let hasTouchScreen = false;
-	let scroll_element;
+	export let scroll_element;
 	let navStart = false;
 	$: if ($navigating) {
 		navState.reportNavigation(scroll_element.scrollLeft, scroll_element.scrollTop);
@@ -12,7 +12,6 @@
 	}
 
 	onMount(() => {
-		scroll_element = document.querySelector('.scroller');
 		window.addEventListener('wheel', wheelHandler, { passive: false });
 		navStart = false;
 

@@ -1,4 +1,5 @@
 <script>
+	import ScrollHandler from '$lib/UX/ScrollHandler.svelte';
 	import WindowView from '$lib/WindowView.svelte';
 	import PageTransition from '$lib/UX/PageTransition.svelte';
 	import { onMount } from 'svelte';
@@ -6,10 +7,11 @@
 
 	let triggerIntroAnimation = false;
 	let innerHeight;
-
+	let scroll_element;
+	$: isDomInitialized = innerHeight && scroll_element;
 	onMount(() => {
-		prefetchRoutes();
 		triggerIntroAnimation = true;
+		prefetchRoutes();
 	});
 </script>
 
@@ -132,9 +134,12 @@
 					</h1>
 				</div>
 			</div>
-			<div class="scroller">
+			<div class="scroller" bind:this={scroll_element}>
 				<div class="grid-box">
 					<WindowView />
+					{#if isDomInitialized}
+						<ScrollHandler {scroll_element} />
+					{/if}
 				</div>
 			</div>
 		</div>
