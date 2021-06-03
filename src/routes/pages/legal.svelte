@@ -149,9 +149,6 @@
 		padding-bottom: 24px;
 	}
 
-	hr {
-		color: #fefefe;
-	}
 	@media only screen and (min-device-width: 768px) {
 		h1 {
 			font-size: clamp(40px, 6.7vw, 96px);

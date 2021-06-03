@@ -235,6 +235,14 @@
 		color: #fefefe;
 	}
 
+	p {
+		color: #fefefe;
+		font-size: 22px;
+		line-height: 26px;
+		letter-spacing: -0.55px;
+		padding: 5px 10px 20px 10px;
+	}
+
 	h2 {
 		color: #151515;
 		font-size: 24px;
@@ -259,15 +267,12 @@
 	}
 
 	.intro {
+		color: #151515;
 		font-size: clamp(22px, 3.5vw, 44px);
 		line-height: clamp(25px, 0.35vw, 50px);
 		letter-spacing: -0.28px;
 		line-height: 1;
 		padding: 73px 10px 30px 10px;
-	}
-
-	hr {
-		color: #fefefe;
 	}
 
 	@media only screen and (min-device-width: 768px) {
