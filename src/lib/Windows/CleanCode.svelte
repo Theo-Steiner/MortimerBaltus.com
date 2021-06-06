@@ -55,6 +55,7 @@
 		background="#151515"
 		title="CLEAN.CODE"
 		id={10}
+		enlargeable={false}
 		isInForeground={true}
 		intersections={[3]}
 		distanceFromIntersection={{
