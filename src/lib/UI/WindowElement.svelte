@@ -102,7 +102,13 @@
 				class="content-wrapper"
 				style="height: {height - 36}px; background: {background}; background-size: cover;"
 			>
-				<slot><p>Content goes here</p></slot>
+				{#if enlargeable}
+					<a {href}>
+						<slot><p>Content goes here</p></slot>
+					</a>
+				{:else}
+					<slot><p>Content goes here</p></slot>
+				{/if}
 			</div>
 		{/if}
 	</section>
@@ -168,6 +174,10 @@
 	h1 {
 		margin: 0;
 		font-size: 13px;
+	}
+
+	a {
+		text-decoration: none;
 	}
 
 	.content-wrapper {
