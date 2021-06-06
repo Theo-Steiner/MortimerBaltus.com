@@ -2,10 +2,11 @@
 	import Button from './Button.svelte';
 
 	export let title = 'TITLE';
+	export let backLink = '/';
 </script>
 
 <nav>
-	<Button buttonType="previous" href="/" />
+	<Button buttonType="previous" href={backLink} on:click />
 	<h1>{title}</h1>
 	<Button buttonType="next" />
 </nav>
