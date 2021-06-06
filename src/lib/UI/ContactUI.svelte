@@ -554,6 +554,11 @@
 		padding: 10px;
 	}
 
+	hr {
+		color: #c7c7c7;
+		background-color: #c7c7c7;
+	}
+
 	@media (hover: hover) {
 		.cancel-button:hover svg line {
 			stroke: #151515;
