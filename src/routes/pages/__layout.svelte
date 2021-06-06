@@ -4,10 +4,15 @@
 	import Navigation from '$lib/UI/Navigation.svelte';
 	import Footer from '$lib/UI/Footer.svelte';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 
-	let title = 'Title';
+	let title = 'title';
 	let formattedTitle = 'Title';
+	$: {
+		title = $page.path.split('/')[2];
+		if (title) {
+			formattedTitle = formatTitle(title);
+		}
+	}
 
 	function formatTitle(unformattedTitle) {
 		if (unformattedTitle === 'legal') {
@@ -18,11 +23,6 @@
 			return unformattedTitle.toUpperCase();
 		}
 	}
-
-	onMount(() => {
-		title = $page.path.split('/')[2];
-		formattedTitle = formatTitle(title);
-	});
 </script>
 
 <PageTransition>
