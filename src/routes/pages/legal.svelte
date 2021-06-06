@@ -5,6 +5,15 @@
 	let copyright = false;
 </script>
 
+<svelte:head>
+	<title>Legal Notice</title>
+	<meta
+		name="description"
+		content="This page (together with the documents referred to on it) 
+describes the terms on the basis of which you may make use of our website (“Terms of Use”)."
+	/>
+</svelte:head>
+
 <div class="container">
 	<h1>INFORMATION PURSUANT TO SEC. 5 TMG AND ART. 13 DSGVO</h1>
 	<div class="contact-container">

@@ -18,6 +18,11 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Privacy Policy</title>
+	<meta name="description" content="The Privacy Statement of MortimerBaltus.com" />
+</svelte:head>
+
 <div class="container">
 	<p class="intro">
 		At MortimerBaltus, accessible from MortimerBaltus.com, one of our main priorities is the privacy
