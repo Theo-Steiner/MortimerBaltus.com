@@ -14,6 +14,7 @@
 		title="PROJECT_01"
 		id={1}
 		isInForeground={false}
+		href={'/pages/project_01'}
 		intersections={[0]}
 		distanceFromIntersection={{
 			base: 13,
