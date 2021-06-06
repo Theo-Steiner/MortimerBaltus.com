@@ -66,57 +66,59 @@
 	});
 </script>
 
-<div
-	style="width: {width}px; height: {height}px; --baseShuffleDistance: {isMinimized |
-	intersectionIsMinimized
-		? 0
-		: distanceFromIntersection.base}; --largeShuffleDistance: {isMinimized | intersectionIsMinimized
-		? 0
-		: distanceFromIntersection.large};"
-	class:trigger-forward-shuffle={!isInForeground && touched}
-	class:minimized-notransition={isMinimized | intersectionIsMinimized}
-	class="parallax-wrapper {parallax}"
->
-	<section
-		style="--windowWidth: {width}; --windowHeight: {height}; --order: {id / 10};"
-		on:click={handleWindowClick}
-		class:blur-intro={triggerIntroAnimation}
+<div class="parallax-wrapper {parallax}">
+	<div
+		style="width: {width}px; height: {height}px; --baseShuffleDistance: {isMinimized |
+		intersectionIsMinimized
+			? 0
+			: distanceFromIntersection.base}; --largeShuffleDistance: {isMinimized |
+		intersectionIsMinimized
+			? 0
+			: distanceFromIntersection.large};"
+		class:trigger-forward-shuffle={!isInForeground && touched}
+		class:minimized-notransition={isMinimized | intersectionIsMinimized}
 	>
-		<header>
-			<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
-			{#if title}
-				<h1>{title}</h1>
-			{:else}
-				<h1>Title</h1>
-			{/if}
-			{#if enlargeable}
-				<Button buttonType="subpage" {href} />
-			{:else}
-				<Button buttonType="hidden" />
-			{/if}
-		</header>
-		{#if !isMinimized}
-			<div
-				transition:slide
-				class:no-events={!isInForeground}
-				class="content-wrapper"
-				style="height: {height - 36}px; background: {background}; background-size: cover;"
-			>
-				{#if enlargeable}
-					<a {href}>
-						<slot><p>Content goes here</p></slot>
-					</a>
+		<section
+			style="--windowWidth: {width}; --windowHeight: {height}; --order: {id / 10};"
+			on:click={handleWindowClick}
+			class:blur-intro={triggerIntroAnimation}
+		>
+			<header>
+				<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
+				{#if title}
+					<h1>{title}</h1>
 				{:else}
-					<slot><p>Content goes here</p></slot>
+					<h1>Title</h1>
 				{/if}
-			</div>
-		{/if}
-	</section>
+				{#if enlargeable}
+					<Button buttonType="subpage" {href} />
+				{:else}
+					<Button buttonType="hidden" />
+				{/if}
+			</header>
+			{#if !isMinimized}
+				<div
+					transition:slide
+					class:no-events={!isInForeground}
+					class="content-wrapper"
+					style="height: {height - 36}px; background: {background}; background-size: cover;"
+				>
+					{#if enlargeable}
+						<a {href}>
+							<slot><p>Content goes here</p></slot>
+						</a>
+					{:else}
+						<slot><p>Content goes here</p></slot>
+					{/if}
+				</div>
+			{/if}
+		</section>
+	</div>
 </div>
 
 <style>
 	.parallax-wrapper {
-		transition: transform 0.8s;
+		transition: 0.8s;
 		position: relative;
 		overflow: visible;
 	}
@@ -200,13 +202,13 @@
 
 	@keyframes forward-shuffle {
 		0% {
-			right: 0;
+			transform: translateX(0);
 		}
 		50% {
-			right: calc((var(--baseShuffleDistance) * max(2550px, 250vmax) / 200 * 2));
+			transform: translateX(calc((var(--baseShuffleDistance) * max(2550px, 250vmax) / 200 * -2)));
 		}
 		100% {
-			right: 0;
+			transform: translateX(0);
 		}
 	}
 
@@ -242,13 +244,15 @@
 	@media only screen and (min-width: 1440px) {
 		@keyframes forward-shuffle {
 			0% {
-				right: 0;
+				transform: translateX(0);
 			}
 			50% {
-				right: calc((var(--largeShuffleDistance) * max(2880px, 120vmax) / 200));
+				transform: translateX(
+					calc((var(--largeShuffleDistance) * max(2880px, 120vmax) / 200 * -1))
+				);
 			}
 			100% {
-				right: 0;
+				transform: translateX(0);
 			}
 		}
 	}
