@@ -8,87 +8,99 @@
 
 <div class="container" on:click={changeLanguage}>
 	<div class="animation-wrap">
-		<div
+		<p
 			class:layer1-japanese={languageSelected === 'japanese'}
 			class:layer1-english={languageSelected === 'english'}
 			class="animate"
+			lang={languageSelected === 'japanese' ? 'ja' : 'en'}
 		>
 			{languageSelected === 'japanese' ? 'あ' : 'A'}
-		</div>
-		<div
+		</p>
+		<p
 			class:layer2-japanese={languageSelected === 'japanese'}
 			class:layer2-english={languageSelected === 'english'}
 			class="animate"
+			lang={languageSelected === 'japanese' ? 'en' : 'ja'}
 		>
 			{languageSelected === 'japanese' ? 'A' : 'あ'}
-		</div>
-		<div
+		</p>
+		<p
 			class:layer3-japanese={languageSelected === 'japanese'}
 			class:layer3-english={languageSelected === 'english'}
 			class="animate"
+			lang={languageSelected === 'japanese' ? 'ja' : 'en'}
 		>
 			{languageSelected === 'japanese' ? 'あ' : 'A'}
-		</div>
-		<div
+		</p>
+		<p
 			class:layerX-japanese={languageSelected === 'japanese'}
 			class:layerX-english={languageSelected === 'english'}
 			class="animate"
+			lang={languageSelected === 'japanese' ? 'en' : 'ja'}
 		>
 			{languageSelected === 'japanese' ? 'A' : 'あ'}
-		</div>
-		<div
+		</p>
+		<p
 			class:layer4-japanese={languageSelected === 'japanese'}
 			class:layer4-english={languageSelected === 'english'}
 			class="animate"
+			lang={languageSelected === 'japanese' ? 'ja' : 'en'}
 		>
 			{languageSelected === 'japanese' ? 'あ' : 'A'}
-		</div>
-		<div
+		</p>
+		<p
 			class:layer5-japanese={languageSelected === 'japanese'}
 			class:layer5-english={languageSelected === 'english'}
 			class="animate"
+			lang={languageSelected === 'japanese' ? 'en' : 'ja'}
 		>
 			{languageSelected === 'japanese' ? 'A' : 'あ'}
-		</div>
+		</p>
 	</div>
 </div>
 
 <style>
 	.container {
-		display: flex;
-		justify-content: center;
-		align-items: center;
 		overflow: hidden;
 		cursor: pointer;
-		width: 266px;
-		height: 273px;
+		width: 264px;
+		height: 236px;
 		transform: translateZ(0px) scale(1);
 	}
 
 	.animation-wrap {
-		width: 266px;
-		height: 273px;
+		width: 100%;
+		height: 100%;
 		transition: all 0.2s ease;
 		background-color: rgb(201, 97, 97);
+		overflow: hidden;
+	}
+
+	p:lang(en) {
+		padding-top: 10px;
+	}
+
+	p {
 		color: #aa4545;
+		width: 100%;
+		height: 100%;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		overflow: hidden;
 		font-size: 220px;
 		line-height: 200px;
-		font-weight: 400;
-		font-family: sans-serif;
 	}
 
 	.animation-wrap:hover {
 		background-color: #aa4545;
+	}
+
+	.animation-wrap:hover p {
 		color: rgb(201, 97, 97);
 	}
 
 	.animate {
 		position: absolute;
-		text-align: center;
 		animation-fill-mode: forwards;
 		animation-duration: 3s;
 		animation-iteration-count: 1;
