@@ -1,4 +1,5 @@
 <script>
+	import HeroImage from '$lib/UX/HeroImage.svelte';
 	const slug =
 		'https://res.cloudinary.com/thdrstnr/image/upload/v1622961941/MortimerBaltus/ConCorazon/';
 </script>
@@ -11,9 +12,8 @@
 	/>
 </svelte:head>
 <div class="container">
-	<img
-		class="hero-image"
-		src={`${slug}con_corazon_romanesco_ocq9w6.jpg`}
+	<HeroImage
+		imageID="ConCorazon/con_corazon_romanesco_ocq9w6"
 		alt="handcrafted tumblers, arranged with green vegetables"
 	/>
 	<p>
@@ -44,17 +44,13 @@
 		/>
 		<img class="half-image" src={`${slug}con_corazon_iPhone_01_zz1cvk`} alt="iPhone App design" />
 	</div>
-	<img
-		class="hero-image"
-		src={`${slug}con_corazon_banner_iungvl`}
-		alt="Banner design for Con Corazón"
-	/>
-	<img
-		class="hero-image"
-		src={`${slug}con_corazon_artisan_urpfhn`}
+
+	<HeroImage imageID="ConCorazon/con_corazon_banner_iungvl" alt="Banner design for Con Corazón" />
+	<HeroImage
+		imageID="ConCorazon/con_corazon_artisan_urpfhn"
 		alt="An artisan working with hemp strings"
 	/>
-	<img class="hero-image" src={`${slug}con_corazon_emblem_p70r28`} alt="Emblem for Con Corazón" />
+	<HeroImage imageID="ConCorazon/con_corazon_emblem_p70r28" alt="Emblem design for Con Corazón" />
 	<div class="two-cards">
 		<img
 			class="half-image"

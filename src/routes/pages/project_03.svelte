@@ -1,4 +1,5 @@
 <script>
+	import HeroImage from '$lib/UX/HeroImage.svelte';
 	let slug =
 		'https://res.cloudinary.com/thdrstnr/image/upload/v1623308059/MortimerBaltus/EberhardM%C3%BCller/';
 </script>
@@ -11,9 +12,8 @@
 	/>
 </svelte:head>
 <div class="container">
-	<img
-		class="hero-image"
-		src={`${slug}EberhardMueller_v2tpxi_qg6up9`}
+	<HeroImage
+		imageID="EberhardM%C3%BCller/EberhardMueller_v2tpxi_qg6up9"
 		alt="Business cards in a new corporate design language"
 	/>
 	<p>^this image needs to be replaced before going live</p>
@@ -33,14 +33,6 @@
 		background: #151515;
 		min-height: calc(100vh - 331px);
 		margin-top: -33px;
-	}
-
-	.hero-image {
-		width: 100vw;
-		height: auto;
-		max-height: 853px;
-		object-fit: cover;
-		object-position: center bottom;
 	}
 
 	p {
