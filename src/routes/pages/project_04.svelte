@@ -30,7 +30,7 @@
 		what is left on the cutting room floor.
 	</p>
 	<!-- svelte-ignore a11y-media-has-caption -->
-	<video autoplay loop>
+	<video autoplay loop muted playsinline>
 		<source src={`${videoSlug}.webm`} type="video/webm" />
 		<source src={`${videoSlug}.mp4`} type="video/mp4" />
 		<source src={`${videoSlug}.ogg`} type="video/ogg" />
