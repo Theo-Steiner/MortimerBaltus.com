@@ -1,5 +1,7 @@
 <script>
+	import ImageLoader from '../UX/ImageLoader.svelte';
 	import WindowElement from '../UI/WindowElement.svelte';
+	const slug = 'MortimerBaltus/Projects/Soe_04_so0xle';
 </script>
 
 <div class="grid-area">
@@ -13,7 +15,14 @@
 		id={6}
 		isInForeground={true}
 	>
-		<img src="Images/Logopedia.svg" alt="Logo Portfolio" />
+		<ImageLoader
+			sizes="470px"
+			srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug} 1280w,
+            https://res.cloudinary.com/thdrstnr/image/upload/w_497,f_auto,q_auto:best/{slug} 470w,
+            https://res.cloudinary.com/thdrstnr/image/upload/w_312,f_auto,q_auto:best/{slug} 312w,"
+			alt="Raceworx"
+			src="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug}"
+		/>
 	</WindowElement>
 </div>
 
@@ -24,12 +33,6 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-	img {
-		height: 127px;
-		width: 446px;
-		margin: 80px auto;
-		display: block;
 	}
 
 	@media only screen and (min-width: 1440px) {
