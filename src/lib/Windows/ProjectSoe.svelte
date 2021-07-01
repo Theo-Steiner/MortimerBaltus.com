@@ -12,6 +12,7 @@
 		title="PROJECT_04"
 		enlargeable={true}
 		background="#f4f6f0"
+		href={'/pages/project_04'}
 		id={6}
 		isInForeground={true}
 	>
