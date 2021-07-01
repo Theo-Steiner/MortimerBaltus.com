@@ -11,7 +11,7 @@
 		parallax="slowish"
 		title="PROJECT_04"
 		enlargeable={true}
-		background="#C4BDBD"
+		background="#f4f6f0"
 		id={6}
 		isInForeground={true}
 	>
