@@ -1,5 +1,5 @@
 <script>
-	import HeroImage from '$lib/UX/HeroImage.svelte';
+	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
 	let slug =
 		'https://res.cloudinary.com/thdrstnr/image/upload/v1623308059/MortimerBaltus/EberhardM%C3%BCller/';
 </script>
@@ -12,7 +12,9 @@
 	/>
 </svelte:head>
 <div class="container">
-	<HeroImage
+	<ResponsiveImage
+		imageWidth="960"
+		imageHeight="960"
 		imageID="EberhardM%C3%BCller/EberhardMueller_v2tpxi_qg6up9"
 		alt="Business cards in a new corporate design language"
 	/>

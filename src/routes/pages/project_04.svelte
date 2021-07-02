@@ -1,5 +1,5 @@
 <script>
-	import HeroImage from '$lib/UX/HeroImage.svelte';
+	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
 	let slug = 'https://res.cloudinary.com/thdrstnr/image/upload';
 	let videoSlug =
 		'https://res.cloudinary.com/thdrstnr/video/upload/v1625117503/MortimerBaltus/Soe/Soe_02_ai4z59';
@@ -13,7 +13,9 @@
 	/>
 </svelte:head>
 <div class="container">
-	<HeroImage
+	<ResponsiveImage
+		imageWidth="2400"
+		imageHeight="1800"
 		imageID="Soe/Soe_01_ethymr"
 		alt="How we envisioned the final packaging of the product."
 	/>
@@ -44,7 +46,9 @@
 			/>
 		</svg>
 	</div>
-	<HeroImage
+	<ResponsiveImage
+		imageWidth="2400"
+		imageHeight="1800"
 		imageID="Soe/Soe_04_zc06pa"
 		alt="The engraved logo conveys the luxurious feel of the brand"
 	/>
@@ -63,7 +67,7 @@
 
 	.logo-container {
 		width: 100vw;
-		height: 100vh;
+		height: 75vw;
 		max-height: 853px;
 		display: flex;
 		justify-content: center;

@@ -1,7 +1,5 @@
 <script>
-	import HeroImage from '$lib/UX/HeroImage.svelte';
-	const slug =
-		'https://res.cloudinary.com/thdrstnr/image/upload/v1622961941/MortimerBaltus/ConCorazon/';
+	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
 </script>
 
 <svelte:head>
@@ -12,7 +10,9 @@
 	/>
 </svelte:head>
 <div class="container">
-	<HeroImage
+	<ResponsiveImage
+		imageWidth="1280"
+		imageHeight="898"
 		imageID="ConCorazon/con_corazon_romanesco_ocq9w6"
 		alt="handcrafted tumblers, arranged with green vegetables"
 	/>
@@ -28,38 +28,82 @@
 	<div class="visitenkarten-container">
 		<img
 			class="vk-image"
-			src={`${slug}con_corazon_necklace_ef6uzk.jpg`}
+			src="https://res.cloudinary.com/thdrstnr/image/upload/MortimerBaltus/ConCorazon/con_corazon_necklace_ef6uzk.jpg"
+			width="2160"
+			height="1440"
+			sizes="100vw"
+			srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1024/MortimerBaltus/ConCorazon/con_corazon_necklace_ef6uzk.jpg 1024w, https://res.cloudinary.com/thdrstnr/image/upload/w_768/MortimerBaltus/ConCorazon/con_corazon_necklace_ef6uzk.jpg 768w, https://res.cloudinary.com/thdrstnr/image/upload/w_640/MortimerBaltus/ConCorazon/con_corazon_necklace_ef6uzk.jpg 640w, https://res.cloudinary.com/thdrstnr/image/upload/w_320/MortimerBaltus/ConCorazon/con_corazon_necklace_ef6uzk.jpg 320w, https://res.cloudinary.com/thdrstnr/image/upload/w_160/MortimerBaltus/ConCorazon/con_corazon_necklace_ef6uzk.jpg 160w"
 			alt="Beautiful chain dangling from a woman's neck"
 		/>
 		<div class="visitenkarten stack">
-			<img class="vk" src={`${slug}con_corazon_vk_ghziwc`} alt="Vorderseite der Visitenkarte" />
-			<img class="vk" src={`${slug}con_corazon_vk2_qfwien`} alt="Rückseite der Visitenkarte" />
+			<img
+				class="vk"
+				src="https://res.cloudinary.com/thdrstnr/image/upload/MortimerBaltus/ConCorazon/con_corazon_vk_ghziwc"
+				width="2953"
+				height="1671"
+				sizes="30vw"
+				srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1024/MortimerBaltus/ConCorazon/con_corazon_vk_ghziwc 1024w, https://res.cloudinary.com/thdrstnr/image/upload/w_768/MortimerBaltus/ConCorazon/con_corazon_vk_ghziwc 768w, https://res.cloudinary.com/thdrstnr/image/upload/w_640/MortimerBaltus/ConCorazon/con_corazon_vk_ghziwc 640w, https://res.cloudinary.com/thdrstnr/image/upload/w_320/MortimerBaltus/ConCorazon/con_corazon_vk_ghziwc 320w, https://res.cloudinary.com/thdrstnr/image/upload/w_160/MortimerBaltus/ConCorazon/con_corazon_vk_ghziwc 160w"
+				alt="Vorderseite der Visitenkarte"
+			/>
+			<img
+				class="vk"
+				src="https://res.cloudinary.com/thdrstnr/image/upload/MortimerBaltus/ConCorazon/con_corazon_vk2_qfwien"
+				width="2953"
+				height="1671"
+				sizes="30vw"
+				srcset="https://res.cloudinary.com/thdrstnr/image/upload/MortimerBaltus/ConCorazon/con_corazon_vk2_qfwien 2160w, https://res.cloudinary.com/thdrstnr/image/upload/w_1600/MortimerBaltus/ConCorazon/con_corazon_vk2_qfwien 1600w, https://res.cloudinary.com/thdrstnr/image/upload/w_1366/MortimerBaltus/ConCorazon/con_corazon_vk2_qfwien 1366w, https://res.cloudinary.com/thdrstnr/image/upload/w_1024/MortimerBaltus/ConCorazon/con_corazon_vk2_qfwien 1024w, https://res.cloudinary.com/thdrstnr/image/upload/w_768/MortimerBaltus/ConCorazon/con_corazon_vk2_qfwien 768w, https://res.cloudinary.com/thdrstnr/image/upload/w_640/MortimerBaltus/ConCorazon/con_corazon_vk2_qfwien 640w, https://res.cloudinary.com/thdrstnr/image/upload/w_320/MortimerBaltus/ConCorazon/con_corazon_vk2_qfwien 320w"
+				alt="Rückseite der Visitenkarte"
+			/>
 		</div>
 	</div>
 	<div class="two-cards">
-		<img
-			class="half-image"
-			src={`${slug}con_corazon_ear_dekidu`}
+		<ResponsiveImage
+			imageWidth="1080"
+			imageHeight="1350"
+			imageID="ConCorazon/con_corazon_ear_dekidu"
+			displayWidth="50vw"
 			alt="Golden earrings with a blue gem"
 		/>
-		<img class="half-image" src={`${slug}con_corazon_iPhone_01_zz1cvk`} alt="iPhone App design" />
+		<ResponsiveImage
+			imageWidth="2000"
+			imageHeight="2000"
+			imageID="ConCorazon/con_corazon_iPhone_01_zz1cvk"
+			displayWidth="50vw"
+			alt="Design for an eCommerce shopping app"
+		/>
 	</div>
 
-	<HeroImage imageID="ConCorazon/con_corazon_banner_iungvl" alt="Banner design for Con Corazón" />
-	<HeroImage
+	<ResponsiveImage
+		imageWidth="2160"
+		imageHeight="1440"
+		imageID="ConCorazon/con_corazon_banner_iungvl"
+		alt="Banner design for Con Corazón"
+	/>
+	<ResponsiveImage
+		imageWidth="1200"
+		imageHeight="802"
 		imageID="ConCorazon/con_corazon_artisan_urpfhn"
 		alt="An artisan working with hemp strings"
 	/>
-	<HeroImage imageID="ConCorazon/con_corazon_emblem_p70r28" alt="Emblem design for Con Corazón" />
+	<ResponsiveImage
+		imageWidth="2160"
+		imageHeight="1440"
+		imageID="ConCorazon/con_corazon_emblem_p70r28"
+		alt="Emblem design for Con Corazón"
+	/>
 	<div class="two-cards">
-		<img
-			class="half-image"
-			src={`${slug}con_corazon_iPhone_02_w0mhgy`}
+		<ResponsiveImage
+			imageWidth="2000"
+			imageHeight="2000"
+			imageID="ConCorazon/con_corazon_iPhone_02_w0mhgy"
+			displayWidth="50vw"
 			alt="The shop application designed for Con Corazón"
 		/>
-		<img
-			class="half-image"
-			src={`${slug}con-corazon_craftsman_m0ssbe`}
+		<ResponsiveImage
+			imageWidth="1080"
+			imageHeight="1350"
+			imageID="ConCorazon/con-corazon_craftsman_m0ssbe"
+			displayWidth="50vw"
 			alt="A craftsman focused on his pottery work"
 		/>
 	</div>
