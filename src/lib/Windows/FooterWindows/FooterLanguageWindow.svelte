@@ -1,6 +1,6 @@
 <script>
 	import FooterWindowElement from '../../UI/FooterWindowElement.svelte';
-	import LanguageUI from '../../UI/LanguageUI.svelte';
+	import LanguageUI from '../../UI/Language/LanguageUI.svelte';
 </script>
 
 <FooterWindowElement

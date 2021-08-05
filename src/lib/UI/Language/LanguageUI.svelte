@@ -1,4 +1,5 @@
 <script>
+	import LanguageLetter from './LanguageLetter.svelte';
 	let languageSelected = 'english';
 
 	function changeLanguage() {
@@ -8,54 +9,54 @@
 
 <div class="container" on:click={changeLanguage}>
 	<div class="animation-wrap">
-		<p
+		<figure
 			class:layer1-japanese={languageSelected === 'japanese'}
 			class:layer1-english={languageSelected === 'english'}
 			class="animate"
 			lang={languageSelected === 'japanese' ? 'ja' : 'en'}
 		>
-			{languageSelected === 'japanese' ? 'あ' : 'A'}
-		</p>
-		<p
+			<LanguageLetter {languageSelected} />
+		</figure>
+		<figure
 			class:layer2-japanese={languageSelected === 'japanese'}
 			class:layer2-english={languageSelected === 'english'}
 			class="animate"
 			lang={languageSelected === 'japanese' ? 'en' : 'ja'}
 		>
-			{languageSelected === 'japanese' ? 'A' : 'あ'}
-		</p>
-		<p
+			<LanguageLetter {languageSelected} reverse={true} />
+		</figure>
+		<figure
 			class:layer3-japanese={languageSelected === 'japanese'}
 			class:layer3-english={languageSelected === 'english'}
 			class="animate"
 			lang={languageSelected === 'japanese' ? 'ja' : 'en'}
 		>
-			{languageSelected === 'japanese' ? 'あ' : 'A'}
-		</p>
-		<p
+			<LanguageLetter {languageSelected} />
+		</figure>
+		<figure
 			class:layerX-japanese={languageSelected === 'japanese'}
 			class:layerX-english={languageSelected === 'english'}
 			class="animate"
 			lang={languageSelected === 'japanese' ? 'en' : 'ja'}
 		>
-			{languageSelected === 'japanese' ? 'A' : 'あ'}
-		</p>
-		<p
+			<LanguageLetter {languageSelected} reverse={true} />
+		</figure>
+		<figure
 			class:layer4-japanese={languageSelected === 'japanese'}
 			class:layer4-english={languageSelected === 'english'}
 			class="animate"
 			lang={languageSelected === 'japanese' ? 'ja' : 'en'}
 		>
-			{languageSelected === 'japanese' ? 'あ' : 'A'}
-		</p>
-		<p
+			<LanguageLetter {languageSelected} />
+		</figure>
+		<figure
 			class:layer5-japanese={languageSelected === 'japanese'}
 			class:layer5-english={languageSelected === 'english'}
 			class="animate"
 			lang={languageSelected === 'japanese' ? 'en' : 'ja'}
 		>
-			{languageSelected === 'japanese' ? 'A' : 'あ'}
-		</p>
+			<LanguageLetter {languageSelected} reverse={true} />
+		</figure>
 	</div>
 </div>
 
@@ -72,31 +73,11 @@
 		width: 100%;
 		height: 100%;
 		transition: all 0.2s ease;
-		background-color: rgb(201, 97, 97);
-		overflow: hidden;
-	}
-
-	p:lang(en) {
-		padding-top: 10px;
-	}
-
-	p {
-		color: #aa4545;
-		width: 100%;
-		height: 100%;
+		background-color: #151515;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		font-size: 220px;
-		line-height: 200px;
-	}
-
-	.animation-wrap:hover {
-		background-color: #aa4545;
-	}
-
-	.animation-wrap:hover p {
-		color: rgb(201, 97, 97);
+		overflow: hidden;
 	}
 
 	.animate {

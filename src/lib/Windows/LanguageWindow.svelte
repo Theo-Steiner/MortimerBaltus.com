@@ -1,6 +1,6 @@
 <script>
 	import WindowElement from '../UI/WindowElement.svelte';
-	import LanguageUI from '../UI/LanguageUI.svelte';
+	import LanguageUI from '../UI/Language/LanguageUI.svelte';
 </script>
 
 <div class="wrapper grid-area">
