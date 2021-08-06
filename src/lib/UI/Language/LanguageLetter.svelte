@@ -4,7 +4,7 @@
 </script>
 
 {#if (languageSelected === 'japanese' && !reverse) || (languageSelected === 'english' && reverse)}
-	<svg width="176" height="189" xmlns="http://www.w3.org/2000/svg"
+	<svg width="179" height="189" xmlns="http://www.w3.org/2000/svg"
 		><path
 			fill-rule="evenodd"
 			clip-rule="evenodd"
@@ -26,6 +26,8 @@
 		fill: rgba(254, 254, 254, 0);
 		stroke: #fefefe;
 		transition: 0.2s ease;
+		overflow: visible;
+		/* filter: blur(0.5px); */
 	}
 
 	:global(div:hover > figure > svg) {
