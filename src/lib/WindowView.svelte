@@ -1,7 +1,7 @@
 <script>
 	import AboutWindow from './Windows/AboutWindow.svelte';
 	import ProjectCorazon from './Windows/ProjectCorazon.svelte';
-	import ProjectRaceworx from './Windows/ProjectRaceworx.svelte';
+	import ProjectProdukt from './Windows/ProjectProdukt.svelte';
 	import ProjectMueller from './Windows/ProjectMueller.svelte';
 	import CookieWindow from './Windows/CookieWindow.svelte';
 	import LegalWindow from './Windows/LegalWindow.svelte';
@@ -18,7 +18,7 @@
 <ProjectCorazon />
 <AboutWindow />
 <JapanJPG />
-<ProjectRaceworx />
+<ProjectProdukt />
 <CookieWindow />
 <LegalWindow />
 <PrivacyWindow />
