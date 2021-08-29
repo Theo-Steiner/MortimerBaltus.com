@@ -105,33 +105,87 @@
 					</h1>
 				</noscript>
 				<div class="masking">
-					<h1
-						class="mask"
-						class:intro-animation={triggerIntroAnimation}
-						style="--animation-order: 2;"
-					>
-						CREATIVE SERVICES & DIGITAL DEVELOPMENT
-						<span class="desktop" />
-					</h1>
+					<h2 lang="en">
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 2;">CREATIVE</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 2.2;">SERVICES</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 2.4;">&</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 2.6;">DIGITAL</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 2.8;">DEVELOPMENT</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 3;">&copy;2021</span
+						>
+					</h2>
 				</div>
 				<div class="masking">
-					<h1
-						class="mask"
-						class:intro-animation={triggerIntroAnimation}
-						style="--animation-order: 2;"
-					>
-						<span class="mobile">&copy;2021</span>c/o MORITZ MORTIMER MÜLLER (DE),
-						<span class="desktop">THEODOR BALTUS STEINER (JP)</span>
-					</h1>
-				</div>
-				<div class="masking mobile">
-					<h1
-						class="mobile mask"
-						class:intro-animation={triggerIntroAnimation}
-						style="--animation-order: 2;"
-					>
-						THEODOR BALTUS STEINER (JP)
-					</h1>
+					<h2 lang="en">
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 3.2;">c/o</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 3.4;">MORITZ</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 3.6;">MORTIMER</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 3.8;">MÜLLER</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 4;">(DE),</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 4.2;">THEODOR</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 4.4;">BALTUS</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 4.6;">STEINER</span
+						>
+						<span
+							class="mask"
+							class:intro-animation={triggerIntroAnimation}
+							style="--animation-order: 4.8;">(JP)</span
+						>
+					</h2>
 				</div>
 			</div>
 			<div class="scroller" bind:this={scroll_element}>
@@ -207,20 +261,21 @@
 	}
 
 	.masking {
-		height: calc(1.4vh * 1.6);
+		height: calc(13px * 1.6);
 		overflow: hidden;
 	}
 
-	.mortimer-baltus h1 {
+	.mortimer-baltus h2 {
 		text-align: center;
 		color: white;
-		font-size: 1.4vh;
+		font-size: 13px;
 		line-height: 1.6;
+		letter-spacing: 0.8;
 		padding: 0;
 	}
 
-	.desktop {
-		display: none;
+	span {
+		display: inline-block;
 	}
 
 	.mortimer-baltus svg {
@@ -249,24 +304,6 @@
 	}
 
 	@media only screen and (min-width: 1020px) {
-		.masking {
-			height: calc(1.7vh * 1.35);
-		}
-
-		.mortimer-baltus h1 {
-			line-height: 1.35;
-			font-size: 1.7vh;
-			padding: 0;
-		}
-
-		.mobile {
-			display: none;
-		}
-
-		.desktop {
-			display: inline;
-		}
-
 		.mortimer-baltus svg {
 			margin-top: 43vh;
 			margin-bottom: 2.5vh;

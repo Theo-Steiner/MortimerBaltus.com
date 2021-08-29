@@ -23,10 +23,7 @@
 	>
 		<ImageLoader
 			sizes="463px"
-			srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug} 960w, 
-            https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_auto:best/{slug} 463w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto,q_auto:best/{slug} 291w"
-			src="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug}"
+			src="https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_95/{slug}"
 			alt="Con Corazón is embracing artisans from countries at war"
 		/>
 	</WindowElement>

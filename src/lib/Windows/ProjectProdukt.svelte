@@ -1,7 +1,8 @@
 <script>
-	import ImageMarquee from '$lib/UI/ImageMarquee.svelte';
-
+	import ImageLoader from '$lib/UX/ImageLoader.svelte';
 	import WindowElement from '../UI/WindowElement.svelte';
+
+	const slug = 'MortimerBaltus/Produkt/Produkt_Hero_fbs3q6';
 </script>
 
 <div class="grid-area">
@@ -15,7 +16,10 @@
 		id={2}
 		isInForeground={true}
 	>
-		<ImageMarquee />
+		<ImageLoader
+			src="https://res.cloudinary.com/thdrstnr/image/upload/w_497,f_auto,q_95/{slug}"
+			alt="Produkt is a lifestyle brand we helped establish"
+		/>
 	</WindowElement>
 </div>
 
