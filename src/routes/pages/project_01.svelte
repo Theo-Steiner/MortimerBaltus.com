@@ -120,14 +120,6 @@
 		margin-top: -33px;
 	}
 
-	.hero-image {
-		width: 100vw;
-		height: auto;
-		max-height: 853px;
-		object-fit: cover;
-		object-position: center bottom;
-	}
-
 	.vk-image {
 		width: 100vw;
 		height: 180vw;
@@ -173,13 +165,6 @@
 		flex-wrap: wrap;
 	}
 
-	.half-image {
-		width: 100%;
-		height: 70vh;
-		max-height: 853px;
-		object-fit: cover;
-	}
-
 	p {
 		padding: 30px 20px 20px 20px;
 	}
@@ -210,11 +195,6 @@
 			height: 17vw;
 			max-width: none;
 			max-height: none;
-		}
-
-		.half-image {
-			width: 50%;
-			height: auto;
 		}
 	}
 </style>

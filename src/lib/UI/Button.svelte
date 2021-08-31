@@ -132,13 +132,6 @@
 		outline: none;
 	}
 
-	span {
-		overflow: hidden;
-		height: 1px;
-		width: 1px;
-		position: absolute;
-	}
-
 	svg {
 		outline: none;
 		width: 100%;

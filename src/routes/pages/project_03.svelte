@@ -36,25 +36,30 @@
 		imageID="EberhardMueller/EM_Bathtub_dark_f2skh4"
 		alt="Sophistication both in interior design and the face lifted brand identity."
 	/>
-	<ResponsiveImage
-		imageWidth="2480"
-		imageHeight="3508"
-		limitHeight={false}
-		imageID="EberhardMueller/EM_Page_iwsane"
-		alt="The finished page showcases highlights of interior design by Eberhard Mueller"
-	/>
+	<figure>
+		<ResponsiveImage
+			imageWidth="2480"
+			imageHeight="3508"
+			limitHeight={false}
+			displayWidth="70.7vw"
+			imageID="EberhardMueller/EM_Page_iwsane"
+			alt="The finished page showcases highlights of interior design by Eberhard Mueller"
+		/>
+	</figure>
 	<ResponsiveImage
 		imageWidth="2000"
 		imageHeight="1355"
 		imageID="EberhardMueller/EM_Bathtub_light_bpknz3"
 		alt="A bathroom created by Eberhard Mueller."
 	/>
-	<ResponsiveImage
-		imageWidth="2326"
-		imageHeight="1494"
-		imageID="EberhardMueller/EM_Page_Menu_tlkvyw"
-		alt="Simplicity was the key paradigm to for this rebranding - as with interior design: less is more"
-	/>
+	<div class="image-padding">
+		<ResponsiveImage
+			imageWidth="2326"
+			imageHeight="1494"
+			imageID="EberhardMueller/EM_Page_Menu_tlkvyw"
+			alt="Simplicity was the key paradigm to for this rebranding - as with interior design: less is more"
+		/>
+	</div>
 </div>
 
 <style>
@@ -82,5 +87,15 @@
 	p {
 		color: #fefefe;
 		padding: 30px 20px 20px 20px;
+	}
+
+	figure {
+		padding: 14.65vw;
+		filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))
+			drop-shadow(0px 25px 50px rgba(0, 0, 0, 0.5));
+	}
+
+	.image-padding {
+		padding: 20px 0;
 	}
 </style>
