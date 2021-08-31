@@ -83,12 +83,15 @@
 
 	.logo-container {
 		width: 100vw;
-		height: 75vw;
+		padding: 11vw;
 		max-height: 853px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		background-color: #151515;
+	}
+	img {
+		width: 100%;
 	}
 
 	p {
