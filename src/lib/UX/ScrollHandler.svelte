@@ -2,10 +2,12 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { navigating } from '$app/stores';
 	import navState from './nav-state';
+	import { vh, vw, getScrollTo } from './css_utils.js';
 
 	let hasTouchScreen = false;
 	export let scroll_element;
 	let navStart = false;
+
 	$: if ($navigating) {
 		navState.reportNavigation(scroll_element.scrollLeft, scroll_element.scrollTop);
 		navStart = true;
@@ -63,34 +65,6 @@
 	let scrollVelocityY = 0;
 	let momentumID;
 	let scrollInertia = 1;
-
-	function vh(v) {
-		var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-		return (v * h) / 100;
-	}
-
-	function vw(v) {
-		var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-		return (v * w) / 100;
-	}
-
-	function vmax(v) {
-		return Math.max(vh(v), vw(v));
-	}
-
-	function getScrollTo(screen) {
-		let currentBodyDimensions;
-		if (window.matchMedia('(max-width: 1439px)').matches) {
-			currentBodyDimensions = Math.max(2550, vmax(250));
-		} else if (window.matchMedia('(min-width: 1439px)').matches) {
-			currentBodyDimensions = Math.max(2550, vmax(170));
-		}
-		if (currentBodyDimensions > screen) {
-			return (currentBodyDimensions - screen) / 2;
-		} else {
-			return 0;
-		}
-	}
 
 	function beginMomentumTracking() {
 		cancelMomentumTracking();
