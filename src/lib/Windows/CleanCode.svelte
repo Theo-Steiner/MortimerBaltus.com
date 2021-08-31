@@ -2,7 +2,6 @@
 	import WindowElement from '../UI/WindowElement.svelte';
 
 	let show = 'html';
-	let colors = { cyan: '#60d9f1', red: '#e32636', yellow: '#fcff52' };
 
 	function matrix(node, params) {
 		const randomChars =
