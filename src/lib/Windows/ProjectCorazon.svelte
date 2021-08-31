@@ -10,7 +10,7 @@
 		width={465}
 		height={616}
 		parallax="very-fast"
-		background="#dec7b4"
+		background={`url("https://res.cloudinary.com/thdrstnr/image/upload/c_pad,w_iw_div_2,ar_1,b_auto:predominant/c_crop,w_5,g_north_west/${slug}")`}
 		title="PROJECT_01"
 		id={1}
 		isInForeground={false}
@@ -23,7 +23,7 @@
 	>
 		<ImageLoader
 			sizes="463px"
-			src="https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_95/{slug}"
+			src="https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_auto:best/{slug}"
 			alt="Con Corazón is embracing artisans from countries at war"
 		/>
 	</WindowElement>

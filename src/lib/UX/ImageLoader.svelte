@@ -5,7 +5,7 @@
 	export let src;
 	export let alt;
 	export let sizes;
-	export let srcset;
+	export let srcset = '';
 	let nativeLoading = false; // Determine whether to bypass our intersecting check
 	onMount(() => {
 		if ('loading' in HTMLImageElement.prototype) {

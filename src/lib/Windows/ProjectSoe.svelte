@@ -11,18 +11,15 @@
 		parallax="slowish"
 		title="PROJECT_04"
 		enlargeable={true}
-		background="#f4f6f0"
+		background={`url("https://res.cloudinary.com/thdrstnr/image/upload/c_pad,w_iw_div_2,ar_1,b_auto:predominant/c_crop,w_5,g_north_west/${slug}")`}
 		href={'/pages/project_04'}
 		id={6}
 		isInForeground={true}
 	>
 		<ImageLoader
 			sizes="470px"
-			srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug} 1280w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_497,f_auto,q_auto:best/{slug} 470w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_312,f_auto,q_auto:best/{slug} 312w,"
-			alt="Raceworx"
-			src="https://res.cloudinary.com/thdrstnr/image/upload/w_1280,f_auto/{slug}"
+			alt="A design proposal for luxury scents"
+			src="https://res.cloudinary.com/thdrstnr/image/upload/w_470,f_auto,q_auto:best/{slug}"
 		/>
 	</WindowElement>
 </div>

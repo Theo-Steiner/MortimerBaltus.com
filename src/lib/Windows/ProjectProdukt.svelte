@@ -10,14 +10,15 @@
 		width={499}
 		height={392}
 		parallax="very-fast"
-		background="#888383"
+		background={`url("https://res.cloudinary.com/thdrstnr/image/upload/c_pad,w_iw_div_2,ar_1,b_auto:predominant/c_crop,w_5,g_north_west/${slug}")`}
 		title="PROJECT_02"
 		href={'/pages/project_02'}
 		id={2}
 		isInForeground={true}
 	>
 		<ImageLoader
-			src="https://res.cloudinary.com/thdrstnr/image/upload/w_497,f_auto,q_95/{slug}"
+			sizes="497px"
+			src="https://res.cloudinary.com/thdrstnr/image/upload/w_497,f_auto,q_auto:best/{slug}"
 			alt="Produkt is a lifestyle brand we helped establish"
 		/>
 	</WindowElement>

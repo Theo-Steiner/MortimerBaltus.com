@@ -10,7 +10,7 @@
 		width={465}
 		height={497}
 		parallax="very-fast"
-		background={'#0c0c0b'}
+		background={`url("https://res.cloudinary.com/thdrstnr/image/upload/c_pad,w_iw_div_2,ar_1,b_auto:predominant/c_crop,w_5,g_north_west/${slug}")`}
 		title="PROJECT_03"
 		id={3}
 		href={'/pages/project_03'}
@@ -23,10 +23,7 @@
 	>
 		<ImageLoader
 			sizes="463px"
-			srcset="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug} 960w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_auto:best/{slug} 463w,
-            https://res.cloudinary.com/thdrstnr/image/upload/w_291,f_auto,q_auto:best/{slug} 291w,"
-			src="https://res.cloudinary.com/thdrstnr/image/upload/w_960,f_auto/{slug}"
+			src="https://res.cloudinary.com/thdrstnr/image/upload/w_463,f_auto,q_auto:best/{slug}"
 			alt="Eberhard Müller develops sophisticated textile interiors at the highest level"
 		/>
 	</WindowElement>
