@@ -189,7 +189,7 @@
 	}
 
 	.masking {
-		height: calc(min(1.88vw, 13px) * 1.6);
+		height: calc(min(1.88vw, 13px) * 1.35);
 		overflow: hidden;
 	}
 
@@ -197,7 +197,7 @@
 		text-align: center;
 		color: white;
 		font-size: min(1.88vw, 13px);
-		line-height: 1.6;
+		line-height: 1.35;
 		letter-spacing: 0.8%;
 		padding: 0;
 	}
