@@ -1,6 +1,4 @@
 <script>
-	import { browser } from '$app/env';
-
 	import { createEventDispatcher } from 'svelte';
 
 	export let buttonType;
@@ -10,9 +8,8 @@
 </script>
 
 {#if buttonType === 'subpage'}
-	<a sveltekit:prefetch class={buttonType} {href}>
-		<span>Go to the subpage for this window</span>
-		<svg version="1.1" viewBox="0 0 54 15" xmlns="http://www.w3.org/2000/svg">
+	<a aria-label="Go to the subpage for this window" sveltekit:prefetch class={buttonType} {href}>
+		<svg aria-hidden="true" version="1.1" viewBox="0 0 54 15" xmlns="http://www.w3.org/2000/svg">
 			<g fill="none" fill-rule="evenodd">
 				<rect
 					id="box"
@@ -41,9 +38,9 @@
 		on:click={() => {
 			dispatch('toggleMinimize');
 		}}
+		aria-label="Shrink this window"
 	>
-		<span>Shrink this window</span>
-		<svg version="1.1" viewBox="0 0 54 15" xmlns="http://www.w3.org/2000/svg">
+		<svg aria-hidden="true" version="1.1" viewBox="0 0 54 15" xmlns="http://www.w3.org/2000/svg">
 			<g fill="none" fill-rule="evenodd">
 				<rect
 					id="box"
@@ -61,9 +58,8 @@
 		</svg>
 	</button>
 {:else if buttonType === 'next'}
-	<a class={buttonType} {href}>
-		<span>Go to the next subpage!</span>
-		<svg version="1.1" viewBox="0 0 54 15" xmlns="http://www.w3.org/2000/svg">
+	<a aria-label="Go to the next subpage!" class={buttonType} {href}>
+		<svg aria-hidden="true" version="1.1" viewBox="0 0 54 15" xmlns="http://www.w3.org/2000/svg">
 			<g fill="none" fill-rule="evenodd">
 				<rect
 					id="box"
@@ -83,9 +79,15 @@
 		</svg>
 	</a>
 {:else if buttonType === 'previous'}
-	<a class={buttonType} {href} on:click>
-		<span>Go home, or to the previous subpage!</span>
-		<svg width="54" height="15" viewBox="0 0 54 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<a aria-label="Go home, or to the previous subpage!" class={buttonType} {href} on:click>
+		<svg
+			aria-hidden="true"
+			width="54"
+			height="15"
+			viewBox="0 0 54 15"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
 			<rect
 				id="box"
 				x="0.5"
