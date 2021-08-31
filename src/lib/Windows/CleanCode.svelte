@@ -19,7 +19,7 @@
 			large: 8
 		}}
 	>
-		<CleanCodeUI isPaused />
+		<CleanCodeUI isPaused={false} />
 	</WindowElement>
 </div>
 
