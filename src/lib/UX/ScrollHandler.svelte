@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { navigating } from '$app/stores';
 	import navState from './nav-state';
 
@@ -49,6 +49,10 @@
 					/\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
 			}
 		}
+	});
+
+	onDestroy(() => {
+		window.removeEventListener('wheel', wheelHandler, { passive: false });
 	});
 
 	let isMousedown = false;
@@ -123,6 +127,7 @@
 			event.stopPropagation();
 			let reducedDeltaY = Math.round(event.deltaY / 2);
 			let reducedDeltaX = Math.round(event.deltaX / 2);
+			console.log('still active');
 			scroll_element.scrollLeft = scroll_element.scrollLeft + reducedDeltaX;
 			scroll_element.scrollTop = scroll_element.scrollTop + reducedDeltaY;
 		}
