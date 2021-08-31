@@ -1,6 +1,6 @@
 <script>
 	import { onDestroy, onMount } from 'svelte';
-	import { fly, slide } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	import windowHandler from '../UX/window-state';
 	import Button from './Button.svelte';
 
@@ -68,57 +68,59 @@
 	});
 </script>
 
-{#if !subpageActive}
-	<div out:fly|local={{ y: 600, duration: 600, opacity: 1 }} class="parallax-wrapper {parallax}">
-		<div
-			style="width: {width}px; height: {height}px; --baseShuffleDistance: {isMinimized |
-			intersectionIsMinimized
-				? 0
-				: distanceFromIntersection.base}; --largeShuffleDistance: {isMinimized |
-			intersectionIsMinimized
-				? 0
-				: distanceFromIntersection.large};"
-			class:trigger-forward-shuffle={!isInForeground && touched}
-			class:minimized-notransition={isMinimized | intersectionIsMinimized}
+<div
+	class:fly-out={subpageActive}
+	style="--fly-animation: fly-{parallax};"
+	class="parallax-wrapper {parallax}"
+>
+	<div
+		style="width: {width}px; height: {height}px; --baseShuffleDistance: {isMinimized |
+		intersectionIsMinimized
+			? 0
+			: distanceFromIntersection.base}; --largeShuffleDistance: {isMinimized |
+		intersectionIsMinimized
+			? 0
+			: distanceFromIntersection.large};"
+		class:trigger-forward-shuffle={!isInForeground && touched}
+		class:minimized-notransition={isMinimized | intersectionIsMinimized}
+	>
+		<section
+			style="--windowWidth: {width}; --windowHeight: {height}; --order: {id / 10};"
+			on:click={handleWindowClick}
+			class:blur-intro={triggerIntroAnimation}
 		>
-			<section
-				style="--windowWidth: {width}; --windowHeight: {height}; --order: {id / 10};"
-				on:click={handleWindowClick}
-				class:blur-intro={triggerIntroAnimation}
-			>
-				<header>
-					<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
-					{#if title}
-						<h1>{title}</h1>
-					{:else}
-						<h1>Title</h1>
-					{/if}
-					{#if enlargeable}
-						<Button on:close={() => (subpageActive = true)} buttonType="subpage" {href} />
-					{:else}
-						<Button buttonType="hidden" />
-					{/if}
-				</header>
-				{#if !isMinimized}
-					<div
-						transition:slide|local
-						class:no-events={!isInForeground}
-						class="content-wrapper"
-						style="height: {height - 36}px; background: {background}; background-size: cover;"
-					>
-						{#if enlargeable}
-							<a {href}>
-								<slot><p>Content goes here</p></slot>
-							</a>
-						{:else}
-							<slot><p>Content goes here</p></slot>
-						{/if}
-					</div>
+			<header>
+				<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
+				{#if title}
+					<h1>{title}</h1>
+				{:else}
+					<h1>Title</h1>
 				{/if}
-			</section>
-		</div>
+				{#if enlargeable}
+					<Button on:close={() => (subpageActive = true)} buttonType="subpage" {href} />
+				{:else}
+					<Button buttonType="hidden" />
+				{/if}
+			</header>
+			{#if !isMinimized}
+				<div
+					transition:slide|local
+					class:no-events={!isInForeground}
+					class="content-wrapper"
+					style="height: {height - 36}px; background: {background}; background-size: cover;"
+				>
+					{#if enlargeable}
+						<a {href}>
+							<slot><p>Content goes here</p></slot>
+						</a>
+					{:else}
+						<slot><p>Content goes here</p></slot>
+					{/if}
+				</div>
+			{/if}
+		</section>
 	</div>
-{/if}
+</div>
 
 <style>
 	.parallax-wrapper {
@@ -258,6 +260,62 @@
 			100% {
 				transform: translateX(0);
 			}
+		}
+	}
+
+	.fly-out {
+		animation: var(--fly-animation) 800ms forwards;
+		animation-timing-function: cubic-bezier(0.5, 0, 0.75, 0);
+	}
+
+	@keyframes -global-fly-very-slow {
+		from {
+			transform: translateZ(1.2px) translateY(0px) scale(0.88);
+		}
+		to {
+			transform: translateZ(1.2px) translateY(60vh) scale(0.88);
+		}
+	}
+
+	@keyframes -global-fly-slowish {
+		from {
+			transform: translateZ(1px) translateY(0px) scale(0.9);
+		}
+		to {
+			transform: translateZ(1px) translateY(60vh) scale(0.9);
+		}
+	}
+
+	@keyframes -global-fly-slow {
+		from {
+			transform: translateZ(0.8px) translateY(0px) scale(0.92);
+		}
+		to {
+			transform: translateZ(0.8px) translateY(60vh) scale(0.92);
+		}
+	}
+	@keyframes -global-fly-medium {
+		from {
+			transform: translateZ(0.6px) translateY(0px) scale(0.94);
+		}
+		to {
+			transform: translateZ(0.6px) translateY(60vh) scale(0.94);
+		}
+	}
+	@keyframes -global-fly-fast {
+		from {
+			transform: translateZ(0.4px) translateY(0px) scale(0.96);
+		}
+		to {
+			transform: translateZ(0.4px) translateY(60vh) scale(0.96);
+		}
+	}
+	@keyframes -global-fly-very-fast {
+		from {
+			transform: translateZ(0.2px) translateY(0px) scale(0.98);
+		}
+		to {
+			transform: translateZ(0.2px) translateY(60vh) scale(0.98);
 		}
 	}
 </style>
