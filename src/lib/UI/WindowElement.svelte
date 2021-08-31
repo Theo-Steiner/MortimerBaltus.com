@@ -1,6 +1,6 @@
 <script>
 	import { onDestroy, onMount } from 'svelte';
-	import { slide } from 'svelte/transition';
+	import { fly, slide } from 'svelte/transition';
 	import windowHandler from '../UX/window-state';
 	import Button from './Button.svelte';
 
@@ -23,6 +23,8 @@
 	let thisWindowObject;
 
 	let triggerIntroAnimation = false;
+
+	let subpageActive = false;
 
 	windowHandler.registerWindow({
 		id: id,
@@ -66,55 +68,57 @@
 	});
 </script>
 
-<div class="parallax-wrapper {parallax}">
-	<div
-		style="width: {width}px; height: {height}px; --baseShuffleDistance: {isMinimized |
-		intersectionIsMinimized
-			? 0
-			: distanceFromIntersection.base}; --largeShuffleDistance: {isMinimized |
-		intersectionIsMinimized
-			? 0
-			: distanceFromIntersection.large};"
-		class:trigger-forward-shuffle={!isInForeground && touched}
-		class:minimized-notransition={isMinimized | intersectionIsMinimized}
-	>
-		<section
-			style="--windowWidth: {width}; --windowHeight: {height}; --order: {id / 10};"
-			on:click={handleWindowClick}
-			class:blur-intro={triggerIntroAnimation}
+{#if !subpageActive}
+	<div out:fly|local={{ y: 600, duration: 600, opacity: 1 }} class="parallax-wrapper {parallax}">
+		<div
+			style="width: {width}px; height: {height}px; --baseShuffleDistance: {isMinimized |
+			intersectionIsMinimized
+				? 0
+				: distanceFromIntersection.base}; --largeShuffleDistance: {isMinimized |
+			intersectionIsMinimized
+				? 0
+				: distanceFromIntersection.large};"
+			class:trigger-forward-shuffle={!isInForeground && touched}
+			class:minimized-notransition={isMinimized | intersectionIsMinimized}
 		>
-			<header>
-				<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
-				{#if title}
-					<h1>{title}</h1>
-				{:else}
-					<h1>Title</h1>
-				{/if}
-				{#if enlargeable}
-					<Button buttonType="subpage" {href} />
-				{:else}
-					<Button buttonType="hidden" />
-				{/if}
-			</header>
-			{#if !isMinimized}
-				<div
-					transition:slide
-					class:no-events={!isInForeground}
-					class="content-wrapper"
-					style="height: {height - 36}px; background: {background}; background-size: cover;"
-				>
-					{#if enlargeable}
-						<a {href}>
-							<slot><p>Content goes here</p></slot>
-						</a>
+			<section
+				style="--windowWidth: {width}; --windowHeight: {height}; --order: {id / 10};"
+				on:click={handleWindowClick}
+				class:blur-intro={triggerIntroAnimation}
+			>
+				<header>
+					<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
+					{#if title}
+						<h1>{title}</h1>
 					{:else}
-						<slot><p>Content goes here</p></slot>
+						<h1>Title</h1>
 					{/if}
-				</div>
-			{/if}
-		</section>
+					{#if enlargeable}
+						<Button on:close={() => (subpageActive = true)} buttonType="subpage" {href} />
+					{:else}
+						<Button buttonType="hidden" />
+					{/if}
+				</header>
+				{#if !isMinimized}
+					<div
+						transition:slide|local
+						class:no-events={!isInForeground}
+						class="content-wrapper"
+						style="height: {height - 36}px; background: {background}; background-size: cover;"
+					>
+						{#if enlargeable}
+							<a {href}>
+								<slot><p>Content goes here</p></slot>
+							</a>
+						{:else}
+							<slot><p>Content goes here</p></slot>
+						{/if}
+					</div>
+				{/if}
+			</section>
+		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 	.parallax-wrapper {

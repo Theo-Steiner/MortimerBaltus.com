@@ -2,6 +2,8 @@
 	import { slide } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
+	export let inDelay = 400;
+	export let outDelay = 0;
 	export let reverse = null;
 
 	onMount(() => {
@@ -15,6 +17,6 @@
 	});
 </script>
 
-<div transition:slide>
+<div in:slide={{ delay: inDelay }} out:slide={{ delay: outDelay }}>
 	<slot />
 </div>

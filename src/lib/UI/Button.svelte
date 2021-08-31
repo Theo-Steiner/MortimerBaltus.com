@@ -8,7 +8,13 @@
 </script>
 
 {#if buttonType === 'subpage'}
-	<a aria-label="Go to the subpage for this window" sveltekit:prefetch class={buttonType} {href}>
+	<a
+		aria-label="Go to the subpage for this window"
+		on:click={() => dispatch('close')}
+		sveltekit:prefetch
+		class={buttonType}
+		{href}
+	>
 		<svg aria-hidden="true" version="1.1" viewBox="0 0 54 15" xmlns="http://www.w3.org/2000/svg">
 			<g fill="none" fill-rule="evenodd">
 				<rect
