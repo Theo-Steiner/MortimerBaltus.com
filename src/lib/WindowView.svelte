@@ -13,12 +13,6 @@
 	import ProjectSoe from './Windows/ProjectSoe.svelte';
 	import Language from './Windows/LanguageWindow.svelte';
 	import Contact from './Windows/ContactWindow.svelte';
-	import { onMount } from 'svelte';
-	import { prefetchRoutes } from '$app/navigation';
-
-	onMount(() => {
-		prefetchRoutes();
-	});
 </script>
 
 <ProjectCorazon />

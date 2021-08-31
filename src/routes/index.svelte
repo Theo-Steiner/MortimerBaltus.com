@@ -1,12 +1,11 @@
 <script>
 	import ScrollHandler from '$lib/UX/ScrollHandler.svelte';
 	import PageTransition from '$lib/UX/PageTransition.svelte';
+	import WindowView from '$lib/WindowView.svelte';
 
 	let innerHeight;
 	let scroll_element;
 	$: isDomInitialized = innerHeight && scroll_element;
-
-	const windowComponents = import('$lib/WindowView.svelte');
 </script>
 
 <svelte:head>
@@ -114,9 +113,7 @@
 			</div>
 			<div class="scroller" bind:this={scroll_element}>
 				<div class="grid-box">
-					{#await windowComponents then { default: WindowView }}
-						<WindowView />
-					{/await}
+					<WindowView />
 					{#if isDomInitialized}
 						<ScrollHandler {scroll_element} />
 					{/if}
