@@ -55,7 +55,7 @@
 		startTimer(lastCall);
 	}
 
-	$: if (!pause && lastCall) {
+	$: if (!isPaused && lastCall) {
 		restart();
 	}
 </script>
