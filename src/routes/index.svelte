@@ -5,12 +5,10 @@
 	import { onMount } from 'svelte';
 	import { prefetchRoutes } from '$app/navigation';
 
-	let triggerIntroAnimation = false;
 	let innerHeight;
 	let scroll_element;
 	$: isDomInitialized = innerHeight && scroll_element;
 	onMount(() => {
-		triggerIntroAnimation = true;
 		prefetchRoutes();
 	});
 </script>
@@ -30,12 +28,7 @@
 				<svg width="462" height="50" viewBox="0 0 462 50" xmlns="http://www.w3.org/2000/svg">
 					<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 						<path fill="none" d="M0 0h768v300H0z" />
-						<g
-							id="Mortimer"
-							style="--animation-order: 0;"
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-						>
+						<g id="Mortimer" style="--animation-order: 0;" class="mask intro-animation">
 							<path
 								id="Path"
 								fill="#FEFEFE"
@@ -62,12 +55,7 @@
 								fill="#FEFEFE"
 							/>
 						</g>
-						<g
-							id="Baltus"
-							style="--animation-order: 1;"
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-						>
+						<g id="Baltus" style="--animation-order: 1;" class="mask intro-animation">
 							<g transform="translate(278.3)">
 								<path
 									d="M0 0h22.88667C30.515 0 38.49 4.43833 38.49 12.82833c0 5.20167-2.98333 8.73834-7.62833 10.75 5.895 1.45667 9.36166 5.68834 9.36166 11.79 0 8.6-8.25166 13.17667-15.95 13.17667H0V0z"
@@ -106,85 +94,25 @@
 				</noscript>
 				<div class="masking">
 					<h2 lang="en">
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 2;">CREATIVE</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 2.2;">SERVICES</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 2.4;">&</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 2.6;">DIGITAL</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 2.8;">DEVELOPMENT</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 3;">&copy;2021</span
-						>
+						<span class="mask intro-animation" style="--animation-order: 2;">CREATIVE</span>
+						<span class="mask intro-animation" style="--animation-order: 2.2;">SERVICES</span>
+						<span class="mask intro-animation" style="--animation-order: 2.4;">&</span>
+						<span class="mask intro-animation" style="--animation-order: 2.6;">DIGITAL</span>
+						<span class="mask intro-animation" style="--animation-order: 2.8;">DEVELOPMENT</span>
+						<span class="mask intro-animation" style="--animation-order: 3;">&copy;2021</span>
 					</h2>
 				</div>
 				<div class="masking">
 					<h2 lang="en">
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 3.2;">c/o</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 3.4;">MORITZ</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 3.6;">MORTIMER</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 3.8;">MÜLLER</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 4;">(DE),</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 4.2;">THEODOR</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 4.4;">BALTUS</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 4.6;">STEINER</span
-						>
-						<span
-							class="mask"
-							class:intro-animation={triggerIntroAnimation}
-							style="--animation-order: 4.8;">(JP)</span
-						>
+						<span class="mask intro-animation" style="--animation-order: 3.2;">c/o</span>
+						<span class="mask intro-animation" style="--animation-order: 3.4;">MORITZ</span>
+						<span class="mask intro-animation" style="--animation-order: 3.6;">MORTIMER</span>
+						<span class="mask intro-animation" style="--animation-order: 3.8;">MÜLLER</span>
+						<span class="mask intro-animation" style="--animation-order: 4;">(DE),</span>
+						<span class="mask intro-animation" style="--animation-order: 4.2;">THEODOR</span>
+						<span class="mask intro-animation" style="--animation-order: 4.4;">BALTUS</span>
+						<span class="mask intro-animation" style="--animation-order: 4.6;">STEINER</span>
+						<span class="mask intro-animation" style="--animation-order: 4.8;">(JP)</span>
 					</h2>
 				</div>
 			</div>
@@ -261,16 +189,16 @@
 	}
 
 	.masking {
-		height: calc(13px * 1.6);
+		height: calc(min(1.88vw, 13px) * 1.6);
 		overflow: hidden;
 	}
 
 	.mortimer-baltus h2 {
 		text-align: center;
 		color: white;
-		font-size: 13px;
+		font-size: min(1.88vw, 13px);
 		line-height: 1.6;
-		letter-spacing: 0.8;
+		letter-spacing: 0.8%;
 		padding: 0;
 	}
 
@@ -280,8 +208,10 @@
 
 	.mortimer-baltus svg {
 		margin-top: 43vh;
-		margin-bottom: 3.2vh;
-		width: 68vw;
+		/* margin-bottom: 3.2vh; */
+		margin-bottom: min(4.2vw, 29px);
+		max-width: 552px;
+		width: 80vw;
 		height: auto;
 	}
 
@@ -301,14 +231,6 @@
 
 	.grid-box {
 		transform-style: preserve-3d;
-	}
-
-	@media only screen and (min-width: 1020px) {
-		.mortimer-baltus svg {
-			margin-top: 43vh;
-			margin-bottom: 2.5vh;
-			width: 40vw;
-		}
 	}
 
 	@media only screen and (min-width: 1440px) {
