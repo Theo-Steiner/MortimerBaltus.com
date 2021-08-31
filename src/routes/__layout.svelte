@@ -4,6 +4,6 @@
 	import '../app.css';
 </script>
 
-<PageTransition reverse inDelay={400} outDelay={400}>
+<PageTransition inDelay={400} outDelay={600}>
 	<slot />
 </PageTransition>
