@@ -19,8 +19,13 @@
 			if (history.scrollRestoration) {
 				window.history.scrollRestoration = 'manual';
 			}
-			scroll_element.scrollTop = getScrollTo(vh(100));
-			scroll_element.scrollLeft = getScrollTo(vw(100));
+			if (window.matchMedia('(orientation: portrait)')) {
+				scroll_element.scrollTop = getScrollTo(vh(130));
+				scroll_element.scrollLeft = getScrollTo(vw(70));
+			} else {
+				scroll_element.scrollTop = getScrollTo(vh(100));
+				scroll_element.scrollLeft = getScrollTo(vw(100));
+			}
 		} else {
 			scroll_element.scrollTop = $navState[1];
 			scroll_element.scrollLeft = $navState[0];
