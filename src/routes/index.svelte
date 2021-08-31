@@ -1,13 +1,15 @@
 <script>
 	import ScrollHandler from '$lib/UX/ScrollHandler.svelte';
-	import WindowView from '$lib/WindowView.svelte';
 	import PageTransition from '$lib/UX/PageTransition.svelte';
 	import { onMount } from 'svelte';
 	import { prefetchRoutes } from '$app/navigation';
+	import WindowView from '$lib/WindowView.svelte';
 
 	let innerHeight;
 	let scroll_element;
 	$: isDomInitialized = innerHeight && scroll_element;
+
+	const windowComponents = import('$lib/WindowView.svelte');
 	onMount(() => {
 		prefetchRoutes();
 	});
@@ -118,7 +120,9 @@
 			</div>
 			<div class="scroller" bind:this={scroll_element}>
 				<div class="grid-box">
-					<WindowView />
+					{#await windowComponents then { default: WindowView }}
+						<WindowView />
+					{/await}
 					{#if isDomInitialized}
 						<ScrollHandler {scroll_element} />
 					{/if}
@@ -197,6 +201,7 @@
 		text-align: center;
 		color: white;
 		font-size: min(1.88vw, 13px);
+		user-select: none;
 		line-height: 1.35;
 		letter-spacing: 0.8%;
 		padding: 0;
