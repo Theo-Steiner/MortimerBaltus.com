@@ -1,22 +1,14 @@
 <script>
 	import { slide } from 'svelte/transition';
-	import { onMount } from 'svelte';
 
-	export let inDelay = 400;
+	export let inDelay = 600;
 	export let outDelay = 0;
-	export let reverse = null;
-
-	onMount(() => {
-		if (reverse) {
-			document.body.style.display = 'flex';
-			document.body.style.flexDirection = 'column-reverse';
-		} else {
-			document.body.style.display = 'flex';
-			document.body.style.flexDirection = 'column';
-		}
-	});
+	import { quartInOut } from 'svelte/easing';
 </script>
 
-<div in:slide={{ delay: inDelay }} out:slide={{ delay: outDelay }}>
+<div
+	in:slide={{ delay: inDelay, easing: quartInOut }}
+	out:slide={{ delay: outDelay, easing: quartInOut }}
+>
 	<slot />
 </div>
