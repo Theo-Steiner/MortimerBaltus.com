@@ -127,7 +127,6 @@
 			event.stopPropagation();
 			let reducedDeltaY = Math.round(event.deltaY / 2);
 			let reducedDeltaX = Math.round(event.deltaX / 2);
-			console.log('still active');
 			scroll_element.scrollLeft = scroll_element.scrollLeft + reducedDeltaX;
 			scroll_element.scrollTop = scroll_element.scrollTop + reducedDeltaY;
 		}

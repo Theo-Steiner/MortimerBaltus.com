@@ -1,11 +1,16 @@
 <script>
 	import ScrollHandler from '$lib/UX/ScrollHandler.svelte';
-	import PageTransition from '$lib/UX/PageTransition.svelte';
 	import WindowView from '$lib/WindowView.svelte';
+	import { prefetchRoutes } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import { browser } from '$app/env';
 
 	let innerHeight;
 	let scroll_element;
 	$: isDomInitialized = innerHeight && scroll_element;
+	if (browser) {
+		window.onload = () => prefetchRoutes();
+	}
 </script>
 
 <svelte:head>
