@@ -2,7 +2,7 @@
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
 	let slug = 'https://res.cloudinary.com/thdrstnr/image/upload';
 	let videoSlug =
-		'https://res.cloudinary.com/thdrstnr/video/upload/v1625117503/MortimerBaltus/Soe/Soe_02_ai4z59';
+		'https://res.cloudinary.com/thdrstnr/video/upload/q_auto:best/v1625117503/MortimerBaltus/Soe/Soe_02_ai4z59';
 </script>
 
 <svelte:head>
