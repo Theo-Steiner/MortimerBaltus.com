@@ -2,7 +2,6 @@
 	import ScrollHandler from '$lib/UX/ScrollHandler.svelte';
 	import WindowView from '$lib/WindowView.svelte';
 	import { prefetchRoutes } from '$app/navigation';
-	import { onMount } from 'svelte';
 	import { browser } from '$app/env';
 
 	let innerHeight;
