@@ -1,4 +1,5 @@
 <script>
+	import PrivacyUI from '$lib/UI/WindowUI/PrivacyUI.svelte';
 	import WindowElement from '../UI/WindowElement.svelte';
 </script>
 
@@ -13,10 +14,7 @@
 		id={5}
 		isInForeground={true}
 	>
-		<p>
-			Eager to find out how browser-data is handled on our Website? <br />
-			<br /> Surely this is just your cup of tea...
-		</p>
+		<PrivacyUI />
 	</WindowElement>
 </div>
 
@@ -27,13 +25,6 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	p {
-		color: #151515;
-		font-size: 24px;
-		margin: 0px;
-		padding: 10px;
 	}
 
 	@media only screen and (min-width: 1440px) {

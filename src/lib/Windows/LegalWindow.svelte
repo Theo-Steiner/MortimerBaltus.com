@@ -1,4 +1,5 @@
 <script>
+	import LegalUI from '$lib/UI/WindowUI/LegalUI.svelte';
 	import WindowElement from '../UI/WindowElement.svelte';
 </script>
 
@@ -13,9 +14,7 @@
 		id={7}
 		isInForeground={true}
 	>
-		<p>
-			You like boring legal texts and bureaucracy? <br /><br /> We've got you covered!
-		</p>
+		<LegalUI />
 	</WindowElement>
 </div>
 
@@ -26,16 +25,6 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	p {
-		display: block;
-		height: 133px;
-		width: 266px;
-		color: #fefefe;
-		font-size: 21px;
-		margin: 0px;
-		padding: 14px 8px 14px 8px;
 	}
 	@media only screen and (min-width: 1440px) {
 		div {

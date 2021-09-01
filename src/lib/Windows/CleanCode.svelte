@@ -1,5 +1,5 @@
 <script>
-	import CleanCodeUI from '$lib/UI/CleanCodeUI.svelte';
+	import CleanCodeUI from '../UI/WindowUI/CleanCodeUI.svelte';
 	import WindowElement from '../UI/WindowElement.svelte';
 </script>
 
