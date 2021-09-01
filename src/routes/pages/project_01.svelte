@@ -60,6 +60,7 @@
 		<ResponsiveImage
 			imageWidth="1080"
 			imageHeight="1350"
+			aspectRatio="16 / 19"
 			imageID="ConCorazon/con_corazon_ear_dekidu"
 			displayWidth="50vw"
 			alt="Golden earrings with a blue gem"
@@ -67,6 +68,7 @@
 		<ResponsiveImage
 			imageWidth="2000"
 			imageHeight="2000"
+			aspectRatio="16 / 19"
 			imageID="ConCorazon/con_corazon_iPhone_01_zz1cvk"
 			displayWidth="50vw"
 			alt="Design for an eCommerce shopping app"
@@ -96,6 +98,7 @@
 			imageWidth="2000"
 			imageHeight="2000"
 			imageID="ConCorazon/con_corazon_iPhone_02_w0mhgy"
+			aspectRatio="16 / 19"
 			displayWidth="50vw"
 			alt="The shop application designed for Con Corazón"
 		/>
@@ -103,6 +106,7 @@
 			imageWidth="1080"
 			imageHeight="1350"
 			imageID="ConCorazon/con-corazon_craftsman_m0ssbe"
+			aspectRatio="16 / 19"
 			displayWidth="50vw"
 			alt="A craftsman focused on his pottery work"
 		/>
