@@ -55,14 +55,9 @@
 </div>
 
 <style>
-	:global(.project_04-subpage-color) {
-		background-color: #dadcd3;
-	}
-
 	.container {
 		background: #dadcd3;
 		min-height: calc(100vh - 331px);
-		margin-top: -33px;
 	}
 
 	.logo-container {

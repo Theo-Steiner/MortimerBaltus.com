@@ -63,10 +63,6 @@
 </div>
 
 <style>
-	:global(.project_03-subpage-color) {
-		background-color: #151515;
-	}
-
 	a {
 		display: inline-block;
 		margin: 10px 30px 30px;
@@ -81,7 +77,6 @@
 	.container {
 		background: #151515;
 		min-height: calc(100vh - 331px);
-		margin-top: -33px;
 	}
 
 	p {

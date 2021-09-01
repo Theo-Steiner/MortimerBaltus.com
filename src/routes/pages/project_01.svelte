@@ -110,14 +110,9 @@
 </div>
 
 <style>
-	:global(.project_01-subpage-color) {
-		background-color: #e8f2ea;
-	}
-
 	.container {
 		background: #e8f2ea;
 		min-height: calc(100vh - 331px);
-		margin-top: -33px;
 	}
 
 	.vk-image {

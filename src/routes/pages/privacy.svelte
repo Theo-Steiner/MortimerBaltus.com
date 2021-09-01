@@ -207,10 +207,6 @@
 </div>
 
 <style>
-	:global(.privacy-subpage-color) {
-		background-image: linear-gradient(#fec7a3, #151515);
-	}
-
 	.container {
 		background: #fec7a3;
 		min-height: calc(100vh - 331px);

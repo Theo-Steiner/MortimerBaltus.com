@@ -60,14 +60,9 @@
 </div>
 
 <style>
-	:global(.project_02-subpage-color) {
-		background-color: #faf7f2;
-	}
-
 	.container {
 		background: #faf7f2;
 		min-height: calc(100vh - 331px);
-		margin-top: -33px;
 	}
 
 	a {

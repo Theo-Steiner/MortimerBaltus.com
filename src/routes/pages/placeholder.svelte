@@ -3,9 +3,6 @@
 </div>
 
 <style>
-	:global(.placeholder-subpage-color) {
-		background-image: linear-gradient(#e8f2ea, #151515);
-	}
 	div {
 		background-color: #e8f2ea;
 		height: 50vh;

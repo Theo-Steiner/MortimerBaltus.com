@@ -1,11 +1,12 @@
 <script>
 	import Button from './Button.svelte';
+	import { fly } from 'svelte/transition';
 
 	export let title = 'TITLE';
 	export let backLink = '/';
 </script>
 
-<nav>
+<nav in:fly={{ y: -300, delay: 600 }}>
 	<Button buttonType="previous" href={backLink} on:click />
 	<h1>{title}</h1>
 	<Button buttonType="next" />
@@ -14,7 +15,7 @@
 <style>
 	nav {
 		transform: translateZ(999px);
-		position: sticky;
+		position: fixed;
 		z-index: 9999;
 		top: 15px;
 		margin: 0 10px 0 10px;

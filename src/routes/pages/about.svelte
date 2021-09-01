@@ -85,10 +85,6 @@
 </div>
 
 <style>
-	:global(.about-subpage-color) {
-		background-image: linear-gradient(#a25c24, #151515);
-	}
-
 	.container {
 		background-color: #a25c24;
 	}
@@ -116,7 +112,7 @@
 	}
 
 	.first-paragraph {
-		padding: 20px 0 20px 0;
+		padding-top: 58px;
 	}
 
 	p {
@@ -140,10 +136,6 @@
 	}
 
 	@media only screen and (min-device-width: 768px) {
-		.first-paragraph {
-			padding: 30px 0 30px 0;
-		}
-
 		p {
 			letter-spacing: -0.55px;
 			padding: 15px 20px 0px 20px;

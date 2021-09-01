@@ -89,10 +89,6 @@ describes the terms on the basis of which you may make use of our website (“Te
 </div>
 
 <style>
-	:global(.legal-subpage-color) {
-		background-image: linear-gradient(#1c6370, #151515);
-	}
-
 	.container {
 		background: #1c6370;
 		min-height: calc(100vh - 331px);
