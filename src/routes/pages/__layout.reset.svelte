@@ -2,19 +2,15 @@
 	import '../../app.css';
 	import Navigation from '$lib/UI/Navigation.svelte';
 	import Footer from '$lib/UI/Footer.svelte';
-	import { page } from '$app/stores';
-	import { browser } from '$app/env';
+	import { navigating, page } from '$app/stores';
+	import navState from '$lib/UX/nav-state';
 
 	let title = 'title';
 	let formattedTitle = 'Title';
-	let backLink = '/';
 	$: {
 		title = $page.path.split('/')[2];
 		if (title) {
 			formattedTitle = formatTitle(title);
-		}
-		if (browser) {
-			backLink = document.referrer;
 		}
 	}
 
@@ -28,14 +24,45 @@
 		}
 	}
 
-	function updateBrowserHistory(_) {
-		history.back();
-		return false;
+	const informationPages = ['/pages/privacy', '/pages/legal', '/pages/about'];
+	const galleryPages = [];
+	const projectPages = [
+		'/pages/project_01',
+		'/pages/project_02',
+		'/pages/project_03',
+		'/pages/project_04'
+	];
+
+	function nextIndexFromRoute(routeGroup, currentRoute) {
+		const currentIndex = routeGroup.findIndex((el) => el === currentRoute);
+		const nextIndex = (currentIndex + 1) % routeGroup.length;
+		return routeGroup[nextIndex];
 	}
+
+	function getNextSubpage(currentRoute) {
+		if (projectPages.includes(currentRoute)) {
+			return nextIndexFromRoute(projectPages, currentRoute);
+		} else if (galleryPages.includes(currentRoute)) {
+		} else if (informationPages.includes(currentRoute)) {
+			return nextIndexFromRoute(informationPages, currentRoute);
+		} else {
+			return '/';
+		}
+	}
+
+	function reportNavigation(route) {
+		if (route !== undefined) {
+			navState.setFrom(route);
+		}
+	}
+
+	$: reportNavigation($navigating?.from?.path);
+
+	$: nextLink = getNextSubpage($page.path);
 </script>
 
 <main>
-	<Navigation title={formattedTitle} {backLink} on:click={updateBrowserHistory} />
+	<Navigation fromRoute={$navState.from} title={formattedTitle} {nextLink} />
 	<slot />
 	<Footer />
 </main>
