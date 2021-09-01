@@ -1,21 +1,49 @@
 <script>
+	import { createEventDispatcher } from 'svelte';
+
 	import Button from './Button.svelte';
 
 	export let height;
 	export let width;
 	export let background = '';
 	export let title;
+	export let href = '';
+
+	const dispatch = createEventDispatcher();
+	function clickOutside(node) {
+		const handleClick = (event) => {
+			if (node && !node.contains(event.target) && !event.defaultPrevented) {
+				node.dispatchEvent(new CustomEvent('click-outside', node));
+			}
+		};
+
+		document.addEventListener('click', handleClick, true);
+
+		return {
+			destroy() {
+				document.removeEventListener('click', handleClick, true);
+			}
+		};
+	}
 </script>
 
-<section style="width: {width}px; height: {height}px;">
+<section
+	use:clickOutside
+	on:click-outside={() => dispatch('toggle-minimize')}
+	style="width: {width}px; height: {height}px;"
+>
 	<header>
-		<Button buttonType="minimize" on:toggleMinimize />
+		<Button buttonType="minimize" on:toggle-minimize />
 		{#if title}
 			<h1>{title}</h1>
 		{:else}
 			<h1>Title</h1>
 		{/if}
-		<Button buttonType="hidden" />
+		{#if href}
+			<Button buttonType="subpage" {href} />
+		{:else}
+			<Button buttonType="hidden" />
+		{/if}
 	</header>
 	<div class="content-wrapper" style="background: {background}; background-size: cover;">
 		<slot><p>Content goes here</p></slot>
