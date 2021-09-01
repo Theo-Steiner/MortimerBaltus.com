@@ -3,16 +3,33 @@
 	import { fly } from 'svelte/transition';
 
 	export let title = 'TITLE';
-	export let backLink = '/';
+	export let nextLink = '/';
+	export let fromRoute;
+
+	function goBack(_) {
+		history.back();
+		return false;
+	}
 </script>
 
 <nav in:fly={{ y: -300, delay: 600 }}>
-	<Button buttonType="previous" href={backLink} on:click />
+	<div>
+		{#if fromRoute !== '/'}
+			<Button buttonType="home" />
+		{/if}
+		<Button buttonType="previous" on:history-back={goBack} />
+	</div>
 	<h1>{title}</h1>
-	<Button buttonType="next" />
+	<Button buttonType="next" href={nextLink} />
 </nav>
 
 <style>
+	div {
+		display: flex;
+	}
+	p {
+		color: white;
+	}
 	nav {
 		transform: translateZ(999px);
 		position: fixed;

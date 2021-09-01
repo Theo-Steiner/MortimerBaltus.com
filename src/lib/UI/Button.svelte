@@ -1,5 +1,6 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
+	import { horizontalSlide } from '$lib/UX/css_utils';
 
 	export let buttonType;
 	export let href = null;
@@ -85,7 +86,13 @@
 		</svg>
 	</a>
 {:else if buttonType === 'previous'}
-	<a aria-label="Go home, or to the previous subpage!" class={buttonType} {href} on:click>
+	<button
+		aria-label="Go the previous page!"
+		on:click={() => dispatch('history-back')}
+		class={buttonType}
+		{href}
+		on:click
+	>
 		<svg
 			aria-hidden="true"
 			width="54"
@@ -108,6 +115,19 @@
 				<rect x="22" y="7" width="20" height="1" fill="#FEFEFE" />
 				<polygon points="12 7 22 7 22 10" fill="#FEFEFE" />
 			</g>
+		</svg>
+	</button>
+{:else if buttonType === 'home'}
+	<a in:horizontalSlide aria-label="Go home!" class={buttonType} href="/">
+		<svg
+			aria-hidden="true"
+			width="18"
+			height="14"
+			viewBox="0 0 18 14"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<path d="M15 7V14H11V10H7V14H3V7H0L9 0L18 7H15Z" fill="#FEFEFE" />
 		</svg>
 	</a>
 {:else}
@@ -145,12 +165,38 @@
 	}
 
 	svg rect,
-	svg polygon {
+	svg polygon,
+	svg path {
 		transition: 300ms ease-in-out;
 	}
 
 	svg:hover #box {
 		fill: #fefefe;
+	}
+
+	.home {
+		width: 32px;
+		height: 31px;
+		border-radius: 4px;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+		border-right: #fefefe solid 1px;
+		margin: 0px;
+		transition: background-color 300ms ease-in-out;
+	}
+
+	.home svg {
+		width: 18px;
+		height: 14px;
+		margin: 9px 6px 10px 8px;
+	}
+
+	.home:hover {
+		background-color: #fefefe;
+	}
+
+	.home:hover svg path {
+		fill: #151515;
 	}
 
 	.minimize:hover #upper {

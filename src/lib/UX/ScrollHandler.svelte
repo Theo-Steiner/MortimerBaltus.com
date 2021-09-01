@@ -17,7 +17,7 @@
 		window.addEventListener('wheel', wheelHandler, { passive: false });
 		navStart = false;
 
-		if (!$navState) {
+		if (!$navState.location) {
 			if (history.scrollRestoration) {
 				window.history.scrollRestoration = 'manual';
 			}
@@ -29,8 +29,8 @@
 				scroll_element.scrollLeft = getScrollTo(vw(100));
 			}
 		} else {
-			scroll_element.scrollTop = $navState[1];
-			scroll_element.scrollLeft = $navState[0];
+			scroll_element.scrollTop = $navState.location[1];
+			scroll_element.scrollLeft = $navState.location[0];
 		}
 
 		if ('maxTouchPoints' in navigator) {
