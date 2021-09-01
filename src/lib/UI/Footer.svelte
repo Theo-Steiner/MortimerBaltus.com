@@ -2,62 +2,70 @@
 	import { slide } from 'svelte/transition';
 	import FooterContactWindow from '$lib/Windows/FooterWindows/FooterContactWindow.svelte';
 	import FooterLanguageWindow from '$lib/Windows/FooterWindows/FooterLanguageWindow.svelte';
+	import FooterPrivacyWindow from '$lib/Windows/FooterWindows/FooterPrivacyWindow.svelte';
+	import FooterLegalWindow from '$lib/Windows/FooterWindows/FooterLegalWindow.svelte';
 
 	let display = 'overview';
-	let nav;
 
-	function toggleContactWindow() {
-		display = display === 'contact' ? 'overview' : 'contact';
-	}
-
-	function toggleLanguageWindow() {
-		display = display === 'language' ? 'overview' : 'language';
+	function toggleWindow(name) {
+		display = display === name ? 'overview' : name;
 	}
 </script>
 
 <footer>
 	{#if display === 'contact'}
 		<div class="overlay" transition:slide>
-			<FooterContactWindow on:toggleMinimize={toggleContactWindow} />
+			<FooterContactWindow on:toggle-minimize={() => toggleWindow('contact')} />
 		</div>
 	{:else if display === 'language'}
 		<div style="transform: translateZ(0px) scale(1);" class="overlay" transition:slide>
-			<FooterLanguageWindow on:toggleMinimize={toggleLanguageWindow} />
+			<FooterLanguageWindow on:toggle-minimize={() => toggleWindow('language')} />
+		</div>
+	{:else if display === 'legal'}
+		<div class="overlay" transition:slide>
+			<FooterLegalWindow on:toggle-minimize={() => toggleWindow('legal')} />
+		</div>
+	{:else if display === 'privacy'}
+		<div class="overlay" transition:slide>
+			<FooterPrivacyWindow on:toggle-minimize={() => toggleWindow('privacy')} />
 		</div>
 	{/if}
 
-	<nav class="marquee">
+	<nav
+		style="--marquee-play-state: {display === 'overview' ? 'running' : 'paused'};"
+		class="marquee"
+	>
 		<div class="marquee-inner">
 			<span>
-				<button on:click={toggleContactWindow}>GET IN TOUCH</button>
-				<button on:click={toggleLanguageWindow}>LANGUAGE</button>
+				<button on:click={() => toggleWindow('contact')}>GET IN TOUCH</button>
+				<button on:click={() => toggleWindow('language')}>LANGUAGE</button>
 				<a href="/">INSTAGRAM</a>
-				<a href="/pages/privacy">PRIVACY POLICY</a>
-				<a href="/pages/legal">LEGAL NOTICE</a>
+				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
+				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
 				<a href="/">SITEMAP</a>
 			</span>
 			<span>
-				<button on:click={toggleContactWindow}>GET IN TOUCH</button>
-				<button on:click={toggleLanguageWindow}>LANGUAGE</button>
+				<button on:click={() => toggleWindow('contact')}>GET IN TOUCH</button>
+				<button on:click={() => toggleWindow('language')}>LANGUAGE</button>
 				<a href="/">INSTAGRAM</a>
-				<a href="/pages/privacy">PRIVACY POLICY</a>
-				<a href="/pages/legal">LEGAL NOTICE</a>
+				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
+				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
 				<a href="/">SITEMAP</a>
 			</span>
 			<span>
-				<button on:click={toggleContactWindow}>GET IN TOUCH</button>
-				<button on:click={toggleLanguageWindow}>LANGUAGE</button>
+				<button on:click={() => toggleWindow('contact')}>GET IN TOUCH</button>
+				<button on:click={() => toggleWindow('language')}>LANGUAGE</button>
 				<a href="/">INSTAGRAM</a>
-				<a href="/pages/privacy">PRIVACY POLICY</a>
-				<a href="/pages/legal">LEGAL NOTICE</a>
+				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
+				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
 				<a href="/">SITEMAP</a>
 			</span>
 			<span>
-				<button on:click={toggleContactWindow}>GET IN TOUCH</button>
-				<button on:click={toggleLanguageWindow}>LANGUAGE</button>
+				<button on:click={() => toggleWindow('contact')}>GET IN TOUCH</button>
+				<button on:click={() => toggleWindow('language')}>LANGUAGE</button>
 				<a href="/">INSTAGRAM</a>
-				<a href="/pages/privacy">PRIVACY POLICY</a>
-				<a href="/pages/legal">LEGAL NOTICE</a>
+				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
+				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
 				<a href="/">SITEMAP</a>
 			</span>
 		</div>
@@ -177,8 +185,8 @@
 		display: flex;
 		position: relative;
 		transform: translate3d(var(--move-initial), 0, 0);
-		animation: marquee 15s linear infinite;
-		animation-play-state: running;
+		animation: marquee 25s linear infinite;
+		animation-play-state: var(--marquee-play-state);
 	}
 
 	.marquee span {
