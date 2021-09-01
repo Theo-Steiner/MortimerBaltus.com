@@ -10,7 +10,7 @@
 {#if buttonType === 'subpage'}
 	<a
 		aria-label="Go to the subpage for this window"
-		on:click={() => dispatch('close')}
+		on:click={() => dispatch('enlarge')}
 		sveltekit:prefetch
 		class={buttonType}
 		{href}

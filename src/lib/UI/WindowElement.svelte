@@ -97,7 +97,7 @@
 					<h1>Title</h1>
 				{/if}
 				{#if enlargeable}
-					<Button on:close={() => (subpageActive = true)} buttonType="subpage" {href} />
+					<Button on:enlarge={() => (subpageActive = true)} buttonType="subpage" {href} />
 				{:else}
 					<Button buttonType="hidden" />
 				{/if}
@@ -110,7 +110,7 @@
 					style="height: {height - 36}px; background: {background}; background-size: cover;"
 				>
 					{#if enlargeable}
-						<a {href}>
+						<a on:click={() => (subpageActive = true)} {href}>
 							<slot><p>Content goes here</p></slot>
 						</a>
 					{:else}
@@ -265,7 +265,7 @@
 
 	.fly-out {
 		animation: var(--fly-animation) 800ms forwards;
-		animation-timing-function: cubic-bezier(0.5, 0, 0.75, 0);
+		animation-timing-function: cubic-bezier(0.7, 0, 0.84, 0);
 	}
 
 	@keyframes -global-fly-very-slow {
