@@ -8,7 +8,7 @@
 	export let scroll_element;
 	let navStart = false;
 
-	$: if ($navigating) {
+	$: if ($navigating?.from?.path == '/') {
 		navState.reportNavigation(scroll_element.scrollLeft, scroll_element.scrollTop);
 		navStart = true;
 	}
