@@ -1,3 +1,5 @@
+import { cubicOut } from 'svelte/easing';
+
 export function vh(v) {
 	var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 	return (v * h) / 100;
@@ -24,4 +26,35 @@ export function getScrollTo(screen) {
 	} else {
 		return 0;
 	}
+}
+
+export function horizontalSlide(
+	node,
+	{ delay = 0, duration = 400, easing = cubicOut, inverse = 1 }
+) {
+	const style = getComputedStyle(node);
+	const opacity = +style.opacity;
+	const width = parseFloat(style.width);
+	const paddingLeft = parseFloat(style.paddingLeft);
+	const paddingRight = parseFloat(style.paddingRight);
+	const marginLeft = parseFloat(style.marginLeft);
+	const marginRight = parseFloat(style.marginRight);
+	const borderLeftWidth = parseFloat(style.borderLeftWidth);
+	const borderRightWidth = parseFloat(style.borderRightWidth);
+
+	return {
+		delay,
+		duration,
+		easing,
+		css: (t) =>
+			`overflow: hidden;` +
+			`opacity: ${Math.min(t * 20, 1) * opacity};` +
+			`width: ${t * width}px;` +
+			`padding-left: ${t * paddingLeft}px;` +
+			`padding-right: ${t * paddingRight}px;` +
+			`margin-left: ${t * marginLeft}px;` +
+			`margin-right: ${t * marginRight}px;` +
+			`border-left-width: ${t * borderLeftWidth}px;` +
+			`border-right-width: ${t * borderRightWidth}px;`
+	};
 }
