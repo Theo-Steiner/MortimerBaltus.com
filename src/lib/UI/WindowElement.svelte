@@ -90,7 +90,7 @@
 			class:blur-intro={triggerIntroAnimation}
 		>
 			<header>
-				<Button buttonType="minimize" on:toggleMinimize={toggleMinimize} />
+				<Button buttonType="minimize" on:toggle-minimize={toggleMinimize} />
 				{#if title}
 					<h1>{title}</h1>
 				{:else}

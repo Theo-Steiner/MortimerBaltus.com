@@ -1,6 +1,6 @@
 <script>
 	import FooterWindowElement from '../../UI/FooterWindowElement.svelte';
-	import LanguageUI from '../../UI/Language/LanguageUI.svelte';
+	import LanguageUI from '../../UI/WindowUI/Language/LanguageUI.svelte';
 </script>
 
 <FooterWindowElement
@@ -8,7 +8,7 @@
 	height={273}
 	background="C96161"
 	title="LANGUAGE"
-	on:toggleMinimize
+	on:toggle-minimize
 >
 	<LanguageUI />
 </FooterWindowElement>

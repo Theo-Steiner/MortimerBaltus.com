@@ -42,7 +42,7 @@
 	<button
 		class={buttonType}
 		on:click={() => {
-			dispatch('toggleMinimize');
+			dispatch('toggle-minimize');
 		}}
 		aria-label="Shrink this window"
 	>
