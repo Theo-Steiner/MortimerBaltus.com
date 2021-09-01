@@ -1,6 +1,5 @@
 <script>
 	import '../../app.css';
-	import PageTransition from '$lib/UX/PageTransition.svelte';
 	import Navigation from '$lib/UI/Navigation.svelte';
 	import Footer from '$lib/UI/Footer.svelte';
 	import { page } from '$app/stores';
@@ -29,18 +28,14 @@
 		}
 	}
 
-	function updateBrowserHistory(e) {
+	function updateBrowserHistory(_) {
 		history.back();
 		return false;
 	}
 </script>
 
-<PageTransition>
-	<main>
-		<div class="{title}-subpage-color">
-			<Navigation title={formattedTitle} {backLink} on:click={updateBrowserHistory} />
-			<slot />
-			<Footer />
-		</div>
-	</main>
-</PageTransition>
+<main>
+	<Navigation title={formattedTitle} {backLink} on:click={updateBrowserHistory} />
+	<slot />
+	<Footer />
+</main>
