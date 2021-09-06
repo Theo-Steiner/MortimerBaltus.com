@@ -21,7 +21,7 @@
 			if (history.scrollRestoration) {
 				window.history.scrollRestoration = 'manual';
 			}
-			if (window.matchMedia('(orientation: portrait)')) {
+			if (window.matchMedia('(orientation: portrait)').matches) {
 				scroll_element.scrollTop = getScrollTo(vh(130));
 				scroll_element.scrollLeft = getScrollTo(vw(70));
 			} else {

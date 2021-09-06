@@ -18,8 +18,8 @@ export function getScrollTo(screen) {
 	let currentBodyDimensions;
 	if (window.matchMedia('(max-width: 1439px)').matches) {
 		currentBodyDimensions = Math.max(2550, vmax(250));
-	} else if (window.matchMedia('(min-width: 1439px)').matches) {
-		currentBodyDimensions = Math.max(2550, vmax(170));
+	} else if (window.matchMedia('(min-width: 1440px)').matches) {
+		currentBodyDimensions = Math.max(2880, vmax(120));
 	}
 	if (currentBodyDimensions > screen) {
 		return (currentBodyDimensions - screen) / 2;
@@ -28,10 +28,7 @@ export function getScrollTo(screen) {
 	}
 }
 
-export function horizontalSlide(
-	node,
-	{ delay = 0, duration = 400, easing = cubicOut, inverse = 1 }
-) {
+export function horizontalSlide(node, { delay = 0, duration = 400, easing = cubicOut }) {
 	const style = getComputedStyle(node);
 	const opacity = +style.opacity;
 	const width = parseFloat(style.width);
