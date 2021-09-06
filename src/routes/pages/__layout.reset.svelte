@@ -4,6 +4,8 @@
 	import Footer from '$lib/UI/Footer.svelte';
 	import { navigating, page } from '$app/stores';
 	import navState from '$lib/UX/nav-state';
+	import deGallery from '$lib/data/deGallery.json';
+	import jpGallery from '$lib/data/jpGallery.json';
 
 	let title = 'title';
 	let formattedTitle = 'Title';
@@ -26,6 +28,10 @@
 
 	const informationPages = ['/pages/privacy', '/pages/legal', '/pages/about'];
 	const galleryPages = [];
+	const gallery = [...deGallery, ...jpGallery];
+	for (const image of gallery) {
+		galleryPages.push(`/pages/gallery/${image.name}`);
+	}
 	const projectPages = [
 		'/pages/project_01',
 		'/pages/project_02',
@@ -43,6 +49,7 @@
 		if (projectPages.includes(currentRoute)) {
 			return nextIndexFromRoute(projectPages, currentRoute);
 		} else if (galleryPages.includes(currentRoute)) {
+			return nextIndexFromRoute(galleryPages, currentRoute);
 		} else if (informationPages.includes(currentRoute)) {
 			return nextIndexFromRoute(informationPages, currentRoute);
 		} else {
