@@ -1,6 +1,7 @@
 <script>
 	import FooterWindowElement from '../../UI/FooterWindowElement.svelte';
 	import ContactUI from '../../UI/WindowUI/ContactUI.svelte';
+	import { t } from 'svelte-intl-precompile';
 </script>
 
 <FooterWindowElement
@@ -8,7 +9,7 @@
 	height={313}
 	on:toggle-minimize
 	background="#EFEFEF"
-	title="CONTACT"
+	title={$t('windows.contact')}
 >
 	<ContactUI />
 </FooterWindowElement>

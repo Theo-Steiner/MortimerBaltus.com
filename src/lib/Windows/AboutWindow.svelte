@@ -9,7 +9,7 @@
 		height={392}
 		parallax="very-slow"
 		background="#A25C24"
-		title={$t('about')}
+		title={$t('windows.about')}
 		href="pages/about"
 		id={0}
 		isInForeground={true}

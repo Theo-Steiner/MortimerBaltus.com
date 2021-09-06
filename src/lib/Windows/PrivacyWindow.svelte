@@ -1,6 +1,7 @@
 <script>
 	import PrivacyUI from '$lib/UI/WindowUI/PrivacyUI.svelte';
 	import WindowElement from '../UI/WindowElement.svelte';
+	import { t } from 'svelte-intl-precompile';
 </script>
 
 <div class="grid-area">
@@ -10,7 +11,7 @@
 		parallax="very-slow"
 		background="#FEC7A3"
 		href="/pages/privacy"
-		title="PRIVACY POLICY"
+		title={$t('windows.privacy')}
 		id={5}
 		isInForeground={true}
 	>

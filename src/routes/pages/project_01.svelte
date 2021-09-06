@@ -1,9 +1,10 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
+	import { t } from 'precompile-intl-runtime';
 </script>
 
 <svelte:head>
-	<title>Project 01</title>
+	<title>Project_01</title>
 	<meta
 		name="description"
 		content="Con Corazón is a brand supporting artisans from countries at war"
@@ -17,11 +18,7 @@
 		alt="handcrafted tumblers, arranged with green vegetables"
 	/>
 	<p>
-		Con Corazón is a brand supporting artisans from countries at war by embracing their cultural
-		heritage and distributing the unique goods through an appealing online shop. In close
-		coordination with the team at Con Corazón a corporate design and its core values have been
-		created and defined to give the artisan goods a competitive visual identity in the world of
-		contemporary online shopping.
+		{@html $t('pages.project_01.introduction')}
 		<a class="outside-link" href="https://concorazon-hamburg.com/">concorazon-hamburg.com ↗</a>
 	</p>
 

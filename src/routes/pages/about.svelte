@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { t } from 'svelte-intl-precompile';
 
 	let innerHeight = 1;
 	let innerWidth = 1;
@@ -53,12 +54,7 @@
 <div class="container">
 	<div class="first-paragraph">
 		<p>
-			MortimerBaltus is a 2021 founded partnership between art director Moritz Müller and web
-			developer Theodor Steiner with the purpose of realizing holistic brand experiences by
-			utilizing knowledge and techniques from different fields of profession. <br /> We work
-			individually or as a team for agencies, companies and start up businesses. <br /> For our clients
-			we aspire new concepts and favour the unconventional over the trend. This way we find individual
-			solutions that can make lasting impressions in an otherwise boringly standardized world.
+			{@html $t('pages.about.introduction')}
 		</p>
 	</div>
 </div>
@@ -72,9 +68,7 @@
 </div>
 <div class="lower-container">
 	<p>
-		Located in Hamburg and Tokyo we are able to work closely with our partners from both markets and
-		can provide intercultural guidance if needed. We are always looking forward to get to know new
-		people – and Yes, we also speak Japanese.
+		{@html $t('pages.about.location')}
 	</p>
 	<div class="animation-container">
 		<h2 bind:this={nice}>NICE</h2>

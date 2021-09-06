@@ -1,11 +1,12 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
+	import { t } from 'precompile-intl-runtime';
 	let videoSlug =
 		'https://res.cloudinary.com/thdrstnr/video/upload/q_auto:best/v1625117503/MortimerBaltus/Soe/Soe_02_ai4z59';
 </script>
 
 <svelte:head>
-	<title>Project 04</title>
+	<title>Project_04</title>
 	<meta
 		name="description"
 		content="Proposal for a visual identity for a perfume startup from Germany - now succesfully launched under the name Soèm"
@@ -19,16 +20,7 @@
 		alt="How we envisioned the final packaging of the product."
 	/>
 	<p>
-		This design proposal was developed as part of the visual identity development for a perfume
-		start-up located in Germany. As part of this process we visualized multiple concepts for the
-		client to decide which overall look suited their wishes and requirements best.<br />
-		During a very successfull launch in 2021 the perfume's first edition sold out in just 2 weeks - starting
-		off the start-up finally branded as Soèm perfectly.
-		<br />
-		<br />
-		The process of brand identity development, which makes our work so enjoyable and special usually
-		leaves us with great results that remain unseen. Therefore, we decided to use this space to showcase
-		what is left on the cutting room floor.
+		{@html $t('pages.project_04.introduction')}
 		<a class="outside-link" href="https://so-em.com">so-em.com ↗</a>
 	</p>
 	<!-- svelte-ignore a11y-media-has-caption -->

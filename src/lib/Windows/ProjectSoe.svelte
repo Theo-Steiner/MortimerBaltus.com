@@ -1,6 +1,7 @@
 <script>
 	import ImageLoader from '../UX/ImageLoader.svelte';
 	import WindowElement from '../UI/WindowElement.svelte';
+	import { t } from 'svelte-intl-precompile';
 	const slug = 'MortimerBaltus/Projects/Soe_04_so0xle';
 </script>
 
@@ -9,7 +10,7 @@
 		width={472}
 		height={344}
 		parallax="slowish"
-		title="PROJECT_04"
+		title={$t('windows.project_04')}
 		enlargeable={true}
 		background={`url("https://res.cloudinary.com/thdrstnr/image/upload/c_pad,w_iw_div_2,ar_1,b_auto:predominant/c_crop,w_5,g_north_west/${slug}")`}
 		href={'/pages/project_04'}

@@ -1,6 +1,9 @@
 <script>
 	import FooterWindowElement from '../../UI/FooterWindowElement.svelte';
 	import PrivacyUI from '../../UI/WindowUI/PrivacyUI.svelte';
+	import { t } from 'svelte-intl-precompile';
+	export let currentPage;
+	$: href = currentPage === 'privacy' ? undefined : '/pages/privacy';
 </script>
 
 <FooterWindowElement
@@ -8,8 +11,8 @@
 	width={288}
 	height={207}
 	background="#FEC7A3"
-	href="/pages/privacy"
-	title="PRIVACY POLICY"
+	title={$t('windows.privacy')}
+	{href}
 >
 	<PrivacyUI />
 </FooterWindowElement>

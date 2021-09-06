@@ -1,6 +1,10 @@
 <script>
 	import LegalUI from '$lib/UI/WindowUI/LegalUI.svelte';
 	import FooterWindowElement from '../../UI/FooterWindowElement.svelte';
+	import { t } from 'svelte-intl-precompile';
+	export let currentPage;
+
+	$: href = currentPage === 'legal' ? undefined : '/pages/legal';
 </script>
 
 <FooterWindowElement
@@ -8,8 +12,8 @@
 	width={268}
 	height={158}
 	background="#1C6370"
-	title="LEGAL NOTICE"
-	href="/pages/legal"
+	title={$t('windows.legal')}
+	{href}
 >
 	<LegalUI />
 </FooterWindowElement>
