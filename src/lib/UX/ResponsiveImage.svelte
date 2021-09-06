@@ -27,5 +27,6 @@
 		height: auto;
 		object-fit: cover;
 		object-position: center bottom;
+		display: block;
 	}
 </style>
