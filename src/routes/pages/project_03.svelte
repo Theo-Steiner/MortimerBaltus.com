@@ -1,7 +1,5 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
-	let slug =
-		'https://res.cloudinary.com/thdrstnr/image/upload/v1623308059/MortimerBaltus/EberhardM%C3%BCller/';
 </script>
 
 <svelte:head>
@@ -22,56 +20,55 @@
 		Eberhard Müller develops sophis­ti­cated interiors at the highest level. For this, the small
 		agency from Lake Starnberg near Munich needed a corporate design fitting their high standards
 		across all media platforms.
+		<a class="outside-link" href="https://eberhard-mueller.de">eberhard-mueller.de ↗</a>
 	</p>
-	<a href="https://eberhard-mueller.de">eberhard-mueller.de ↗</a>
-	<ResponsiveImage
-		imageWidth="2326"
-		imageHeight="1494"
-		imageID="EberhardMueller/EM_Portrait_fmlj3x"
-		alt="A portrait shot of Eberhard Mueller."
-	/>
-	<ResponsiveImage
-		imageWidth="1438"
-		imageHeight="1200"
-		imageID="EberhardMueller/EM_Bathtub_dark_f2skh4"
-		alt="Sophistication both in interior design and the face lifted brand identity."
-	/>
-	<figure>
-		<ResponsiveImage
-			imageWidth="2480"
-			imageHeight="3508"
-			limitHeight={false}
-			displayWidth="70.7vw"
-			imageID="EberhardMueller/EM_Page_iwsane"
-			alt="The finished page showcases highlights of interior design by Eberhard Mueller"
-		/>
-	</figure>
-	<ResponsiveImage
-		imageWidth="2000"
-		imageHeight="1355"
-		imageID="EberhardMueller/EM_Bathtub_light_bpknz3"
-		alt="A bathroom created by Eberhard Mueller."
-	/>
-	<div class="image-padding">
+	<div class="sticky-image">
 		<ResponsiveImage
 			imageWidth="2326"
 			imageHeight="1494"
-			imageID="EberhardMueller/EM_Page_Menu_tlkvyw"
-			alt="Simplicity was the key paradigm to for this rebranding - as with interior design: less is more"
+			imageID="EberhardMueller/EM_Portrait_fmlj3x"
+			alt="A portrait shot of Eberhard Mueller."
 		/>
+	</div>
+	<div class="lower-container">
+		<ResponsiveImage
+			imageWidth="1438"
+			imageHeight="1200"
+			imageID="EberhardMueller/EM_Bathtub_dark_f2skh4"
+			alt="Sophistication both in interior design and the face lifted brand identity."
+		/>
+		<figure>
+			<ResponsiveImage
+				imageWidth="2480"
+				imageHeight="3508"
+				limitHeight={false}
+				displayWidth="70.7vw"
+				imageID="EberhardMueller/EM_Page_iwsane"
+				alt="The finished page showcases highlights of interior design by Eberhard Mueller"
+			/>
+		</figure>
+		<div class="sticky-image">
+			<ResponsiveImage
+				imageWidth="2000"
+				imageHeight="1355"
+				imageID="EberhardMueller/EM_Bathtub_light_bpknz3"
+				alt="A bathroom created by Eberhard Mueller."
+			/>
+		</div>
+		<div class="image-padding lower-container">
+			<ResponsiveImage
+				imageWidth="2326"
+				imageHeight="1494"
+				imageID="EberhardMueller/EM_Page_Menu_tlkvyw"
+				alt="Simplicity was the key paradigm to for this rebranding - as with interior design: less is more"
+			/>
+		</div>
 	</div>
 </div>
 
 <style>
-	a {
-		display: inline-block;
-		margin: 10px 30px 30px;
+	.outside-link {
 		color: #fefefe;
-		font-size: min(1vw, 13px);
-		line-height: 17.5px;
-		letter-spacing: 0.11px;
-		text-decoration: none;
-		text-align: center;
 	}
 
 	.container {
@@ -79,9 +76,12 @@
 		min-height: calc(100vh - 331px);
 	}
 
+	.lower-container {
+		background: #151515;
+	}
+
 	p {
 		color: #fefefe;
-		padding: 30px 20px 20px 20px;
 	}
 
 	figure {

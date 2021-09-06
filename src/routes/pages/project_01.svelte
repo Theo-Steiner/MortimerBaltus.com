@@ -22,8 +22,8 @@
 		coordination with the team at Con Corazón a corporate design and its core values have been
 		created and defined to give the artisan goods a competitive visual identity in the world of
 		contemporary online shopping.
+		<a class="outside-link" href="https://concorazon-hamburg.com/">concorazon-hamburg.com ↗</a>
 	</p>
-	<a href="https://concorazon-hamburg.com/">concorazon-hamburg.com ↗</a>
 
 	<div class="visitenkarten-container">
 		<img
@@ -56,7 +56,7 @@
 			/>
 		</div>
 	</div>
-	<div class="two-cards">
+	<div class="two-cards sticky-image">
 		<ResponsiveImage
 			imageWidth="1080"
 			imageHeight="1350"
@@ -75,41 +75,47 @@
 		/>
 	</div>
 
-	<ResponsiveImage
-		imageWidth="2160"
-		imageHeight="1440"
-		imageID="ConCorazon/con_corazon_banner_iungvl"
-		alt="Banner design for Con Corazón"
-	/>
-	<ResponsiveImage
-		imageWidth="1200"
-		imageHeight="802"
-		imageID="ConCorazon/con_corazon_artisan_urpfhn"
-		alt="An artisan working with hemp strings"
-	/>
-	<ResponsiveImage
-		imageWidth="2160"
-		imageHeight="1440"
-		imageID="ConCorazon/con_corazon_emblem_p70r28"
-		alt="Emblem design for Con Corazón"
-	/>
-	<div class="two-cards">
+	<div class="lower-container">
 		<ResponsiveImage
-			imageWidth="2000"
-			imageHeight="2000"
-			imageID="ConCorazon/con_corazon_iPhone_02_w0mhgy"
-			aspectRatio="16 / 19"
-			displayWidth="50vw"
-			alt="The shop application designed for Con Corazón"
+			imageWidth="2160"
+			imageHeight="1440"
+			imageID="ConCorazon/con_corazon_banner_iungvl"
+			alt="Banner design for Con Corazón"
 		/>
-		<ResponsiveImage
-			imageWidth="1080"
-			imageHeight="1350"
-			imageID="ConCorazon/con-corazon_craftsman_m0ssbe"
-			aspectRatio="16 / 19"
-			displayWidth="50vw"
-			alt="A craftsman focused on his pottery work"
-		/>
+		<div class="sticky-image">
+			<ResponsiveImage
+				imageWidth="1200"
+				imageHeight="802"
+				imageID="ConCorazon/con_corazon_artisan_urpfhn"
+				alt="An artisan working with hemp strings"
+			/>
+		</div>
+		<div class="lower-container">
+			<ResponsiveImage
+				imageWidth="2160"
+				imageHeight="1440"
+				imageID="ConCorazon/con_corazon_emblem_p70r28"
+				alt="Emblem design for Con Corazón"
+			/>
+			<div class="two-cards">
+				<ResponsiveImage
+					imageWidth="2000"
+					imageHeight="2000"
+					imageID="ConCorazon/con_corazon_iPhone_02_w0mhgy"
+					aspectRatio="16 / 19"
+					displayWidth="50vw"
+					alt="The shop application designed for Con Corazón"
+				/>
+				<ResponsiveImage
+					imageWidth="1080"
+					imageHeight="1350"
+					imageID="ConCorazon/con-corazon_craftsman_m0ssbe"
+					aspectRatio="16 / 19"
+					displayWidth="50vw"
+					alt="A craftsman focused on his pottery work"
+				/>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -162,21 +168,6 @@
 		width: 100vw;
 		display: flex;
 		flex-wrap: wrap;
-	}
-
-	p {
-		padding: 30px 20px 20px 20px;
-	}
-
-	a {
-		display: inline-block;
-		margin: 0px 20px 30px 20px;
-		color: #151515;
-		font-size: min(1vw, 13px);
-		line-height: 17.5px;
-		letter-spacing: 0.11px;
-		text-decoration: none;
-		text-align: center;
 	}
 
 	@media only screen and (min-device-width: 768px) {

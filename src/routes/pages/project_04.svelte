@@ -1,6 +1,5 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
-	let slug = 'https://res.cloudinary.com/thdrstnr/image/upload';
 	let videoSlug =
 		'https://res.cloudinary.com/thdrstnr/video/upload/q_auto:best/v1625117503/MortimerBaltus/Soe/Soe_02_ai4z59';
 </script>
@@ -30,6 +29,7 @@
 		The process of brand identity development, which makes our work so enjoyable and special usually
 		leaves us with great results that remain unseen. Therefore, we decided to use this space to showcase
 		what is left on the cutting room floor.
+		<a class="outside-link" href="https://so-em.com">so-em.com ↗</a>
 	</p>
 	<!-- svelte-ignore a11y-media-has-caption -->
 	<video autoplay loop muted playsinline>
@@ -38,7 +38,7 @@
 		<source src={`${videoSlug}.ogg`} type="video/ogg" />
 		Sorry, your browser doesn't support embedded videos
 	</video>
-	<div class="logo-container">
+	<div class="logo-container sticky-image">
 		<svg viewBox="0 0 240.88 67.479" xmlns="http://www.w3.org/2000/svg">
 			<path
 				class="cls-1"
@@ -46,15 +46,21 @@
 			/>
 		</svg>
 	</div>
-	<ResponsiveImage
-		imageWidth="2400"
-		imageHeight="1800"
-		imageID="Soe/Soe_04_zc06pa"
-		alt="The engraved logo conveys the luxurious feel of the brand"
-	/>
+	<div class="lower-container">
+		<ResponsiveImage
+			imageWidth="2400"
+			imageHeight="1800"
+			imageID="Soe/Soe_04_zc06pa"
+			alt="The engraved logo conveys the luxurious feel of the brand"
+		/>
+	</div>
 </div>
 
 <style>
+	.outside-link {
+		color: #fefefe;
+	}
+
 	.container {
 		background: #dadcd3;
 		min-height: calc(100vh - 331px);
@@ -86,6 +92,5 @@
 
 	p {
 		color: #fefefe;
-		padding: 30px 20px 20px 30px;
 	}
 </style>

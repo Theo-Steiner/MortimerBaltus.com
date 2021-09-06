@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Project 04</title>
+	<title>Project 02</title>
 	<meta
 		name="description"
 		content="PRODUKT is a multi-area brand we helped establish in 2020 & 2021. For this, we designed the products, created a brand identity and built a online shop complete with shipping, payments and a easy to use CMS."
@@ -23,39 +23,47 @@
 		finalized photoshoots and developed the online store itself. The brand aims to grow their
 		product range continuously. Therefore, we selected an easily manageable cms and designed the
 		shopping-experience for the customer accordingly.
+		<a class="outside-link" href="https://produkt.jp">produkt.jp ↗</a>
 	</p>
-	<a href="https://produkt.jp">produkt.jp ↗</a>
-	<ResponsiveImage
-		imageWidth="2326"
-		imageHeight="1494"
-		imageID="Produkt/Produkt_Home_e3txec"
-		alt="We developed the online shop to accept payments from countless vendors and ship globally"
-	/>
-	<ResponsiveImage
-		imageWidth="2000"
-		imageHeight="2507"
-		limitHeight={false}
-		imageID="Produkt/Produkt_Tshirt_o85iqs"
-		alt="We envisiond 'PRODUKT' as a lifestyle brand with stylish products from multiple areas"
-	/>
-	<ResponsiveImage
-		imageWidth="2326"
-		imageHeight="1494"
-		imageID="Produkt/Produkt_Item_twhvhf"
-		alt="To keep the maintenance cost of our client low, we built the shop around a CMS for easy inventory, administration and expansion."
-	/>
-	<ResponsiveImage
-		imageWidth="2000"
-		imageHeight="2507"
-		limitHeight={false}
-		imageID="Produkt/Produkt_Perfume_l4cdvk"
-		alt="A perfume flask we designed for the brand."
-	/>
-	<div class="logo-container">
-		<img
-			src="https://res.cloudinary.com/thdrstnr/image/upload/v1630052982/MortimerBaltus/Produkt/ProduktLogo_gawypn.svg"
-			alt="Logo for the brand: PRODUKT"
+	<div class="sticky-image">
+		<ResponsiveImage
+			imageWidth="2326"
+			imageHeight="1494"
+			imageID="Produkt/Produkt_Home_e3txec"
+			alt="We developed the online shop to accept payments from countless vendors and ship globally"
 		/>
+	</div>
+	<div class="lower-container">
+		<ResponsiveImage
+			imageWidth="2000"
+			imageHeight="2507"
+			limitHeight={false}
+			imageID="Produkt/Produkt_Tshirt_o85iqs"
+			alt="We envisiond 'PRODUKT' as a lifestyle brand with stylish products from multiple areas"
+		/>
+		<div class="sticky-image">
+			<ResponsiveImage
+				imageWidth="2326"
+				imageHeight="1494"
+				imageID="Produkt/Produkt_Item_twhvhf"
+				alt="To keep the maintenance cost of our client low, we built the shop around a CMS for easy inventory, administration and expansion."
+			/>
+		</div>
+		<div class="lower-container">
+			<ResponsiveImage
+				imageWidth="2000"
+				imageHeight="2507"
+				limitHeight={false}
+				imageID="Produkt/Produkt_Perfume_l4cdvk"
+				alt="A perfume flask we designed for the brand."
+			/>
+			<div class="logo-container">
+				<img
+					src="https://res.cloudinary.com/thdrstnr/image/upload/v1630052982/MortimerBaltus/Produkt/ProduktLogo_gawypn.svg"
+					alt="Logo for the brand: PRODUKT"
+				/>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -65,15 +73,8 @@
 		min-height: calc(100vh - 331px);
 	}
 
-	a {
-		display: inline-block;
-		margin: 10px 30px 30px;
-		color: #151515;
-		font-size: min(1vw, 13px);
-		line-height: 17.5px;
-		letter-spacing: 0.11px;
-		text-decoration: none;
-		text-align: center;
+	.lower-container {
+		background: #faf7f2;
 	}
 
 	.logo-container {
@@ -87,9 +88,5 @@
 	}
 	img {
 		width: 100%;
-	}
-
-	p {
-		padding: 30px 20px 20px 30px;
 	}
 </style>

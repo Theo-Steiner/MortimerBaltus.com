@@ -16,6 +16,9 @@ html {
 p {
 	color: #151515;
 	font-size: clamp(22px, 3.5vw, 44px);
+	line-height: clamp(25px, 3.6vw, 50px);
+	letter-spacing: -0.28px;
+	padding: clamp(20px, 2.8vw, 30px) 20px;
 }
 
 hr {
@@ -23,6 +26,30 @@ hr {
 	height: 1px;
 	color: #fefefe;
 	background-color: #fefefe;
+}
+
+a {
+	color: #151515;
+}
+
+.outside-link {
+	display: block;
+	margin-top: 20px;
+	margin-left: 4px;
+	font-size: 13px;
+	line-height: 17.5px;
+	letter-spacing: 0.11px;
+	text-decoration: none;
+	text-align: start;
+}
+
+.sticky-image {
+	position: sticky;
+	top: 0px;
+}
+
+.lower-container {
+	transform: translateZ(500px);
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

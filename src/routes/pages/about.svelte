@@ -62,7 +62,7 @@
 		</p>
 	</div>
 </div>
-<div class="image-container">
+<div class="image-container sticky-image">
 	<img
 		src="https://res.cloudinary.com/thdrstnr/image/upload/h_800/q_auto:low/v1618455027/MortimerBaltus/About/polaroid_jymdbi.png"
 		width="100vw"
@@ -91,7 +91,6 @@
 	.lower-container {
 		background-color: #a25c24;
 		position: relative;
-		transform: translateZ(500px);
 	}
 
 	img {
@@ -107,18 +106,10 @@
 		height: 800px;
 		width: 100vw;
 		background-color: #e1e2e4;
-		position: sticky;
-		top: 0px;
 	}
 
 	.first-paragraph {
-		padding-top: 58px;
-	}
-
-	p {
-		line-height: clamp(25px, 3.6vw, 50px);
-		letter-spacing: -0.28px;
-		padding: 15px 10px 0px 10px;
+		padding-top: 53px;
 	}
 
 	h2 {
@@ -131,16 +122,11 @@
 
 	.animation-container {
 		width: 100vw;
-		padding: 90px 10px 50px 10px;
+		padding: 80px 10px 50px 10px;
 		overflow: hidden;
 	}
 
 	@media only screen and (min-device-width: 768px) {
-		p {
-			letter-spacing: -0.55px;
-			padding: 15px 20px 0px 20px;
-		}
-
 		h2 {
 			font-size: 150px;
 			letter-spacing: 2.57px;
