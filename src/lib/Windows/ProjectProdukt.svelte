@@ -1,6 +1,7 @@
 <script>
 	import ImageLoader from '$lib/UX/ImageLoader.svelte';
 	import WindowElement from '../UI/WindowElement.svelte';
+	import { t } from 'svelte-intl-precompile';
 
 	const slug = 'MortimerBaltus/Produkt/Produkt_Hero_fbs3q6';
 </script>
@@ -11,7 +12,7 @@
 		height={392}
 		parallax="very-fast"
 		background={`url("https://res.cloudinary.com/thdrstnr/image/upload/c_pad,w_iw_div_2,ar_1,b_auto:predominant/c_crop,w_5,g_north_west/${slug}")`}
-		title="PROJECT_02"
+		title={$t('windows.project_02')}
 		href={'/pages/project_02'}
 		id={2}
 		isInForeground={true}

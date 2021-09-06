@@ -1,5 +1,6 @@
 <script>
 	import WindowElement from '../UI/WindowElement.svelte';
+	import { t } from 'svelte-intl-precompile';
 </script>
 
 <div class="grid-area">
@@ -8,7 +9,7 @@
 		height={164}
 		parallax="very-slow"
 		background="#5E4B1B"
-		title="COOKIES"
+		title={$t('windows.cookies')}
 		enlargeable={false}
 		id={9}
 		isInForeground={true}

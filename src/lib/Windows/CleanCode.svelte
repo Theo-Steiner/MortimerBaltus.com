@@ -1,4 +1,5 @@
 <script>
+	import { t } from 'svelte-intl-precompile';
 	import CleanCodeUI from '../UI/WindowUI/CleanCodeUI.svelte';
 	import WindowElement from '../UI/WindowElement.svelte';
 </script>
@@ -9,7 +10,7 @@
 		height={273}
 		parallax="very-slow"
 		background="#151515"
-		title="CLEAN.CODE"
+		title={$t('windows.clean-code')}
 		id={10}
 		enlargeable={false}
 		isInForeground={true}

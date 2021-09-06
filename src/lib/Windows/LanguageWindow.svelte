@@ -1,6 +1,7 @@
 <script>
 	import WindowElement from '../UI/WindowElement.svelte';
 	import LanguageUI from '../UI/WindowUI/Language/LanguageUI.svelte';
+	import { t } from 'svelte-intl-precompile';
 </script>
 
 <div class="wrapper grid-area">
@@ -9,7 +10,7 @@
 		height={273}
 		parallax="very-slow"
 		background="C96161"
-		title="LANGUAGE"
+		title={$t('windows.language')}
 		id={13}
 		enlargeable={false}
 	>

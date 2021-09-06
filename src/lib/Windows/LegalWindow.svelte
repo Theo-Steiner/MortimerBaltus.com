@@ -1,6 +1,7 @@
 <script>
 	import LegalUI from '$lib/UI/WindowUI/LegalUI.svelte';
 	import WindowElement from '../UI/WindowElement.svelte';
+	import { t } from 'svelte-intl-precompile';
 </script>
 
 <div class="grid-area">
@@ -9,7 +10,7 @@
 		height={158}
 		parallax="very-slow"
 		background="#1C6370"
-		title="LEGAL NOTICE"
+		title={$t('windows.legal')}
 		href="pages/legal"
 		id={7}
 		isInForeground={true}

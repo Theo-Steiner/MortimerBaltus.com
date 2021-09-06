@@ -1,9 +1,10 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
+	import { t } from 'precompile-intl-runtime';
 </script>
 
 <svelte:head>
-	<title>Project 02</title>
+	<title>Project_02</title>
 	<meta
 		name="description"
 		content="PRODUKT is a multi-area brand we helped establish in 2020 & 2021. For this, we designed the products, created a brand identity and built a online shop complete with shipping, payments and a easy to use CMS."
@@ -17,12 +18,7 @@
 		alt="In addition to establishing the brand itself, we also organized photoshoots to showcase the products."
 	/>
 	<p>
-		PRODUKT is a multi-area brand selling everything from streetwear fashion to lifestyle goods and
-		accessories. For the launch of the webshop, we defined a brand identity, designed logo and
-		corporate guidelines, helped with the design and packaging of the products, organized and
-		finalized photoshoots and developed the online store itself. The brand aims to grow their
-		product range continuously. Therefore, we selected an easily manageable cms and designed the
-		shopping-experience for the customer accordingly.
+		{@html $t('pages.project_02.introduction')}
 		<a class="outside-link" href="https://produkt.jp">produkt.jp ↗</a>
 	</p>
 	<div class="sticky-image">

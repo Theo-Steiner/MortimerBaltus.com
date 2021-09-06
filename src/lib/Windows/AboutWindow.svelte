@@ -1,5 +1,6 @@
 <script>
 	import WindowElement from '../UI/WindowElement.svelte';
+	import { t } from 'svelte-intl-precompile';
 </script>
 
 <div class="wrapper grid-area">
@@ -8,7 +9,7 @@
 		height={392}
 		parallax="very-slow"
 		background="#A25C24"
-		title="ABOUT"
+		title={$t('windows.about')}
 		href="pages/about"
 		id={0}
 		isInForeground={true}

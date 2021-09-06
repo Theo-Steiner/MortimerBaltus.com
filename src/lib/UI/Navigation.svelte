@@ -20,12 +20,21 @@
 		<Button buttonType="previous" on:history-back={goBack} />
 	</div>
 	<h1>{title}</h1>
-	<Button buttonType="next" href={nextLink} />
+	<div>
+		{#if fromRoute !== '/'}
+			<div class="dummy" />
+		{/if}
+		<Button buttonType="next" href={nextLink} />
+	</div>
 </nav>
 
 <style>
 	div {
 		display: flex;
+	}
+
+	.dummy {
+		width: 32px;
 	}
 
 	nav {

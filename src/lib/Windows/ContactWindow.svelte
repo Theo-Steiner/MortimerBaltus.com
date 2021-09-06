@@ -1,6 +1,7 @@
 <script>
 	import WindowElement from '../UI/WindowElement.svelte';
 	import ContactUI from '../UI/WindowUI/ContactUI.svelte';
+	import { t } from 'svelte-intl-precompile';
 </script>
 
 <div class="wrapper grid-area">
@@ -9,7 +10,7 @@
 		height={313}
 		parallax="very-slow"
 		background="#EFEFEF"
-		title="CONTACT"
+		title={$t('windows.contact')}
 		id={14}
 		enlargeable={false}
 	>

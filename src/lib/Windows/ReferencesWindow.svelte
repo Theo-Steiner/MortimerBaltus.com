@@ -1,5 +1,6 @@
 <script>
 	import WindowElement from '../UI/WindowElement.svelte';
+	import { t } from 'svelte-intl-precompile';
 </script>
 
 <div class="grid-area">
@@ -8,7 +9,7 @@
 		height={408}
 		parallax="medium"
 		background="#151515"
-		title="REFERENCES"
+		title={$t('windows.references')}
 		enlargeable={false}
 		id={4}
 		isInForeground={true}

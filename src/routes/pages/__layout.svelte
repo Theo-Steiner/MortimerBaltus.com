@@ -1,29 +1,16 @@
 <script>
-	import '../../app.css';
 	import Navigation from '$lib/UI/Navigation.svelte';
 	import Footer from '$lib/UI/Footer.svelte';
 	import { navigating, page } from '$app/stores';
 	import navState from '$lib/UX/nav-state';
 	import deGallery from '$lib/data/deGallery.json';
 	import jpGallery from '$lib/data/jpGallery.json';
+	import { t } from 'svelte-intl-precompile';
 
-	let title = 'title';
-	let formattedTitle = 'Title';
+	let slug = 'title';
+
 	$: {
-		title = $page.path.split('/')[2];
-		if (title) {
-			formattedTitle = formatTitle(title);
-		}
-	}
-
-	function formatTitle(unformattedTitle) {
-		if (unformattedTitle === 'legal') {
-			return unformattedTitle.concat(' NOTICE').toUpperCase();
-		} else if (unformattedTitle === 'privacy') {
-			return unformattedTitle.concat(' POLICY').toUpperCase();
-		} else {
-			return unformattedTitle.toUpperCase();
-		}
+		slug = $page.path.split('/')[2];
 	}
 
 	const informationPages = ['/pages/privacy', '/pages/legal', '/pages/about'];
@@ -69,7 +56,7 @@
 </script>
 
 <main>
-	<Navigation fromRoute={$navState.from} title={formattedTitle} {nextLink} />
+	<Navigation fromRoute={$navState.from} title={$t(`pages.${slug}.title`)} {nextLink} />
 	<slot />
-	<Footer />
+	<Footer currentPage={slug} />
 </main>

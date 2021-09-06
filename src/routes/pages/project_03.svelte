@@ -1,9 +1,10 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
+	import { t } from 'precompile-intl-runtime';
 </script>
 
 <svelte:head>
-	<title>Project 03</title>
+	<title>Project_03</title>
 	<meta
 		name="description"
 		content="Eberhard Müller develops sophis­ti­cated textile interiors at the ghest level."
@@ -17,9 +18,7 @@
 		alt="Redesigned business cards were part of brand's face lift."
 	/>
 	<p>
-		Eberhard Müller develops sophis­ti­cated interiors at the highest level. For this, the small
-		agency from Lake Starnberg near Munich needed a corporate design fitting their high standards
-		across all media platforms.
+		{@html $t('pages.project_03.introduction')}
 		<a class="outside-link" href="https://eberhard-mueller.de">eberhard-mueller.de ↗</a>
 	</p>
 	<div class="sticky-image">
