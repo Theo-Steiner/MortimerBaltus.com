@@ -3,7 +3,7 @@
 	export let reverse = false;
 </script>
 
-{#if (languageSelected === 'japanese' && !reverse) || (languageSelected === 'english' && reverse)}
+{#if (languageSelected === 'ja' && !reverse) || (languageSelected === 'en' && reverse)}
 	<svg width="179" height="189" xmlns="http://www.w3.org/2000/svg"
 		><path
 			fill-rule="evenodd"
