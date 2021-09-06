@@ -16,10 +16,20 @@
 	export let image;
 </script>
 
-<ResponsiveImage
-	limitHeight={false}
-	imageHeight={image.height}
-	imageWidth={image.width}
-	imageID={image.src}
-	alt={image.alt}
-/>
+<section>
+	<ResponsiveImage
+		limitHeight={false}
+		imageHeight={image.height}
+		imageWidth={image.width}
+		imageID={image.src}
+		alt={image.alt}
+	/>
+</section>
+
+<style>
+	section {
+		display: flex;
+		align-items: center;
+		height: 100vh;
+	}
+</style>
