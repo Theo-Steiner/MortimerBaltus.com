@@ -154,7 +154,6 @@
 	}
 	a:focus,
 	button:focus {
-		box-shadow: 0 0 0 1px #a25c24;
 		outline: none;
 	}
 
