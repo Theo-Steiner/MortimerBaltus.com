@@ -27,9 +27,7 @@
 	div {
 		display: flex;
 	}
-	p {
-		color: white;
-	}
+
 	nav {
 		transform: translateZ(999px);
 		position: fixed;
