@@ -4,6 +4,7 @@
 	"scripts": {
 		"dev": "svelte-kit dev --host",
 		"build": "svelte-kit build --verbose",
+		"postbuild": "svelte-sitemap --domain https://mortimerbaltus.com",
 		"preview": "svelte-kit preview",
 		"lint": "prettier --check . && eslint --ignore-path .gitignore .",
 		"format": "prettier --write ."
@@ -16,7 +17,8 @@
 		"eslint-plugin-svelte3": "^3.2.0",
 		"prettier": "~2.3.2",
 		"prettier-plugin-svelte": "^2.4.0",
-		"svelte": "^3.42.4"
+		"svelte": "^3.42.4",
+		"svelte-sitemap": "^2.0.1"
 	},
 	"type": "module",
 	"dependencies": {
