@@ -92,7 +92,7 @@
 			<header>
 				<Button buttonType="minimize" on:toggle-minimize={toggleMinimize} />
 				{#if title}
-					<h1>{title}</h1>
+					<h1>{title.toUpperCase()}</h1>
 				{:else}
 					<h1>Title</h1>
 				{/if}

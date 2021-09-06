@@ -1,0 +1,23 @@
+[
+	{
+		"name": "shinjuku.jpg",
+		"src": "jpGallery/ShinjukuSakura_dgdj2h",
+		"alt": "Shinjuku, Tokyo (JP)",
+		"height": 850,
+		"width": 1280
+	},
+	{
+		"name": "taxi.jpg",
+		"src": "jpGallery/TokyoTaxi_zbokhg",
+		"alt": "A cab in Tokyo (JP)",
+		"height": 850,
+		"width": 1280
+	},
+	{
+		"name": "trainstation.jpg",
+		"src": "jpGallery/TokyoTrainstation_sovh7s",
+		"alt": "A Trainstation in Tokyo",
+		"height": 850,
+		"width": 1280
+	}
+]
