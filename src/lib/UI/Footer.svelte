@@ -5,32 +5,35 @@
 	import FooterPrivacyWindow from '$lib/Windows/FooterWindows/FooterPrivacyWindow.svelte';
 	import FooterLegalWindow from '$lib/Windows/FooterWindows/FooterLegalWindow.svelte';
 
+	export let currentPage;
+
 	let display = 'overview';
+
+	$: currentPage, (() => (display = 'overview'))();
 
 	function toggleWindow(name) {
 		display = display === name ? 'overview' : name;
 	}
 </script>
 
+{#if display === 'contact'}
+	<div class="overlay" transition:slide>
+		<FooterContactWindow on:toggle-minimize={() => toggleWindow('contact')} />
+	</div>
+{:else if display === 'language'}
+	<div style="transform: translateZ(0px) scale(1);" class="overlay" transition:slide>
+		<FooterLanguageWindow on:toggle-minimize={() => toggleWindow('language')} />
+	</div>
+{:else if display === 'legal'}
+	<div class="overlay" transition:slide>
+		<FooterLegalWindow {currentPage} on:toggle-minimize={() => toggleWindow('legal')} />
+	</div>
+{:else if display === 'privacy'}
+	<div class="overlay" transition:slide>
+		<FooterPrivacyWindow {currentPage} on:toggle-minimize={() => toggleWindow('privacy')} />
+	</div>
+{/if}
 <footer>
-	{#if display === 'contact'}
-		<div class="overlay" transition:slide>
-			<FooterContactWindow on:toggle-minimize={() => toggleWindow('contact')} />
-		</div>
-	{:else if display === 'language'}
-		<div style="transform: translateZ(0px) scale(1);" class="overlay" transition:slide>
-			<FooterLanguageWindow on:toggle-minimize={() => toggleWindow('language')} />
-		</div>
-	{:else if display === 'legal'}
-		<div class="overlay" transition:slide>
-			<FooterLegalWindow on:toggle-minimize={() => toggleWindow('legal')} />
-		</div>
-	{:else if display === 'privacy'}
-		<div class="overlay" transition:slide>
-			<FooterPrivacyWindow on:toggle-minimize={() => toggleWindow('privacy')} />
-		</div>
-	{/if}
-
 	<nav
 		style="--marquee-play-state: {display === 'overview' ? 'running' : 'paused'};"
 		class="marquee"
@@ -42,7 +45,7 @@
 				<a href="/">INSTAGRAM</a>
 				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
 				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
-				<a href="/">SITEMAP</a>
+				<a href="https://mortimerbaltus.com/sitemap">SITEMAP</a>
 			</span>
 			<span>
 				<button on:click={() => toggleWindow('contact')}>GET IN TOUCH</button>
@@ -50,7 +53,7 @@
 				<a href="/">INSTAGRAM</a>
 				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
 				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
-				<a href="/">SITEMAP</a>
+				<a href="https://mortimerbaltus.com/sitemap">SITEMAP</a>
 			</span>
 			<span>
 				<button on:click={() => toggleWindow('contact')}>GET IN TOUCH</button>
@@ -58,7 +61,7 @@
 				<a href="/">INSTAGRAM</a>
 				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
 				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
-				<a href="/">SITEMAP</a>
+				<a href="https://mortimerbaltus.com/sitemap">SITEMAP</a>
 			</span>
 			<span>
 				<button on:click={() => toggleWindow('contact')}>GET IN TOUCH</button>
@@ -66,7 +69,7 @@
 				<a href="/">INSTAGRAM</a>
 				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
 				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
-				<a href="/">SITEMAP</a>
+				<a href="https://mortimerbaltus.com/sitemap">SITEMAP</a>
 			</span>
 		</div>
 	</nav>
@@ -136,20 +139,20 @@
 
 <style>
 	.overlay {
+		position: fixed;
 		background-color: transparent;
-		position: absolute;
-		top: -200px;
+		bottom: 0;
 		z-index: 9999;
 		display: flex;
-		width: 100vw;
 		justify-content: center;
-		height: 315px;
+		align-items: center;
+		height: 100vh;
+		width: 100vw;
 		pointer-events: none;
 		overflow: hidden;
 	}
 
 	footer {
-		position: relative;
 		transform: translateZ(500px);
 		width: 100vw;
 		height: 300px;
