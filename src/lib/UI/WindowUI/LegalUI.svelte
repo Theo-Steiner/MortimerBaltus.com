@@ -10,6 +10,8 @@
 		color: #fefefe;
 		font-size: 21px;
 		margin: 0px;
-		padding: 14px 8px 14px 8px;
+		line-height: 25.5px;
+		letter-spacing: -0.28px;
+		padding: 9px 0px 15px 9px;
 	}
 </style>

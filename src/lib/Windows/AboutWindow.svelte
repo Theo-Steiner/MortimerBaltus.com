@@ -46,6 +46,7 @@
 		font-size: 100px;
 		line-height: 85.5px;
 		letter-spacing: 1.72px;
+		padding: 0;
 		margin: 0px;
 		transition: 0.8s cubic-bezier(0.83, 0, 0.15, 1);
 		transition-delay: calc(var(--animation-order) * 200ms);
