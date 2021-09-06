@@ -27,11 +27,6 @@
 		/>
 	</WindowElement>
 </div>
-<span>
-	{#each jpGallery as image}
-		<a href="/pages/gallery/{image.name.toLowerCase()}">{image.name}</a>
-	{/each}
-</span>
 
 <style>
 	div {
@@ -40,10 +35,6 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	span {
-		display: none;
 	}
 
 	@media only screen and (min-width: 1440px) {

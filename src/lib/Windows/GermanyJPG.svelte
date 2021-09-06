@@ -28,11 +28,6 @@
 		/>
 	</WindowElement>
 </div>
-<span>
-	{#each deGallery as image}
-		<a href="/pages/gallery/{image.name}">{image.name}</a>
-	{/each}
-</span>
 
 <style>
 	div {
@@ -48,9 +43,5 @@
 			grid-column: 148/189;
 			grid-row: 14/44;
 		}
-	}
-
-	span {
-		display: none;
 	}
 </style>
