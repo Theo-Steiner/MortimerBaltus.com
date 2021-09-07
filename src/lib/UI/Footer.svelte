@@ -21,7 +21,7 @@
 		<FooterContactWindow on:toggle-minimize={() => toggleWindow('contact')} />
 	</div>
 {:else if display === 'language'}
-	<div style="transform: translateZ(0px) scale(1);" class="overlay" transition:slide>
+	<div class="overlay" transition:slide>
 		<FooterLanguageWindow on:toggle-minimize={() => toggleWindow('language')} />
 	</div>
 {:else if display === 'legal'}
@@ -143,6 +143,7 @@
 		background-color: transparent;
 		bottom: 0;
 		z-index: 9999;
+		transform: translateZ(2000px);
 		display: flex;
 		justify-content: center;
 		align-items: center;

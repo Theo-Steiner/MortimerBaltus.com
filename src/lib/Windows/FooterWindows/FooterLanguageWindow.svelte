@@ -7,7 +7,7 @@
 <FooterWindowElement
 	width={266}
 	height={273}
-	background="C96161"
+	background="#151515"
 	title={$t('windows.language')}
 	on:toggle-minimize
 >
