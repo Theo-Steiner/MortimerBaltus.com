@@ -11,56 +11,62 @@
 	/>
 </svelte:head>
 <div class="container">
-	<ResponsiveImage
-		imageWidth="2786"
-		imageHeight="2786"
-		imageID="EberhardMueller/EM_Thumb_wv3jdv"
-		alt="Redesigned business cards were part of brand's face lift."
-	/>
-	<p>
-		{@html $t('pages.project_03.introduction')}
-		<a class="outside-link" href="https://eberhard-mueller.de">eberhard-mueller.de ↗</a>
-	</p>
 	<div class="sticky-image">
+		<ResponsiveImage
+			imageWidth="2786"
+			imageHeight="2786"
+			imageID="EberhardMueller/EM_Thumb_wv3jdv"
+			alt="Redesigned business cards were part of brand's face lift."
+		/>
+	</div>
+	<div class="lower-container">
+		<p>
+			{@html $t('pages.project_03.introduction')}
+			<a class="outside-link" href="https://eberhard-mueller.de">eberhard-mueller.de ↗</a>
+		</p>
 		<ResponsiveImage
 			imageWidth="2326"
 			imageHeight="1494"
 			imageID="EberhardMueller/EM_Portrait_fmlj3x"
 			alt="A portrait shot of Eberhard Mueller."
 		/>
-	</div>
-	<div class="lower-container">
-		<ResponsiveImage
-			imageWidth="1438"
-			imageHeight="1200"
-			imageID="EberhardMueller/EM_Bathtub_dark_f2skh4"
-			alt="Sophistication both in interior design and the face lifted brand identity."
-		/>
-		<figure>
-			<ResponsiveImage
-				imageWidth="2480"
-				imageHeight="3508"
-				limitHeight={false}
-				displayWidth="70.7vw"
-				imageID="EberhardMueller/EM_Page_iwsane"
-				alt="The finished page showcases highlights of interior design by Eberhard Mueller"
-			/>
-		</figure>
 		<div class="sticky-image">
 			<ResponsiveImage
-				imageWidth="2000"
-				imageHeight="1355"
-				imageID="EberhardMueller/EM_Bathtub_light_bpknz3"
-				alt="A bathroom created by Eberhard Mueller."
+				imageWidth="1438"
+				imageHeight="1200"
+				imageID="EberhardMueller/EM_Bathtub_dark_f2skh4"
+				alt="Sophistication both in interior design and the face lifted brand identity."
 			/>
 		</div>
-		<div class="image-padding lower-container">
-			<ResponsiveImage
-				imageWidth="2326"
-				imageHeight="1494"
-				imageID="EberhardMueller/EM_Page_Menu_tlkvyw"
-				alt="Simplicity was the key paradigm to for this rebranding - as with interior design: less is more"
-			/>
+		<div class="lower-container">
+			<figure>
+				<ResponsiveImage
+					imageWidth="2480"
+					imageHeight="3508"
+					limitHeight={false}
+					displayWidth="70.7vw"
+					imageID="EberhardMueller/EM_Page_iwsane"
+					alt="The finished page showcases highlights of interior design by Eberhard Mueller"
+				/>
+			</figure>
+			<div class="sticky-image">
+				<ResponsiveImage
+					imageWidth="2000"
+					imageHeight="1355"
+					imageID="EberhardMueller/EM_Bathtub_light_bpknz3"
+					alt="A bathroom created by Eberhard Mueller."
+				/>
+			</div>
+			<div class="lower-container">
+				<div class="image-padding lower-container">
+					<ResponsiveImage
+						imageWidth="2326"
+						imageHeight="1494"
+						imageID="EberhardMueller/EM_Page_Menu_tlkvyw"
+						alt="Simplicity was the key paradigm to for this rebranding - as with interior design: less is more"
+					/>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

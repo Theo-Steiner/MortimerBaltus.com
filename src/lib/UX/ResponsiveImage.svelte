@@ -4,6 +4,7 @@
 	export let imageWidth;
 	export let imageHeight;
 	export let displayWidth = '100vw';
+	export let displayHeight = 'auto';
 	export let limitHeight = true;
 	export let aspectRatio = limitHeight ? '32/19' : 'initial';
 	const slug = 'https://res.cloudinary.com/thdrstnr/image/upload/q_auto:best';
@@ -18,15 +19,20 @@
 	sizes={displayWidth}
 	{srcset}
 	{alt}
-	style="--displayWidth: {displayWidth}; aspect-ratio: {aspectRatio};"
+	style="--displayWidth: {displayWidth}; aspect-ratio: {aspectRatio}; --displayHeight: {displayHeight};"
 />
 
 <style>
 	img {
 		width: var(--displayWidth);
-		height: auto;
+		height: var(--displayHeight);
 		object-fit: cover;
 		object-position: center bottom;
 		display: block;
+	}
+	@media (orientation: portrait) {
+		img {
+			height: auto;
+		}
 	}
 </style>
