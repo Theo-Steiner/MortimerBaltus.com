@@ -23,7 +23,7 @@
 	<meta name="description" content="The Privacy Statement of MortimerBaltus.com" />
 </svelte:head>
 
-<div class="container">
+<div lang="en" class="container">
 	<p class="intro">
 		At MortimerBaltus, accessible from MortimerBaltus.com, one of our main priorities is the privacy
 		of our visitors. This Privacy Policy document contains types of information that is collected

@@ -38,7 +38,7 @@
 		style="--marquee-play-state: {display === 'overview' ? 'running' : 'paused'};"
 		class="marquee"
 	>
-		<div class="marquee-inner">
+		<div lang="en" class="marquee-inner">
 			<span>
 				<button on:click={() => toggleWindow('contact')}>GET IN TOUCH</button>
 				<button on:click={() => toggleWindow('language')}>LANGUAGE</button>

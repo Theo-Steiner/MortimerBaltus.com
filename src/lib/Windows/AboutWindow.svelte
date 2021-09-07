@@ -20,10 +20,10 @@
 		}}
 	>
 		<div class="container">
-			<p style="--animation-order: 0; --left-offset: 110">NICE</p>
-			<p style="--animation-order: 1; --left-offset: 208">TO</p>
-			<p style="--animation-order: 2; --left-offset: 62">MEET</p>
-			<p style="--animation-order: 3; --left-offset: 136">YOU</p>
+			<p lang="en" style="--animation-order: 0; --left-offset: 110">NICE</p>
+			<p lang="en" style="--animation-order: 1; --left-offset: 208">TO</p>
+			<p lang="en" style="--animation-order: 2; --left-offset: 62">MEET</p>
+			<p lang="en" style="--animation-order: 3; --left-offset: 136">YOU</p>
 		</div>
 	</WindowElement>
 </div>

@@ -14,7 +14,7 @@ describes the terms on the basis of which you may make use of our website (“Te
 	/>
 </svelte:head>
 
-<div class="container">
+<div lang="en" class="container">
 	<h1>INFORMATION PURSUANT TO SEC. 5 TMG AND ART. 13 DSGVO</h1>
 	<div class="contact-container">
 		<ul>

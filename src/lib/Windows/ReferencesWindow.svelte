@@ -15,7 +15,7 @@
 		isInForeground={true}
 	>
 		<div class="pause-animation">
-			<ul style="--th: 390px;">
+			<ul lang="en" style="--th: 390px;">
 				<li>Bureau Johannes Erler</li>
 				<li>CarlNann</li>
 				<li>Con Corazón</li>

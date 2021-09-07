@@ -188,7 +188,7 @@
 		font-size: min(1.88vw, 13px);
 		user-select: none;
 		line-height: 1.35;
-		letter-spacing: 0.8%;
+		letter-spacing: 0.11px;
 		padding: 0;
 	}
 

@@ -94,7 +94,7 @@
 	{#if view === 'overview'}
 		<div class="contact-container" transition:horizontalSlide>
 			<div class="fixed">
-				<h1>
+				<h1 lang="en">
 					GET IN <br />TOUCH
 				</h1>
 				<hr />
