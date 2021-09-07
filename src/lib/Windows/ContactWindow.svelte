@@ -7,7 +7,7 @@
 <div class="wrapper grid-area">
 	<WindowElement
 		width={378}
-		height={313}
+		height={315}
 		parallax="very-slow"
 		background="#EFEFEF"
 		title={$t('windows.contact')}

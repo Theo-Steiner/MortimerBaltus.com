@@ -1,5 +1,6 @@
 <script>
 	import { horizontalSlide } from '$lib/UX/css_utils';
+	import { slide } from 'svelte/transition';
 	let view = 'overview';
 	let messageCounter = 0;
 
@@ -134,7 +135,7 @@
 							resetChatView();
 						}}
 					/>
-					<p style="height: 38px;" class="message-bubble" use:startMessageTimer>
+					<p style="height: 38px;" transition:slide class="message-bubble" use:startMessageTimer>
 						{view === 'moritz' ? 'Hi, nice to meet you!' : "Hey, I'm Theo!"}
 					</p>
 				</div>
@@ -152,7 +153,7 @@
 								resetChatView();
 							}}
 						/>
-						<p style="height: 95px;" class="message-bubble" use:startMessageTimer>
+						<p style="height: 95px;" transition:slide class="message-bubble" use:startMessageTimer>
 							{view === 'moritz'
 								? 'You can send me a message right from this window or shoot me an email the old fashioned way at moritz@mortimerbaltus.de'
 								: 'If you wanna talk tech, ask me anything or just need someone to share memes with... hit me up at theo@mortimerbaltus.de'}
@@ -172,7 +173,7 @@
 								resetChatView();
 							}}
 						/>
-						<p style="height: 38px;" class="message-bubble">
+						<p style="height: 38px;" transition:slide class="message-bubble">
 							{view === 'moritz'
 								? "I can't wait to hear from you!"
 								: "I'm excited to hear from you!"}
@@ -293,7 +294,7 @@
 							view = 'overview';
 						}}
 					/>
-					<p class="message-bubble">
+					<p transition:slide class="message-bubble">
 						{success
 							? "Thank's! I'll get back to you as soon as possible."
 							: 'Oops, something went terribly wrong... Please try again or use your own e-mail client'}
@@ -512,13 +513,12 @@
 	}
 
 	h1 {
-		max-height: 108px;
 		font-size: 54px;
+		line-height: 0.97;
+		letter-spacing: 0.45px;
+		user-select: none;
 		color: #151515;
-		margin-top: 10px;
-		margin-bottom: 4px;
-		margin-left: 14px;
-		overflow: hidden;
+		padding: 10px 0 4px 14px;
 	}
 
 	p {

@@ -6,7 +6,7 @@
 
 <FooterWindowElement
 	width={378}
-	height={313}
+	height={315}
 	on:toggle-minimize
 	background="#EFEFEF"
 	title={$t('windows.contact')}
