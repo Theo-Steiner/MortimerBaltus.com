@@ -11,7 +11,7 @@
 	width={288}
 	height={207}
 	background="#FEC7A3"
-	title={$t('windows.privacy')}
+	title={$t('windows.privacy.title')}
 	{href}
 >
 	<PrivacyUI />

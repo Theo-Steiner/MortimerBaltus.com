@@ -1,5 +1,6 @@
 <script>
 	import { slide } from 'svelte/transition';
+	import { quartInOut } from 'svelte/easing';
 	import FooterContactWindow from '$lib/Windows/FooterWindows/FooterContactWindow.svelte';
 	import FooterLanguageWindow from '$lib/Windows/FooterWindows/FooterLanguageWindow.svelte';
 	import FooterPrivacyWindow from '$lib/Windows/FooterWindows/FooterPrivacyWindow.svelte';
@@ -17,19 +18,19 @@
 </script>
 
 {#if display === 'contact'}
-	<div class="overlay" transition:slide>
+	<div class="overlay" out:slide={{ easing: quartInOut }}>
 		<FooterContactWindow on:toggle-minimize={() => toggleWindow('contact')} />
 	</div>
 {:else if display === 'language'}
-	<div class="overlay" transition:slide>
+	<div class="overlay" out:slide={{ easing: quartInOut }}>
 		<FooterLanguageWindow on:toggle-minimize={() => toggleWindow('language')} />
 	</div>
 {:else if display === 'legal'}
-	<div class="overlay" transition:slide>
+	<div class="overlay" out:slide={{ easing: quartInOut }}>
 		<FooterLegalWindow {currentPage} on:toggle-minimize={() => toggleWindow('legal')} />
 	</div>
 {:else if display === 'privacy'}
-	<div class="overlay" transition:slide>
+	<div class="overlay" out:slide={{ easing: quartInOut }}>
 		<FooterPrivacyWindow {currentPage} on:toggle-minimize={() => toggleWindow('privacy')} />
 	</div>
 {/if}
@@ -155,6 +156,7 @@
 
 	footer {
 		transform: translateZ(500px);
+		border-top: solid 1px #fefefe;
 		width: 100vw;
 		height: 300px;
 		background-color: #151515;

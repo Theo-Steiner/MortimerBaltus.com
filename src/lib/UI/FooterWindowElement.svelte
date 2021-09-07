@@ -1,5 +1,5 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 
 	import Button from './Button.svelte';
 
@@ -25,12 +25,18 @@
 			}
 		};
 	}
+
+	let triggerIntroAnimation = false;
+	onMount(() => {
+		triggerIntroAnimation = true;
+	});
 </script>
 
 <section
 	use:clickOutside
 	on:click-outside={() => dispatch('toggle-minimize')}
 	style="width: {width}px; height: {height}px;"
+	class:blur-intro={triggerIntroAnimation}
 >
 	<header>
 		<Button buttonType="minimize" on:toggle-minimize />
@@ -62,6 +68,7 @@
 		margin: 0px;
 		padding: 0px;
 		box-shadow: 0px 4px 6px -2px rgba(0, 0, 0, 0.66);
+		opacity: 0;
 	}
 
 	header {
@@ -87,5 +94,23 @@
 		margin: 0px;
 		border-top: 1px solid #fefefe;
 		border-radius: 0px 0px 6px 6px;
+	}
+
+	.blur-intro {
+		animation: 0.5s cubic-bezier(0.22, 1, 0.36, 1) 1 normal forwards running blur-effect;
+	}
+
+	@keyframes blur-effect {
+		0% {
+			filter: blur(5px);
+			transform: scale(1.2);
+			opacity: 0;
+		}
+
+		100% {
+			filter: blur(0px);
+			transform: scale(1);
+			opacity: 1;
+		}
 	}
 </style>
