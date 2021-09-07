@@ -45,7 +45,7 @@
 				<a href="/">INSTAGRAM</a>
 				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
 				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
-				<a href="https://mortimerbaltus.com/sitemap">SITEMAP</a>
+				<a href="https://mortimerbaltus.com/sitemap.xml">SITEMAP</a>
 			</span>
 			<span>
 				<button on:click={() => toggleWindow('contact')}>GET IN TOUCH</button>
@@ -53,7 +53,7 @@
 				<a href="/">INSTAGRAM</a>
 				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
 				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
-				<a href="https://mortimerbaltus.com/sitemap">SITEMAP</a>
+				<a href="https://mortimerbaltus.com/sitemap.xml">SITEMAP</a>
 			</span>
 			<span>
 				<button on:click={() => toggleWindow('contact')}>GET IN TOUCH</button>
@@ -61,7 +61,7 @@
 				<a href="/">INSTAGRAM</a>
 				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
 				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
-				<a href="https://mortimerbaltus.com/sitemap">SITEMAP</a>
+				<a href="https://mortimerbaltus.com/sitemap.xml">SITEMAP</a>
 			</span>
 			<span>
 				<button on:click={() => toggleWindow('contact')}>GET IN TOUCH</button>
@@ -69,7 +69,7 @@
 				<a href="/">INSTAGRAM</a>
 				<button on:click={() => toggleWindow('privacy')}>PRIVACY POLICY</button>
 				<button on:click={() => toggleWindow('legal')}>LEGAL NOTICE</button>
-				<a href="https://mortimerbaltus.com/sitemap">SITEMAP</a>
+				<a href="https://mortimerbaltus.com/sitemap.xml">SITEMAP</a>
 			</span>
 		</div>
 	</nav>
