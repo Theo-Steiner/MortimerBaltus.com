@@ -11,7 +11,7 @@
 		parallax="very-slow"
 		background="#FEC7A3"
 		href="/pages/privacy"
-		title={$t('windows.privacy')}
+		title={$t('windows.privacy.title')}
 		id={5}
 		isInForeground={true}
 	>

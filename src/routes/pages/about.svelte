@@ -57,24 +57,24 @@
 			{@html $t('pages.about.introduction')}
 		</p>
 	</div>
-</div>
-<div class="image-container sticky-image">
-	<img
-		src="https://res.cloudinary.com/thdrstnr/image/upload/h_800/q_auto:low/v1618455027/MortimerBaltus/About/polaroid_jymdbi.png"
-		width="100vw"
-		height="800px"
-		alt="Polaroid Photograph"
-	/>
-</div>
-<div class="lower-container">
-	<p>
-		{@html $t('pages.about.location')}
-	</p>
-	<div class="animation-container">
-		<h2 bind:this={nice}>NICE</h2>
-		<h2 bind:this={to}>TO</h2>
-		<h2 bind:this={meet}>MEET</h2>
-		<h2 bind:this={you}>YOU</h2>
+	<div class="image-container sticky-image">
+		<img
+			src="https://res.cloudinary.com/thdrstnr/image/upload/h_800/q_auto:low/v1618455027/MortimerBaltus/About/polaroid_jymdbi.png"
+			width="100vw"
+			height="800px"
+			alt="Polaroid Photograph"
+		/>
+	</div>
+	<div class="lower-container">
+		<p>
+			{@html $t('pages.about.location')}
+		</p>
+		<div lang="en" class="animation-container">
+			<h2 bind:this={nice}>NICE</h2>
+			<h2 bind:this={to}>TO</h2>
+			<h2 bind:this={meet}>MEET</h2>
+			<h2 bind:this={you}>YOU</h2>
+		</div>
 	</div>
 </div>
 
@@ -116,7 +116,7 @@
 
 	.animation-container {
 		width: 100vw;
-		padding: 80px 10px 50px 10px;
+		padding: 80px 20px 50px 20px;
 		overflow: hidden;
 	}
 

@@ -10,7 +10,7 @@
 		height={315}
 		parallax="very-slow"
 		background="#EFEFEF"
-		title={$t('windows.contact')}
+		title={$t('windows.contact.title')}
 		id={14}
 		enlargeable={false}
 	>

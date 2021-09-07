@@ -9,7 +9,7 @@
 		height={164}
 		parallax="very-slow"
 		background="#5E4B1B"
-		title={$t('windows.cookies')}
+		title={$t('windows.cookies.title')}
 		enlargeable={false}
 		id={9}
 		isInForeground={true}

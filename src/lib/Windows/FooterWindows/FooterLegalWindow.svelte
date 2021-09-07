@@ -12,7 +12,7 @@
 	width={268}
 	height={158}
 	background="#1C6370"
-	title={$t('windows.legal')}
+	title={$t('windows.legal.title')}
 	{href}
 >
 	<LegalUI />

@@ -10,7 +10,7 @@
 		height={158}
 		parallax="very-slow"
 		background="#1C6370"
-		title={$t('windows.legal')}
+		title={$t('windows.legal.title')}
 		href="pages/legal"
 		id={7}
 		isInForeground={true}

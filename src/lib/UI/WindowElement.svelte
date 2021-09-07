@@ -110,7 +110,13 @@
 					style="height: {height - 36}px; background: {background}; background-size: cover;"
 				>
 					{#if enlargeable}
-						<a on:click={() => (subpageActive = true)} {href}>
+						<a
+							on:click={() => {
+								subpageActive = true;
+								return false;
+							}}
+							{href}
+						>
 							<slot><p>Content goes here</p></slot>
 						</a>
 					{:else}

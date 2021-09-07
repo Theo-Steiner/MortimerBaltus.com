@@ -9,7 +9,7 @@
 	height={315}
 	on:toggle-minimize
 	background="#EFEFEF"
-	title={$t('windows.contact')}
+	title={$t('windows.contact.title')}
 >
 	<ContactUI />
 </FooterWindowElement>

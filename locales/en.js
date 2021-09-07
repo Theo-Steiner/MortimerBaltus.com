@@ -1,12 +1,12 @@
 export default {
 	windows: {
 		about: 'ABOUT',
-		contact: 'CONTACT',
-		cookies: 'COOKIES',
+		contact: { title: 'CONTACT', text: '' },
+		cookies: { title: 'COOKIES', text: '' },
 		'clean-code': 'CLEAN.CODE',
 		language: 'LANGUAGE',
-		legal: 'LEGAL NOTICE',
-		privacy: 'PRIVACY POLICY',
+		legal: { title: 'LEGAL NOTICE', text: '' },
+		privacy: { title: 'PRIVACY POLICY', text: '' },
 		references: 'REFERENCES',
 		project_01: 'PROJECT_01',
 		project_02: 'PROJECT_02',
