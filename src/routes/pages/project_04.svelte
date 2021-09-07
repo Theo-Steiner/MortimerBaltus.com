@@ -2,7 +2,7 @@
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
 	import { t } from 'precompile-intl-runtime';
 	let videoSlug =
-		'https://res.cloudinary.com/thdrstnr/video/upload/q_auto:best/v1625117503/MortimerBaltus/Soe/Soe_02_ai4z59';
+		'https://res.cloudinary.com/thdrstnr/video/upload/ac_none,c_scale,q_auto:good,vc_auto,w_1600/v1625117503/MortimerBaltus/Soe/Soe_02_ai4z59';
 </script>
 
 <svelte:head>
@@ -28,7 +28,7 @@
 			<a class="outside-link" href="https://so-em.com">so-em.com ↗</a>
 		</p>
 		<!-- svelte-ignore a11y-media-has-caption -->
-		<video class="sticky-image" autoplay loop muted playsinline>
+		<video class="sticky-image" muted autoplay loop playsinline>
 			<source src={`${videoSlug}.webm`} type="video/webm" />
 			<source src={`${videoSlug}.mp4`} type="video/mp4" />
 			<source src={`${videoSlug}.ogg`} type="video/ogg" />
