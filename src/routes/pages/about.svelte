@@ -116,7 +116,7 @@
 
 	.animation-container {
 		width: 100vw;
-		padding: 80px 20px 50px 20px;
+		padding: 40px 10px 30px 10px;
 		overflow: hidden;
 	}
 
@@ -125,6 +125,10 @@
 			font-size: 150px;
 			letter-spacing: 2.57px;
 			line-height: 128.3px;
+		}
+
+		.animation-container {
+			padding: 80px 20px 50px 20px;
 		}
 	}
 </style>

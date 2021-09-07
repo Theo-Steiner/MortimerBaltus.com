@@ -15,8 +15,8 @@ html {
 
 p {
 	color: #151515;
-	font-size: clamp(22px, 3.5vw, 44px);
-	line-height: clamp(25px, 3.6vw, 50px);
+	font-size: clamp(28px, 3.5vw, 44px);
+	line-height: clamp(31px, 3.6vw, 50px);
 	letter-spacing: -0.28px;
 	padding: clamp(20px, 2.8vw, 30px) 20px;
 }
@@ -61,4 +61,9 @@ body::-webkit-scrollbar {
 body {
 	-ms-overflow-style: none; /* IE and Edge */
 	scrollbar-width: none; /* Firefox */
+}
+@media screen and (min-device-width: 768px) {
+	p {
+		padding: clamp(20px, 2.8vw, 30px) 10px;
+	}
 }

@@ -238,9 +238,6 @@
 
 	p {
 		color: #fefefe;
-		font-size: 22px;
-		line-height: 26px;
-		letter-spacing: -0.55px;
 		padding: 5px 10px 20px 10px;
 	}
 
