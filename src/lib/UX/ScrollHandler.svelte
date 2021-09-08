@@ -58,13 +58,9 @@
 		window.removeEventListener('wheel', wheelHandler, { passive: false });
 	});
 
-	$: if ($grabState) {
-		handleMousedown();
-	}
 	let isMousedown = false;
 	let initialM = { x: 0, y: 0 };
 	let currentM = { x: 0, y: 0 };
-	let background;
 	let scrollVelocityX = 0;
 	let scrollVelocityY = 0;
 	let momentumID;
@@ -111,24 +107,30 @@
 	}
 
 	// The following functions take care of the grab handling
-	export function handleMousedown(event) {
+
+	$: if ($grabState) {
+		handleMousedown();
+	}
+
+	function handleMousedown(event) {
 		window.addEventListener('mouseup', handleMouseup);
 		isMousedown = true;
 		cancelMomentumTracking();
 		initialM.x = event?.clientX || $grabState.clientX;
 		initialM.y = event?.clientY || $grabState.clientY;
-		background.addEventListener('mousemove', handleMousemove);
-		background.addEventListener('mouseout', handleMouseup);
+		window.addEventListener('mousemove', handleMousemove);
+		window.addEventListener('mouseleave', handleMouseup);
 		let selection = window.getSelection();
 		selection.removeAllRanges();
 	}
 
-	export function handleMouseup() {
+	function handleMouseup() {
+		console.log('mouseout detected');
 		isMousedown = false;
 		beginMomentumTracking();
 		window.removeEventListener('mouseup', handleMouseup);
-		background.removeEventListener('mousemove', handleMousemove);
-		background.removeEventListener('mouseout', handleMouseup);
+		window.removeEventListener('mousemove', handleMousemove);
+		window.removeEventListener('mouseleave', handleMouseup);
 		grabState.set(undefined);
 	}
 
@@ -144,12 +146,7 @@
 </script>
 
 {#if !hasTouchScreen}
-	<div
-		class="grabbable"
-		on:mousedown={handleMousedown}
-		class:mousedown={isMousedown}
-		bind:this={background}
-	/>
+	<div class="grabbable" on:mousedown={handleMousedown} class:grabbing={isMousedown} />
 {/if}
 
 <style>
@@ -159,16 +156,16 @@
 		height: max(2550px, 250vmax);
 		transform: translateZ(0px) scale(1);
 		transform-origin: center;
+		cursor: grab;
 		top: 0;
 		left: 0;
-		cursor: grab;
 	}
-	.mousedown {
+
+	.grabbing {
 		cursor: grabbing;
 		user-select: none;
-		transform: translateZ(2px) scale(1);
-		transform-origin: center;
 	}
+
 	@media only screen and (min-width: 1440px) {
 		.grabbable {
 			width: max(2880px, 120vmax);

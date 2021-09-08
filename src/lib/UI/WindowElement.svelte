@@ -1,5 +1,4 @@
 <script>
-	import { browser } from '$app/env';
 	import { goto } from '$app/navigation';
 	import grabState from '$lib/UX/grab-state';
 	import { onDestroy, onMount } from 'svelte';
@@ -55,31 +54,8 @@
 		}
 	}
 
-	// keeps track of how many mousedowns have been registered in the current "click-session"
-	let clicks = 0;
-	// keeps track of whether or not a mouseup occured (Inside the renderGrabTime)
-	let mouseup = false;
-	// time that has to elapse before it is checked,
-	// whether the user was just clicking or is actually grabbing
-	const renderGrabTime = 300;
-
-	// removes the eventListener it was called by and sets mouseup to true
-	// (only if clicks is still at count 1, to rule out double clicks)
-	function checkIfMouseup() {
-		window.removeEventListener('mouseup', checkIfMouseup);
-		if (clicks === 1) {
-			mouseup = true;
-		}
-	}
-
-	// if no mouseup has been detected in the renderGrabTime and clicks is still at 1,
-	// this triggers the grabbing state. It also does a cleanup of the variables.
 	function triggerGrab(evt) {
-		if (!mouseup && clicks === 1) {
-			grabState.set(evt);
-		}
-		clicks = 0;
-		mouseup = false;
+		grabState.set(evt);
 	}
 
 	// Plain event handler to process clicks (Or currently double clicks) on the window-content
@@ -90,21 +66,12 @@
 		}
 	}
 
-	// event handler for window content mousedowns. It increases the click count whenever called and on
-	// click number 1 adds a timeout to call the grab trigger function while also adding a listener
-	// to check for mouseups (To prevent the grab state from occuring on clicks)
 	function handleContentMousedown(evt) {
-		clicks++;
-		if (clicks === 1) {
-			setTimeout(() => {
-				triggerGrab(evt);
-			}, renderGrabTime);
-			window.addEventListener('mouseup', checkIfMouseup);
-		}
+		triggerGrab(evt);
 	}
 
 	// Plain event handler to process clicks on the window in general and bring them to the foreground
-	// if they are in the background and not minimized
+	// if they are in the background and not minimized or on the enlargeButton
 	function handleWindowClick(evt) {
 		if (!isInForeground && !isMinimized) {
 			if (!href) {
@@ -115,18 +82,9 @@
 		}
 	}
 
-	// event handler for window-area mousedowns. It increases the click count whenever called and on
-	// click number 1 adds a timeout to call the grab trigger function while also adding a listener
-	// to check for mouseups (To prevent the grab state from occuring on clicks)
 	function handleWindowMousedown(evt) {
 		if (!enlargeButton?.contains(evt.target)) {
-			clicks++;
-			if (clicks === 1) {
-				setTimeout(() => {
-					triggerGrab(evt);
-				}, renderGrabTime);
-				window.addEventListener('mouseup', checkIfMouseup);
-			}
+			triggerGrab(evt);
 		}
 	}
 
@@ -136,9 +94,6 @@
 	});
 
 	onDestroy(() => {
-		if (browser) {
-			window.removeEventListener('mouseup', checkIfMouseup);
-		}
 		if (unsubscribe) {
 			unsubscribe();
 		}
@@ -165,8 +120,8 @@
 			style="--windowWidth: {width}; --windowHeight: {height}; --order: {id / 10};"
 			on:mousedown={handleWindowMousedown}
 			on:click={handleWindowClick}
+			class:grabbing={$grabState}
 			class:blur-intro={triggerIntroAnimation}
-			class:grabbing={clicks > 0}
 		>
 			<header>
 				<Button buttonType="minimize" on:toggle-minimize={toggleMinimize} />

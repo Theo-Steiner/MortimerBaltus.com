@@ -28,7 +28,7 @@
 			<a lang="en" class="outside-link" href="https://so-em.com">so-em.com ↗</a>
 		</p>
 		<!-- svelte-ignore a11y-media-has-caption -->
-		<video class="sticky-image" muted autoplay loop playsinline>
+		<video class="sticky-video" muted autoplay loop playsinline>
 			<source src={`${videoSlug}.webm`} type="video/webm" />
 			<source src={`${videoSlug}.mp4`} type="video/mp4" />
 			<source src={`${videoSlug}.ogg`} type="video/ogg" />
@@ -84,6 +84,11 @@
 
 	path {
 		fill: #ffffff;
+	}
+
+	.sticky-video {
+		position: sticky;
+		top: min(0px, calc(100vh - (700 / 934) * 100vw));
 	}
 
 	video {
