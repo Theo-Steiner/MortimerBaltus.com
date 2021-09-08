@@ -19,7 +19,7 @@
 	>
 		<ImageLoader
 			sizes="497px"
-			src="https://res.cloudinary.com/thdrstnr/image/upload/w_497,f_auto,q_auto:best/{slug}"
+			src="https://res.cloudinary.com/thdrstnr/image/upload/h_355,f_auto,q_auto:best/{slug}"
 			alt="Produkt is a lifestyle brand we helped establish"
 		/>
 	</WindowElement>
