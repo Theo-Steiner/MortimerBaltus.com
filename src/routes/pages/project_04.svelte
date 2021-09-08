@@ -24,8 +24,8 @@
 	</div>
 	<div class="lower-container">
 		<p>
-			{@html $t('pages.project_04.introduction')}
-			<a class="outside-link" href="https://so-em.com">so-em.com ↗</a>
+			{$t('pages.project_04.introduction')}
+			<a lang="en" class="outside-link" href="https://so-em.com">so-em.com ↗</a>
 		</p>
 		<!-- svelte-ignore a11y-media-has-caption -->
 		<video class="sticky-image" muted autoplay loop playsinline>

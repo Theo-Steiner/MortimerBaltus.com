@@ -21,8 +21,10 @@
 	</div>
 	<div class="lower-container">
 		<p>
-			{@html $t('pages.project_01.introduction')}
-			<a class="outside-link" href="https://concorazon-hamburg.com/">concorazon-hamburg.com ↗</a>
+			{$t('pages.project_01.introduction')}
+			<a lang="en" class="outside-link" href="https://concorazon-hamburg.com/"
+				>concorazon-hamburg.com ↗</a
+			>
 		</p>
 
 		<div class="visitenkarten-container sticky-image">

@@ -54,10 +54,12 @@
 <div class="container">
 	<div class="first-paragraph">
 		<p>
-			{@html $t('pages.about.introduction')}
+			{$t('pages.about.introduction')}
 			<br />
-			<a class="outside-link" href="https://concorazon-hamburg.com/">moritzmortimer.de ↗</a>
-			<a class="outside-link" href="https://concorazon-hamburg.com/">theosteiner.de ↗</a>
+			<a lang="en" class="outside-link" href="https://concorazon-hamburg.com/"
+				>moritzmortimer.de ↗</a
+			>
+			<a lang="en" class="outside-link" href="https://concorazon-hamburg.com/">theosteiner.de ↗</a>
 		</p>
 	</div>
 	<div class="image-container sticky-image">

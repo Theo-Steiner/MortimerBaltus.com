@@ -21,8 +21,8 @@
 	</div>
 	<div class="lower-container">
 		<p>
-			{@html $t('pages.project_03.introduction')}
-			<a class="outside-link" href="https://eberhard-mueller.de">eberhard-mueller.de ↗</a>
+			{$t('pages.project_03.introduction')}
+			<a lang="en" class="outside-link" href="https://eberhard-mueller.de">eberhard-mueller.de ↗</a>
 		</p>
 		<ResponsiveImage
 			imageWidth="2326"
