@@ -125,7 +125,6 @@
 	}
 
 	function handleMouseup() {
-		console.log('mouseout detected');
 		isMousedown = false;
 		beginMomentumTracking();
 		window.removeEventListener('mouseup', handleMouseup);
