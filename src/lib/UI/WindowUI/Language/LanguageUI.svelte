@@ -1,7 +1,9 @@
 <script>
 	import LanguageLetter from './LanguageLetter.svelte';
 	import { locale } from 'svelte-intl-precompile';
-	let languageSelected = $locale.length === 2 ? $locale : $locale.substring(0, 2);
+	const initialLanguage = $locale?.length === 2 ? $locale : $locale?.substring(0, 2);
+	let languageSelected =
+		initialLanguage === 'en' || initialLanguage === 'ja' ? initialLanguage : 'en';
 	function changeLanguage() {
 		languageSelected = languageSelected === 'en' ? 'ja' : 'en';
 		locale.set(languageSelected);
