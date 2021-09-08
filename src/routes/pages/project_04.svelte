@@ -2,7 +2,7 @@
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
 	import { t } from 'precompile-intl-runtime';
 	let videoSlug =
-		'https://res.cloudinary.com/thdrstnr/video/upload/ac_none,c_scale,q_auto:good,vc_auto,w_1600/v1625117503/MortimerBaltus/Soe/Soe_02_ai4z59';
+		'https://res.cloudinary.com/thdrstnr/video/upload/ac_none,c_scale,q_100,w_1280/MortimerBaltus/Soe/Soe_02_ai4z59';
 </script>
 
 <svelte:head>
