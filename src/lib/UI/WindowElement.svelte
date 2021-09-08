@@ -1,4 +1,7 @@
 <script>
+	import { browser } from '$app/env';
+	import { goto } from '$app/navigation';
+	import grabState from '$lib/UX/grab-state';
 	import { onDestroy, onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import windowHandler from '../UX/window-state';
@@ -14,13 +17,15 @@
 	export let isInForeground = true;
 	export let intersections = [];
 	export let distanceFromIntersection = 20;
-	export let href = 'pages/placeholder';
+	export let href = undefined;
 
 	let isMinimized = false;
 	let intersectionIsMinimized = false;
 
 	let touched = false;
 	let thisWindowObject;
+
+	let enlargeButton;
 
 	let triggerIntroAnimation = false;
 
@@ -43,16 +48,85 @@
 		intersectionIsMinimized = thisWindowObject.intersectionIsMinimized;
 	});
 
-	function handleWindowClick() {
-		if (!isInForeground && !isMinimized) {
-			windowHandler.bringToForeground(id);
-		}
-	}
-
 	function toggleMinimize() {
 		isMinimized = !isMinimized;
 		if (intersections.length != 0) {
 			windowHandler.updateIsMinimized(id);
+		}
+	}
+
+	// keeps track of how many mousedowns have been registered in the current "click-session"
+	let clicks = 0;
+	// keeps track of whether or not a mouseup occured (Inside the renderGrabTime)
+	let mouseup = false;
+	// time that has to elapse before it is checked,
+	// whether the user was just clicking or is actually grabbing
+	const renderGrabTime = 300;
+
+	// removes the eventListener it was called by and sets mouseup to true
+	// (only if clicks is still at count 1, to rule out double clicks)
+	function checkIfMouseup() {
+		window.removeEventListener('mouseup', checkIfMouseup);
+		if (clicks === 1) {
+			mouseup = true;
+		}
+	}
+
+	// if no mouseup has been detected in the renderGrabTime and clicks is still at 1,
+	// this triggers the grabbing state. It also does a cleanup of the variables.
+	function triggerGrab(evt) {
+		if (!mouseup && clicks === 1) {
+			grabState.set(evt);
+		}
+		clicks = 0;
+		mouseup = false;
+	}
+
+	// Plain event handler to process clicks (Or currently double clicks) on the window-content
+	function handleContentClick() {
+		if (href) {
+			subpageActive = true;
+			goto(href);
+		}
+	}
+
+	// event handler for window content mousedowns. It increases the click count whenever called and on
+	// click number 1 adds a timeout to call the grab trigger function while also adding a listener
+	// to check for mouseups (To prevent the grab state from occuring on clicks)
+	function handleContentMousedown(evt) {
+		clicks++;
+		if (clicks === 1) {
+			setTimeout(() => {
+				triggerGrab(evt);
+			}, renderGrabTime);
+			window.addEventListener('mouseup', checkIfMouseup);
+		}
+	}
+
+	// Plain event handler to process clicks on the window in general and bring them to the foreground
+	// if they are in the background and not minimized
+	function handleWindowClick(evt) {
+		if (!isInForeground && !isMinimized) {
+			if (!href) {
+				windowHandler.bringToForeground(id);
+			} else if (!enlargeButton.contains(evt.target)) {
+				windowHandler.bringToForeground(id);
+			}
+		}
+	}
+
+	// event handler for window-area mousedowns. It increases the click count whenever called and on
+	// click number 1 adds a timeout to call the grab trigger function while also adding a listener
+	// to check for mouseups (To prevent the grab state from occuring on clicks)
+	function handleWindowMousedown(evt) {
+		if (!enlargeButton?.contains(evt.target)) {
+			clicks++;
+			if (clicks === 1) {
+				setTimeout(() => {
+					triggerGrab(evt);
+				}, renderGrabTime);
+				window.addEventListener('mouseup', checkIfMouseup);
+			}
 		}
 	}
 
@@ -62,6 +136,9 @@
 	});
 
 	onDestroy(() => {
+		if (browser) {
+			window.removeEventListener('mouseup', checkIfMouseup);
+		}
 		if (unsubscribe) {
 			unsubscribe();
 		}
@@ -86,8 +163,10 @@
 	>
 		<section
 			style="--windowWidth: {width}; --windowHeight: {height}; --order: {id / 10};"
+			on:mousedown={handleWindowMousedown}
 			on:click={handleWindowClick}
 			class:blur-intro={triggerIntroAnimation}
+			class:grabbing={clicks > 0}
 		>
 			<header>
 				<Button buttonType="minimize" on:toggle-minimize={toggleMinimize} />
@@ -97,7 +176,9 @@
 					<h1>Title</h1>
 				{/if}
 				{#if enlargeable}
-					<Button on:enlarge={() => (subpageActive = true)} buttonType="subpage" {href} />
+					<div bind:this={enlargeButton}>
+						<Button on:enlarge={() => (subpageActive = true)} buttonType="subpage" {href} />
+					</div>
 				{:else}
 					<Button buttonType="hidden" />
 				{/if}
@@ -106,22 +187,12 @@
 				<div
 					transition:slide|local
 					class:no-events={!isInForeground}
+					on:mousedown|stopPropagation={handleContentMousedown}
+					on:dblclick={handleContentClick}
 					class="content-wrapper"
 					style="height: {height - 36}px; background: {background}; background-size: cover;"
 				>
-					{#if enlargeable}
-						<a
-							on:click={() => {
-								subpageActive = true;
-								return false;
-							}}
-							{href}
-						>
-							<slot><p>Content goes here</p></slot>
-						</a>
-					{:else}
-						<slot><p>Content goes here</p></slot>
-					{/if}
+					<slot><p>Content goes here</p></slot>
 				</div>
 			{/if}
 		</section>
@@ -140,6 +211,7 @@
 
 	section {
 		pointer-events: auto;
+		cursor: grab;
 		user-select: none;
 		position: relative;
 		width: calc(var(--windowWidth) * 1px);
@@ -154,6 +226,10 @@
 		filter: blur(0px);
 		transform: scale(1);
 		opacity: 0;
+	}
+
+	.grabbing {
+		cursor: grabbing;
 	}
 
 	.blur-intro {
@@ -176,6 +252,7 @@
 	}
 
 	header {
+		cursor: default;
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
@@ -188,10 +265,6 @@
 	h1 {
 		margin: 0;
 		font-size: 13px;
-	}
-
-	a {
-		text-decoration: none;
 	}
 
 	.content-wrapper {

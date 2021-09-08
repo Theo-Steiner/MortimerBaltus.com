@@ -3,6 +3,7 @@
 	import { navigating } from '$app/stores';
 	import navState from './nav-state';
 	import { vh, vw, getScrollTo } from './css_utils.js';
+	import grabState from './grab-state';
 
 	let hasTouchScreen = false;
 	export let scroll_element;
@@ -57,6 +58,9 @@
 		window.removeEventListener('wheel', wheelHandler, { passive: false });
 	});
 
+	$: if ($grabState) {
+		handleMousedown();
+	}
 	let isMousedown = false;
 	let initialM = { x: 0, y: 0 };
 	let currentM = { x: 0, y: 0 };
@@ -107,22 +111,27 @@
 	}
 
 	// The following functions take care of the grab handling
-	function handleMousedown(event) {
+	export function handleMousedown(event) {
+		window.addEventListener('mouseup', handleMouseup);
 		isMousedown = true;
 		cancelMomentumTracking();
-		initialM.x = event.clientX;
-		initialM.y = event.clientY;
+		initialM.x = event?.clientX || $grabState.clientX;
+		initialM.y = event?.clientY || $grabState.clientY;
 		background.addEventListener('mousemove', handleMousemove);
 		background.addEventListener('mouseout', handleMouseup);
 		let selection = window.getSelection();
 		selection.removeAllRanges();
 	}
-	function handleMouseup() {
+
+	export function handleMouseup() {
 		isMousedown = false;
 		beginMomentumTracking();
+		window.removeEventListener('mouseup', handleMouseup);
 		background.removeEventListener('mousemove', handleMousemove);
 		background.removeEventListener('mouseout', handleMouseup);
+		grabState.set(undefined);
 	}
+
 	function handleMousemove(event) {
 		currentM.x = event.clientX;
 		currentM.y = event.clientY;
@@ -137,9 +146,8 @@
 {#if !hasTouchScreen}
 	<div
 		class="grabbable"
-		class:mousedown={isMousedown}
 		on:mousedown={handleMousedown}
-		on:mouseup={handleMouseup}
+		class:mousedown={isMousedown}
 		bind:this={background}
 	/>
 {/if}

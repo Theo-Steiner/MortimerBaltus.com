@@ -41,6 +41,7 @@
 	</a>
 {:else if buttonType === 'minimize'}
 	<button
+		ontouchstart=""
 		class={buttonType}
 		on:click={() => {
 			dispatch('toggle-minimize');
@@ -87,6 +88,7 @@
 	</a>
 {:else if buttonType === 'previous'}
 	<button
+		ontouchstart=""
 		aria-label="Go the previous page!"
 		on:click={() => dispatch('history-back')}
 		class={buttonType}
@@ -169,10 +171,6 @@
 		transition: 300ms ease-in-out;
 	}
 
-	svg:hover #box {
-		fill: #fefefe;
-	}
-
 	.home {
 		width: 32px;
 		height: 31px;
@@ -190,55 +188,117 @@
 		margin: 9px 6px 10px 8px;
 	}
 
-	.home:hover {
+	svg:active #box {
+		fill: #fefefe;
+	}
+
+	.home:active {
 		background-color: #fefefe;
 	}
 
-	.home:hover svg path {
+	.home:active svg path {
 		fill: #151515;
 	}
 
-	.minimize:hover #upper {
+	.minimize:active #upper {
 		fill: #151515;
 		transform: translate(0px, 2px);
 	}
 
-	.minimize:hover #lower {
+	.minimize:active #lower {
 		fill: #151515;
 		transform: translate(0px, -2px);
 	}
 
-	.subpage:hover #upper rect,
-	.subpage:hover #upper polygon {
+	.subpage:active #upper rect,
+	.subpage:active #upper polygon {
 		fill: #151515;
 		transform: translate(5px, 0);
 	}
 
-	.subpage:hover #lower rect,
-	.subpage:hover #lower polygon {
+	.subpage:active #lower rect,
+	.subpage:active #lower polygon {
 		fill: #151515;
 		transform: translate(-5px, 0);
 	}
 
-	.next:hover #arrow polygon {
+	.next:active #arrow polygon {
 		fill: #151515;
 		transform: translate(5px, 0);
 	}
 
-	.next:hover #arrow rect {
+	.next:active #arrow rect {
 		fill: #151515;
 		width: 31px;
 		transform: translate(-5px, 0);
 	}
 
-	.previous:hover #arrow rect {
+	.previous:active #arrow rect {
 		fill: #151515;
 		transform: translate(-5px, 0);
 		width: 31px;
 	}
 
-	.previous:hover #arrow polygon {
+	.previous:active #arrow polygon {
 		fill: #151515;
 		transform: translate(-5px, 0);
+	}
+
+	@media (hover: hover) {
+		svg:hover #box {
+			fill: #fefefe;
+		}
+
+		.home:hover {
+			background-color: #fefefe;
+		}
+
+		.home:hover svg path {
+			fill: #151515;
+		}
+
+		.minimize:hover #upper {
+			fill: #151515;
+			transform: translate(0px, 2px);
+		}
+
+		.minimize:hover #lower {
+			fill: #151515;
+			transform: translate(0px, -2px);
+		}
+
+		.subpage:hover #upper rect,
+		.subpage:hover #upper polygon {
+			fill: #151515;
+			transform: translate(5px, 0);
+		}
+
+		.subpage:hover #lower rect,
+		.subpage:hover #lower polygon {
+			fill: #151515;
+			transform: translate(-5px, 0);
+		}
+
+		.next:hover #arrow polygon {
+			fill: #151515;
+			transform: translate(5px, 0);
+		}
+
+		.next:hover #arrow rect {
+			fill: #151515;
+			width: 31px;
+			transform: translate(-5px, 0);
+		}
+
+		.previous:hover #arrow rect {
+			fill: #151515;
+			transform: translate(-5px, 0);
+			width: 31px;
+		}
+
+		.previous:hover #arrow polygon {
+			fill: #151515;
+			transform: translate(-5px, 0);
+		}
 	}
 </style>
