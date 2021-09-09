@@ -163,8 +163,8 @@
 	.intro-animation {
 		animation-fill-mode: forwards;
 		animation-name: slideIn;
-		animation-duration: 1000ms;
-		animation-delay: calc(var(--animation-order) * 200ms);
+		animation-duration: 1200ms;
+		animation-delay: calc(var(--animation-order) * 200ms + 200ms);
 	}
 
 	@keyframes slideIn {
