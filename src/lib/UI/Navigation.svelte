@@ -44,6 +44,7 @@
 		position: fixed;
 		z-index: 9999;
 		top: 15px;
+		left: 0;
 		margin: 0 10px 0 10px;
 		width: calc(100vw - 20px);
 		background-color: #151515;

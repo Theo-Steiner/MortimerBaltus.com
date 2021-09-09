@@ -65,17 +65,17 @@
 	}
 </script>
 
+<Navigation
+	previousLink={$navState.history[$navState.history.length - 1]}
+	currentPage={slug}
+	on:go-previous={() => setSlide('inverse')}
+	on:go-next={() => setSlide('normal')}
+	{nextLink}
+/>
 <main
 	class:inverse-slide={slideDirection === 'inverse'}
 	class:normal-slide={slideDirection === 'normal'}
 >
-	<Navigation
-		previousLink={$navState.history[$navState.history.length - 1]}
-		currentPage={slug}
-		on:go-previous={() => setSlide('inverse')}
-		on:go-next={() => setSlide('normal')}
-		{nextLink}
-	/>
 	<slot />
 	<!-- Footer is inside the SubpageTransition container -->
 </main>
