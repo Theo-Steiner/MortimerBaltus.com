@@ -92,7 +92,7 @@
 
 <div class="container" class:inverse-slide={view === 'overview'}>
 	{#if view === 'overview'}
-		<div class="contact-container" transition:horizontalSlide>
+		<div class="contact-container" transition:horizontalSlide|local>
 			<div class="fixed">
 				<h1 lang="en">
 					GET IN <br />TOUCH

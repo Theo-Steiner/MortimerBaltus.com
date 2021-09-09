@@ -1,7 +1,8 @@
 <script>
 	import WindowElement from '../UI/WindowElement.svelte';
-	import LanguageUI from '../UI/WindowUI/Language/LanguageUI.svelte';
+	import LanguageLetter from '../UI/WindowUI/Language/LanguageLetter.svelte';
 	import { t } from 'svelte-intl-precompile';
+	import LazyComponent from '$lib/UX/LazyComponent.svelte';
 </script>
 
 <div class="wrapper grid-area">
@@ -14,7 +15,11 @@
 		id={13}
 		enlargeable={false}
 	>
-		<LanguageUI />
+		<LazyComponent componentPath="../UI/WindowUI/Language/LanguageUI.svelte">
+			<figure>
+				<LanguageLetter languageSelected="en" />
+			</figure>
+		</LazyComponent>
 	</WindowElement>
 </div>
 
@@ -25,5 +30,14 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
+
+	figure {
+		background-color: #151515;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		height: 100%;
 	}
 </style>
