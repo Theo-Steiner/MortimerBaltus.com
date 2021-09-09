@@ -5,7 +5,6 @@
 	import navState from '$lib/UX/nav-state';
 	import deGallery from '$lib/data/deGallery.json';
 	import jpGallery from '$lib/data/jpGallery.json';
-	import { t } from 'svelte-intl-precompile';
 
 	let slug = 'title';
 
@@ -65,7 +64,7 @@
 <main>
 	<Navigation
 		previousLink={$navState.history[$navState.history.length - 1]}
-		title={$t(`pages.${slug}.title`)}
+		currentPage={slug}
 		{nextLink}
 	/>
 	<slot />

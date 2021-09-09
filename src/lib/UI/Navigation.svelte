@@ -1,35 +1,35 @@
 <script>
 	import Button from './Button.svelte';
 	import { fly } from 'svelte/transition';
+	import { t } from 'svelte-intl-precompile';
 
-	export let title = 'TITLE';
+	export let currentPage;
 	export let nextLink = '/';
 	export let previousLink = '/';
 </script>
 
 <nav out:fly={{ y: -100, duration: 400 }} in:fly={{ y: -300, delay: 600 }}>
-	<div>
+	<div class="left-nav">
 		{#if previousLink !== '/'}
 			<Button buttonType="home" />
 		{/if}
 		<Button buttonType="previous" href={previousLink || '/'} />
 	</div>
-	<h1>{title}</h1>
-	<div>
-		{#if previousLink !== '/'}
-			<div class="dummy" />
-		{/if}
-		<Button buttonType="next" href={nextLink} />
-	</div>
+	<div class="dummy" />
+	<h1>{$t(`pages.${currentPage}.title`)}</h1>
+	<Button buttonType="next" href={nextLink} />
 </nav>
 
 <style>
-	div {
+	.left-nav {
 		display: flex;
+		position: absolute;
+		top: 0;
+		left: 0;
 	}
 
 	.dummy {
-		width: 32px;
+		width: 54px;
 	}
 
 	nav {

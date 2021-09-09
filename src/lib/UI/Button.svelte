@@ -113,7 +113,7 @@
 		</svg>
 	</a>
 {:else if buttonType === 'home'}
-	<a in:horizontalSlide aria-label="Go home!" class={buttonType} href="/">
+	<a transition:horizontalSlide={{ delay: 200 }} aria-label="Go home!" class={buttonType} href="/">
 		<svg
 			aria-hidden="true"
 			width="18"
