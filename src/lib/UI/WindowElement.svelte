@@ -58,9 +58,11 @@
 		grabState.set(evt);
 	}
 
+	let isGrabbing = false;
+
 	// Plain event handler to process clicks (Or currently double clicks) on the window-content
 	function handleContentClick() {
-		if (href) {
+		if (href && !isGrabbing) {
 			subpageActive = true;
 			goto(href);
 		}
@@ -68,6 +70,10 @@
 
 	function handleContentMousedown(evt) {
 		triggerGrab(evt);
+		isGrabbing = false;
+		setTimeout(() => {
+			isGrabbing = true;
+		}, 200);
 	}
 
 	// Plain event handler to process clicks on the window in general and bring them to the foreground
@@ -143,7 +149,7 @@
 					transition:slide|local
 					class:no-events={!isInForeground}
 					on:mousedown|stopPropagation={handleContentMousedown}
-					on:dblclick={handleContentClick}
+					on:click={handleContentClick}
 					class="content-wrapper"
 					style="height: {height - 36}px; background: {background}; background-size: cover;"
 				>
