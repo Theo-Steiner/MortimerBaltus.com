@@ -62,7 +62,7 @@
 
 	// Plain event handler to process clicks (Or currently double clicks) on the window-content
 	function handleContentClick() {
-		if (href && !isGrabbing) {
+		if (href && !isGrabbing && isInForeground) {
 			subpageActive = true;
 			goto(href);
 		}
@@ -120,6 +120,7 @@
 			? 0
 			: distanceFromIntersection.large};"
 		class:trigger-forward-shuffle={!isInForeground && touched}
+		class:trigger-backward-shuffle={isInForeground && touched}
 		class:minimized-notransition={isMinimized | intersectionIsMinimized}
 	>
 		<section
@@ -251,7 +252,23 @@
 			transform: translateX(0);
 		}
 		50% {
-			transform: translateX(calc((var(--baseShuffleDistance) * max(2550px, 250vmax) / 200 * -2)));
+			transform: translateX(calc((var(--baseShuffleDistance) * max(2550px, 250vmax) / 200 * -1)));
+		}
+		100% {
+			transform: translateX(0);
+		}
+	}
+
+	.trigger-backward-shuffle {
+		animation: 0.8s ease-in-out 0s backward-shuffle;
+	}
+
+	@keyframes backward-shuffle {
+		0% {
+			transform: translateX(0);
+		}
+		50% {
+			transform: translateX(calc((var(--baseShuffleDistance) * max(2550px, 250vmax) / 200 * -0.5)));
 		}
 		100% {
 			transform: translateX(0);

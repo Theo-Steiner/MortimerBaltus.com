@@ -34,9 +34,9 @@
 	}
 
 	const moritzmoji =
-		'https://res.cloudinary.com/thdrstnr/image/upload/q_auto:best/v1630485048/MortimerBaltus/misc/moritzmemoji_uqmklf';
+		'https://res.cloudinary.com/thdrstnr/image/upload/w_108,q_auto:best/v1630485048/MortimerBaltus/misc/moritzmemoji_cjyrwj';
 	const theomoji =
-		'https://res.cloudinary.com/thdrstnr/image/upload/q_auto:best/v1630485048/MortimerBaltus/misc/theomemoji_ipo7or';
+		'https://res.cloudinary.com/thdrstnr/image/upload/w_108,q_auto:best/v1630485048/MortimerBaltus/misc/theomemoji_ipo7or';
 
 	function resetView() {
 		setTimeout(() => {
