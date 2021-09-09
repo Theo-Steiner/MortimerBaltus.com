@@ -14,7 +14,7 @@
 <nav out:fly={{ y: -100, duration: 400 }} in:fly={{ y: -300, delay: 600 }}>
 	<div class="left-nav">
 		{#if previousLink !== '/'}
-			<Button buttonType="home" />
+			<Button on:click={() => dispatch('go-previous')} buttonType="home" />
 		{/if}
 		<Button
 			on:click={() => dispatch('go-previous')}
