@@ -11,7 +11,7 @@
 		content="Con Corazón is a brand supporting artisans from countries at war"
 	/>
 </svelte:head>
-<SubpageTransition backgroundColor="#e8f2ea">
+<SubpageTransition currentPage="project_01" backgroundColor="#e8f2ea">
 	<div class="sticky-image">
 		<ResponsiveImage
 			imageWidth="1280"

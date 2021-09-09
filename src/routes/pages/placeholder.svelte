@@ -2,7 +2,7 @@
 	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
 </script>
 
-<SubpageTransition>
+<SubpageTransition currentPage="placeholder">
 	<div>
 		<h1>This page will be available soon</h1>
 	</div>

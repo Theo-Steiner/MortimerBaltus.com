@@ -13,7 +13,7 @@
 		content="Proposal for a visual identity for a perfume startup from Germany - now succesfully launched under the name Soèm"
 	/>
 </svelte:head>
-<SubpageTransition backgroundColor="#dadcd3">
+<SubpageTransition currentPage="project_04" backgroundColor="#dadcd3">
 	<div class="sticky-image">
 		<ResponsiveImage
 			imageWidth="2400"

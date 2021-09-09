@@ -1,6 +1,5 @@
 <script>
 	import Navigation from '$lib/UI/Navigation.svelte';
-	import Footer from '$lib/UI/Footer.svelte';
 	import { navigating, page } from '$app/stores';
 	import navState from '$lib/UX/nav-state';
 	import deGallery from '$lib/data/deGallery.json';
@@ -59,20 +58,40 @@
 	$: reportNavigation($navigating);
 
 	$: nextLink = getNextSubpage($page.path);
+	let slideDirection = 'static';
+
+	function setSlide(direction) {
+		slideDirection = direction;
+	}
 </script>
 
-<main>
+<main
+	class:inverse-slide={slideDirection === 'inverse'}
+	class:normal-slide={slideDirection === 'normal'}
+>
 	<Navigation
 		previousLink={$navState.history[$navState.history.length - 1]}
 		currentPage={slug}
+		on:go-previous={() => setSlide('inverse')}
+		on:go-next={() => setSlide('normal')}
 		{nextLink}
 	/>
 	<slot />
-	<Footer currentPage={slug} />
+	<!-- Footer is inside the SubpageTransition container -->
 </main>
 
 <style>
 	main {
-		scroll-behavior: smooth;
+		display: flex;
+		flex-direction: row;
+		width: 200vw;
+	}
+
+	.inverse-slide {
+		width: 200vw;
+		position: absolute;
+		top: 0;
+		left: -100vw;
+		flex-direction: row-reverse;
 	}
 </style>

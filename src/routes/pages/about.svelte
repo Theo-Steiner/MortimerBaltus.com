@@ -51,7 +51,7 @@
 	<title>ABOUT</title>
 	<meta name="description" content="We are MortimerBaltus. Nice to meet you!" />
 </svelte:head>
-<SubpageTransition backgroundColor="#a25c24">
+<SubpageTransition currentPage="about" backgroundColor="#a25c24">
 	<div class="first-paragraph">
 		<p>
 			{$t('pages.about.introduction')}

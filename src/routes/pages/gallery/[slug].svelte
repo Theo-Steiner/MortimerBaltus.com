@@ -17,7 +17,7 @@
 	export let image;
 </script>
 
-<SubpageTransition>
+<SubpageTransition currentPage="gallery">
 	<section>
 		<ResponsiveImage
 			limitHeight={false}

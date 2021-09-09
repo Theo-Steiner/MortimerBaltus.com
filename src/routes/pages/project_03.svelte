@@ -11,7 +11,7 @@
 		content="Eberhard Müller develops sophis­ti­cated textile interiors at the ghest level."
 	/>
 </svelte:head>
-<SubpageTransition backgroundColor="#151515">
+<SubpageTransition currentPage="project_03" backgroundColor="#151515">
 	<div class="sticky-image">
 		<ResponsiveImage
 			imageWidth="2786"

@@ -2,10 +2,13 @@
 	import Button from './Button.svelte';
 	import { fly } from 'svelte/transition';
 	import { t } from 'svelte-intl-precompile';
+	import { createEventDispatcher } from 'svelte';
 
 	export let currentPage;
-	export let nextLink = '/';
-	export let previousLink = '/';
+	export let nextLink;
+	export let previousLink;
+
+	const dispatch = createEventDispatcher();
 </script>
 
 <nav out:fly={{ y: -100, duration: 400 }} in:fly={{ y: -300, delay: 600 }}>
@@ -13,11 +16,15 @@
 		{#if previousLink !== '/'}
 			<Button buttonType="home" />
 		{/if}
-		<Button buttonType="previous" href={previousLink || '/'} />
+		<Button
+			on:click={() => dispatch('go-previous')}
+			buttonType="previous"
+			href={previousLink || '/'}
+		/>
 	</div>
 	<div class="dummy" />
 	<h1>{$t(`pages.${currentPage}.title`)}</h1>
-	<Button buttonType="next" href={nextLink} />
+	<Button on:click={() => dispatch('go-next')} buttonType="next" href={nextLink} />
 </nav>
 
 <style>

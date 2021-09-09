@@ -24,7 +24,7 @@
 	<meta name="description" content="The Privacy Statement of MortimerBaltus.com" />
 </svelte:head>
 
-<SubpageTransition>
+<SubpageTransition currentPage="privacy">
 	<div lang="en" class="container">
 		<p class="intro">
 			At MortimerBaltus, accessible from MortimerBaltus.com, one of our main priorities is the
