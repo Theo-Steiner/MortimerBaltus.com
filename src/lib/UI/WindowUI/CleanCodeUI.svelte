@@ -60,7 +60,7 @@
 	}
 </script>
 
-<ul>
+<ul lang="en">
 	{#if show === 'html'}
 		<li
 			use:startTimer={'transition'}
@@ -154,12 +154,12 @@
 	li,
 	span {
 		color: #fefefe;
-		font-family: monospace;
+		font-family: 'Courier New', Courier, monospace;
 		list-style: none;
-		font-size: 14px;
+		font-size: 13px;
 		margin: 0px;
 		line-height: 20px;
-		letter-spacing: 0.4px;
+		letter-spacing: -0.2px;
 		height: 20px;
 		overflow: hidden;
 		transition: 0.2s;
