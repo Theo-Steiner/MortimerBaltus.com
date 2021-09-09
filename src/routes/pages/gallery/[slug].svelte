@@ -19,6 +19,7 @@
 <section>
 	<ResponsiveImage
 		limitHeight={false}
+		objectFit="contain"
 		imageHeight={image.height}
 		imageWidth={image.width}
 		imageID={image.src}

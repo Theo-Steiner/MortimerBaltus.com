@@ -17,7 +17,8 @@
 		<ResponsiveImage
 			imageWidth="2400"
 			imageHeight="1800"
-			limitHeight={false}
+			displayHeight="100vh"
+			objectPosition="center center"
 			imageID="Soe/Soe_01_ethymr"
 			alt="How we envisioned the final packaging of the product."
 		/>
