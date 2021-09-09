@@ -3,7 +3,7 @@
 	import { horizontalSlide } from '$lib/UX/css_utils';
 
 	export let buttonType;
-	export let href = null;
+	export let href = '/';
 
 	const dispatch = createEventDispatcher();
 </script>
@@ -87,14 +87,7 @@
 		</svg>
 	</a>
 {:else if buttonType === 'previous'}
-	<button
-		ontouchstart=""
-		aria-label="Go the previous page!"
-		on:click={() => dispatch('history-back')}
-		class={buttonType}
-		{href}
-		on:click
-	>
+	<a aria-label="Go the previous page!" class={buttonType} {href}>
 		<svg
 			aria-hidden="true"
 			width="54"
@@ -118,7 +111,7 @@
 				<polygon points="12 7 22 7 22 10" fill="#FEFEFE" />
 			</g>
 		</svg>
-	</button>
+	</a>
 {:else if buttonType === 'home'}
 	<a in:horizontalSlide aria-label="Go home!" class={buttonType} href="/">
 		<svg

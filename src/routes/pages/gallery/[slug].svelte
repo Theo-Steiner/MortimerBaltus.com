@@ -13,19 +13,22 @@
 
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
+	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
 	export let image;
 </script>
 
-<section>
-	<ResponsiveImage
-		limitHeight={false}
-		objectFit="contain"
-		imageHeight={image.height}
-		imageWidth={image.width}
-		imageID={image.src}
-		alt={image.alt}
-	/>
-</section>
+<SubpageTransition>
+	<section>
+		<ResponsiveImage
+			limitHeight={false}
+			objectFit="contain"
+			imageHeight={image.height}
+			imageWidth={image.width}
+			imageID={image.src}
+			alt={image.alt}
+		/>
+	</section>
+</SubpageTransition>
 
 <style>
 	section {

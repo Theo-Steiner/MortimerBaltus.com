@@ -1,5 +1,6 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
+	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
 	import { t } from 'precompile-intl-runtime';
 </script>
 
@@ -10,11 +11,12 @@
 		content="PRODUKT is a multi-area brand we helped establish in 2020 & 2021. For this, we designed the products, created a brand identity and built a online shop complete with shipping, payments and a easy to use CMS."
 	/>
 </svelte:head>
-<div class="container">
+<SubpageTransition backgroundColor="#faf7f2">
 	<div class="sticky-image">
 		<ResponsiveImage
 			imageWidth="2880"
 			imageHeight="1706"
+			displayHeight="100vh"
 			imageID="Produkt/Produkt_Hero_fbs3q6"
 			alt="In addition to establishing the brand itself, we also organized photoshoots to showcase the products."
 		/>
@@ -64,14 +66,9 @@
 			</div>
 		</div>
 	</div>
-</div>
+</SubpageTransition>
 
 <style>
-	.container {
-		background: #faf7f2;
-		min-height: calc(100vh - 331px);
-	}
-
 	.lower-container {
 		background: #faf7f2;
 	}

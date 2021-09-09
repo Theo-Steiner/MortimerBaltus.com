@@ -1,6 +1,12 @@
-<div>
-	<h1>This page will be available soon</h1>
-</div>
+<script>
+	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
+</script>
+
+<SubpageTransition>
+	<div>
+		<h1>This page will be available soon</h1>
+	</div>
+</SubpageTransition>
 
 <style>
 	div {

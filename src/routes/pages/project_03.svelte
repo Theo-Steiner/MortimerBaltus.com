@@ -1,5 +1,6 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
+	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
 	import { t } from 'precompile-intl-runtime';
 </script>
 
@@ -10,11 +11,12 @@
 		content="Eberhard Müller develops sophis­ti­cated textile interiors at the ghest level."
 	/>
 </svelte:head>
-<div class="container">
+<SubpageTransition backgroundColor="#151515">
 	<div class="sticky-image">
 		<ResponsiveImage
 			imageWidth="2786"
 			imageHeight="2786"
+			displayHeight="100vh"
 			imageID="EberhardMueller/EM_Thumb_wv3jdv"
 			alt="Redesigned business cards were part of brand's face lift."
 		/>
@@ -69,16 +71,11 @@
 			</div>
 		</div>
 	</div>
-</div>
+</SubpageTransition>
 
 <style>
 	.outside-link {
 		color: #fefefe;
-	}
-
-	.container {
-		background: #151515;
-		min-height: calc(100vh - 331px);
 	}
 
 	.lower-container {

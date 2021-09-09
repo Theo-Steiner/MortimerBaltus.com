@@ -45,18 +45,35 @@
 	}
 
 	function reportNavigation(route) {
-		if (route !== undefined) {
-			navState.setFrom(route);
+		if (route?.from?.path) {
+			const history = $navState.history;
+			if (route?.to?.path === history[history.length - 1]) {
+				history.pop();
+				navState.setHistory(history);
+			} else {
+				history.push(route.from.path);
+				navState.setHistory(history);
+			}
 		}
 	}
 
-	$: reportNavigation($navigating?.from?.path);
+	$: reportNavigation($navigating);
 
 	$: nextLink = getNextSubpage($page.path);
 </script>
 
 <main>
-	<Navigation fromRoute={$navState.from} title={$t(`pages.${slug}.title`)} {nextLink} />
+	<Navigation
+		previousLink={$navState.history[$navState.history.length - 1]}
+		title={$t(`pages.${slug}.title`)}
+		{nextLink}
+	/>
 	<slot />
 	<Footer currentPage={slug} />
 </main>
+
+<style>
+	main {
+		scroll-behavior: smooth;
+	}
+</style>

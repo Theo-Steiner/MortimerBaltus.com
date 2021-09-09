@@ -1,4 +1,5 @@
 <script>
+	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
 	import { onMount } from 'svelte';
 	import { t } from 'svelte-intl-precompile';
 
@@ -50,8 +51,7 @@
 	<title>ABOUT</title>
 	<meta name="description" content="We are MortimerBaltus. Nice to meet you!" />
 </svelte:head>
-
-<div class="container">
+<SubpageTransition backgroundColor="#a25c24">
 	<div class="first-paragraph">
 		<p>
 			{$t('pages.about.introduction')}
@@ -81,13 +81,9 @@
 			<h2 bind:this={you}>YOU</h2>
 		</div>
 	</div>
-</div>
+</SubpageTransition>
 
 <style>
-	.container {
-		background-color: #a25c24;
-	}
-
 	.outside-link {
 		display: inline;
 	}

@@ -1,19 +1,19 @@
 import { writable } from 'svelte/store';
 
 function navHandler() {
-	const navState = writable({ from: undefined, location: undefined });
+	const navState = writable({ history: [], location: undefined });
 
 	return {
 		subscribe: navState.subscribe,
 		reportNavigation: (preNavigationScrollY, preNavigationScrollX) => {
 			navState.set({
-				from: '/',
+				history: ['/'],
 				location: [preNavigationScrollY, preNavigationScrollX]
 			});
 		},
-		setFrom: (route) => {
+		setHistory: (history) => {
 			navState.update((previousState) => {
-				return { ...previousState, from: route };
+				return { ...previousState, history };
 			});
 		}
 	};

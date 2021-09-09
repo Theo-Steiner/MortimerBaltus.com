@@ -4,24 +4,19 @@
 
 	export let title = 'TITLE';
 	export let nextLink = '/';
-	export let fromRoute;
-
-	function goBack(_) {
-		history.back();
-		return false;
-	}
+	export let previousLink = '/';
 </script>
 
-<nav in:fly={{ y: -300, delay: 600 }}>
+<nav out:fly={{ y: -100, duration: 400 }} in:fly={{ y: -300, delay: 600 }}>
 	<div>
-		{#if fromRoute !== '/'}
+		{#if previousLink !== '/'}
 			<Button buttonType="home" />
 		{/if}
-		<Button buttonType="previous" on:history-back={goBack} />
+		<Button buttonType="previous" href={previousLink || '/'} />
 	</div>
 	<h1>{title}</h1>
 	<div>
-		{#if fromRoute !== '/'}
+		{#if previousLink !== '/'}
 			<div class="dummy" />
 		{/if}
 		<Button buttonType="next" href={nextLink} />
