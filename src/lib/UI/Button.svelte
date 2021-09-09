@@ -41,7 +41,6 @@
 	</a>
 {:else if buttonType === 'minimize'}
 	<button
-		ontouchstart=""
 		class={buttonType}
 		on:click={() => {
 			dispatch('toggle-minimize');

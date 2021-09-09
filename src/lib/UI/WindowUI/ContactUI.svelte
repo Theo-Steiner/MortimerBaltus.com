@@ -182,7 +182,6 @@
 				</div>
 				<div class="button-container">
 					<button
-						ontouchstart=""
 						class="cancel-button"
 						on:click={() => {
 							resetChatView();
@@ -204,7 +203,6 @@
 					>
 					<button
 						class="action-button"
-						ontouchstart=""
 						on:click={() => {
 							view = `mailto:${
 								view === 'moritz' ? 'moritz@mortimerbaltus.com' : 'theo@mortimerbaltus.com'
@@ -240,7 +238,6 @@
 				/>
 				<div class="button-container">
 					<button
-						ontouchstart=""
 						class="cancel-button"
 						on:click={() => {
 							if (!isEmpty(userEmail) && !isEmpty(userBody)) {
@@ -271,7 +268,6 @@
 					<button
 						class="action-button"
 						type="submit"
-						ontouchstart=""
 						class:disabled={!isFormValid}
 						{disabled}
 						on:click={submitForm}>{isLoading ? 'Sending...' : 'Send Email'}</button

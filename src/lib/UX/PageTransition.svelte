@@ -11,6 +11,7 @@
 </script>
 
 <main
+	on:touchstart|passive
 	out:wait
 	on:outrostart={() => (isTransitioning = true)}
 	class:is-transitioning={isTransitioning}
