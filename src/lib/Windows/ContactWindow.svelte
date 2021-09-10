@@ -19,7 +19,7 @@
 		id={14}
 		enlargeable={false}
 	>
-		<LazyComponent componentImport={() => import('../UI/WindowUI/ContactUI.svelte')}>
+		<LazyComponent componentImport={() => import('$lib/UI/WindowUI/ContactUI.svelte')}>
 			<div class="contact-container">
 				<div class="fixed">
 					<h1 lang="en">

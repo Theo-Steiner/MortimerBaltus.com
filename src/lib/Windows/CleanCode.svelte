@@ -22,7 +22,7 @@
 	>
 		<LazyComponent
 			exposesIntersecting
-			componentImport={() => import('../UI/WindowUI/CleanCodeUI.svelte')}
+			componentImport={() => import('$lib/UI/WindowUI/CleanCodeUI.svelte')}
 		>
 			<ul lang="en">
 				<li>
