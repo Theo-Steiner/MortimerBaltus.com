@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import grabState from '$lib/UX/grab-state';
 	import { onDestroy, onMount } from 'svelte';
-	import { slide } from 'svelte/transition';
 	import windowHandler from '../UX/window-state';
 	import Button from './Button.svelte';
 
@@ -30,22 +29,26 @@
 
 	let subpageActive = false;
 
-	windowHandler.registerWindow({
-		id: id,
-		parallax: parallax,
-		isInForeground: isInForeground,
-		intersections: intersections,
-		intersectionIsMinimized: false,
-		touched: touched
-	});
+	let unsubscribe;
 
-	const unsubscribe = windowHandler.subscribe((windows) => {
-		thisWindowObject = windows.find((wdws) => wdws.id === id);
-		isInForeground = thisWindowObject.isInForeground;
-		parallax = thisWindowObject.parallax;
-		touched = thisWindowObject.touched;
-		intersectionIsMinimized = thisWindowObject.intersectionIsMinimized;
-	});
+	if (intersections.length > 0) {
+		windowHandler.registerWindow({
+			id: id,
+			parallax: parallax,
+			isInForeground: isInForeground,
+			intersections: intersections,
+			intersectionIsMinimized: false,
+			touched: touched
+		});
+
+		unsubscribe = windowHandler.subscribe((windows) => {
+			thisWindowObject = windows.find((wdws) => wdws.id === id);
+			isInForeground = thisWindowObject.isInForeground;
+			parallax = thisWindowObject.parallax;
+			touched = thisWindowObject.touched;
+			intersectionIsMinimized = thisWindowObject.intersectionIsMinimized;
+		});
+	}
 
 	function toggleMinimize() {
 		isMinimized = !isMinimized;
@@ -145,18 +148,16 @@
 					<Button buttonType="hidden" />
 				{/if}
 			</header>
-			{#if !isMinimized}
-				<div
-					transition:slide|local
-					class:no-events={!isInForeground}
-					on:mousedown|stopPropagation={handleContentMousedown}
-					on:click={handleContentClick}
-					class="content-wrapper"
-					style="height: {height - 36}px; background: {background}; background-size: cover;"
-				>
-					<slot><p>Content goes here</p></slot>
-				</div>
-			{/if}
+			<div
+				class:slide={isMinimized}
+				class:no-events={!isInForeground}
+				on:mousedown|stopPropagation={handleContentMousedown}
+				on:click={handleContentClick}
+				class="content-wrapper"
+				style="height: {height - 36}px; background: {background}; background-size: cover;"
+			>
+				<slot><p>Content goes here</p></slot>
+			</div>
 		</section>
 	</div>
 </div>
@@ -230,13 +231,20 @@
 	}
 
 	.content-wrapper {
-		width: 100%;
-		height: 100%;
 		overflow: hidden;
 		padding: 0px;
 		margin: 0px;
-		border-top: 1px solid #fefefe;
 		border-radius: 0px 0px 6px 6px;
+		/* Properties for the slide transition */
+		border-top: 1px solid #fefefe;
+		height: auto;
+		max-height: calc(var(--windowHeight) * 1px);
+		transition: all 400ms ease-in-out;
+	}
+
+	.slide {
+		border-top: 0px solid #fefefe;
+		max-height: 0px;
 	}
 
 	.no-events {
