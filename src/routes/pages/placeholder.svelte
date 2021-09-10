@@ -1,12 +1,12 @@
 <script>
-	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
+	import HorizontalSubpageTransition from '$lib/UX/HorizontalSubpageTransition.svelte';
 </script>
 
-<SubpageTransition currentPage="placeholder">
+<HorizontalSubpageTransition currentPage="placeholder">
 	<div>
 		<h1>This page will be available soon</h1>
 	</div>
-</SubpageTransition>
+</HorizontalSubpageTransition>
 
 <style>
 	div {

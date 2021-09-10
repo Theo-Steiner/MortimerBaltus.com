@@ -1,5 +1,5 @@
 <script>
-	import { slide, fly } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	import { quartInOut } from 'svelte/easing';
 	import FooterContactWindow from '$lib/Windows/FooterWindows/FooterContactWindow.svelte';
 	import FooterLanguageWindow from '$lib/Windows/FooterWindows/FooterLanguageWindow.svelte';
@@ -34,7 +34,7 @@
 		<FooterPrivacyWindow {currentPage} on:toggle-minimize={() => toggleWindow('privacy')} />
 	</div>
 {/if}
-<footer out:fly={{ y: 300 }}>
+<footer>
 	<nav
 		style="--marquee-play-state: {display === 'overview' ? 'running' : 'paused'};"
 		class="marquee"

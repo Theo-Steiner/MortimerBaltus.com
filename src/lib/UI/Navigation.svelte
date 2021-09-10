@@ -3,28 +3,31 @@
 	import { fly } from 'svelte/transition';
 	import { t } from 'svelte-intl-precompile';
 	import { createEventDispatcher } from 'svelte';
+	import navState from '$lib/UX/nav-state';
 
 	export let currentPage;
 	export let nextLink;
 	export let previousLink;
 
+	export let innerWidth;
+
 	const dispatch = createEventDispatcher();
 </script>
 
-<nav out:fly={{ y: -100, duration: 400 }} in:fly={{ y: -300, delay: 600 }}>
+<nav out:fly={{ y: -100, duration: 400 }} in:fly={{ y: -300, delay: 700 }}>
 	<div class="left-nav">
 		{#if previousLink !== '/'}
-			<Button on:click={() => dispatch('go-previous')} buttonType="home" />
+			<Button buttonType="home" />
 		{/if}
 		<Button
-			on:click={() => dispatch('go-previous')}
+			on:click={() => navState.setFlightPath(innerWidth)}
 			buttonType="previous"
 			href={previousLink || '/'}
 		/>
 	</div>
 	<div class="dummy" />
 	<h1>{$t(`pages.${currentPage}.title`)}</h1>
-	<Button on:click={() => dispatch('go-next')} buttonType="next" href={nextLink} />
+	<Button on:click={() => navState.setFlightPath(-innerWidth)} buttonType="next" href={nextLink} />
 </nav>
 
 <style>

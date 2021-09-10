@@ -1,6 +1,6 @@
 <script>
 	import SlidingText from '$lib/UI/SlidingText.svelte';
-	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
+	import HorizontalSubpageTransition from '$lib/UX/HorizontalSubpageTransition.svelte';
 </script>
 
 <svelte:head>
@@ -11,7 +11,7 @@
 describes the terms on the basis of which you may make use of our website (“Terms of Use”)."
 	/>
 </svelte:head>
-<SubpageTransition currentPage="legal">
+<HorizontalSubpageTransition currentPage="legal">
 	<div lang="en" class="container">
 		<h1>INFORMATION PURSUANT TO SEC. 5 TMG AND ART. 13 DSGVO</h1>
 		<div class="contact-container">
@@ -70,7 +70,7 @@ describes the terms on the basis of which you may make use of our website (“Te
 		</SlidingText>
 		<hr />
 	</div>
-</SubpageTransition>
+</HorizontalSubpageTransition>
 
 <style>
 	.container {

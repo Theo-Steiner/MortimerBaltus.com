@@ -1,6 +1,6 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
-	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
+	import HorizontalSubpageTransition from '$lib/UX/HorizontalSubpageTransition.svelte';
 	import { t } from 'precompile-intl-runtime';
 </script>
 
@@ -11,7 +11,7 @@
 		content="Con Corazón is a brand supporting artisans from countries at war"
 	/>
 </svelte:head>
-<SubpageTransition currentPage="project_01" backgroundColor="#e8f2ea">
+<HorizontalSubpageTransition currentPage="project_01" backgroundColor="#e8f2ea">
 	<div class="sticky-image">
 		<ResponsiveImage
 			imageWidth="1280"
@@ -124,7 +124,7 @@
 			</div>
 		</div>
 	</div>
-</SubpageTransition>
+</HorizontalSubpageTransition>
 
 <style>
 	.lower-container {

@@ -1,6 +1,6 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
-	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
+	import HorizontalSubpageTransition from '$lib/UX/HorizontalSubpageTransition.svelte';
 	import { t } from 'precompile-intl-runtime';
 	let videoSlug =
 		'https://res.cloudinary.com/thdrstnr/video/upload/ac_none,c_scale,q_100,w_1280/MortimerBaltus/Soe/Soe_02_ai4z59';
@@ -13,7 +13,7 @@
 		content="Proposal for a visual identity for a perfume startup from Germany - now succesfully launched under the name Soèm"
 	/>
 </svelte:head>
-<SubpageTransition currentPage="project_04" backgroundColor="#dadcd3">
+<HorizontalSubpageTransition currentPage="project_04" backgroundColor="#dadcd3">
 	<div class="sticky-image">
 		<ResponsiveImage
 			imageWidth="2400"
@@ -53,7 +53,7 @@
 			/>
 		</div>
 	</div>
-</SubpageTransition>
+</HorizontalSubpageTransition>
 
 <style>
 	.outside-link {

@@ -329,7 +329,7 @@
 	}
 
 	.fly-out {
-		animation: var(--fly-animation) 800ms forwards;
+		animation: var(--fly-animation) 350ms forwards;
 		animation-timing-function: cubic-bezier(0.7, 0, 0.84, 0);
 	}
 
@@ -338,7 +338,7 @@
 			transform: translateZ(1.2px) translateY(0px) scale(0.88);
 		}
 		to {
-			transform: translateZ(1.2px) translateY(60vh) scale(0.88);
+			transform: translateZ(1.2px) translateY(100vh) scale(0.88);
 		}
 	}
 
@@ -347,7 +347,7 @@
 			transform: translateZ(1px) translateY(0px) scale(0.9);
 		}
 		to {
-			transform: translateZ(1px) translateY(60vh) scale(0.9);
+			transform: translateZ(1px) translateY(100vh) scale(0.9);
 		}
 	}
 
@@ -356,7 +356,7 @@
 			transform: translateZ(0.8px) translateY(0px) scale(0.92);
 		}
 		to {
-			transform: translateZ(0.8px) translateY(60vh) scale(0.92);
+			transform: translateZ(0.8px) translateY(100vh) scale(0.92);
 		}
 	}
 	@keyframes -global-fly-medium {
@@ -364,7 +364,7 @@
 			transform: translateZ(0.6px) translateY(0px) scale(0.94);
 		}
 		to {
-			transform: translateZ(0.6px) translateY(60vh) scale(0.94);
+			transform: translateZ(0.6px) translateY(100vh) scale(0.94);
 		}
 	}
 	@keyframes -global-fly-fast {
@@ -372,7 +372,7 @@
 			transform: translateZ(0.4px) translateY(0px) scale(0.96);
 		}
 		to {
-			transform: translateZ(0.4px) translateY(60vh) scale(0.96);
+			transform: translateZ(0.4px) translateY(100vh) scale(0.96);
 		}
 	}
 	@keyframes -global-fly-very-fast {
@@ -380,7 +380,7 @@
 			transform: translateZ(0.2px) translateY(0px) scale(0.98);
 		}
 		to {
-			transform: translateZ(0.2px) translateY(60vh) scale(0.98);
+			transform: translateZ(0.2px) translateY(100vh) scale(0.98);
 		}
 	}
 </style>

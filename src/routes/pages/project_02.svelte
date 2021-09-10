@@ -1,6 +1,6 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
-	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
+	import HorizontalSubpageTransition from '$lib/UX/HorizontalSubpageTransition.svelte';
 	import { t } from 'precompile-intl-runtime';
 </script>
 
@@ -11,7 +11,7 @@
 		content="PRODUKT is a multi-area brand we helped establish in 2020 & 2021. For this, we designed the products, created a brand identity and built a online shop complete with shipping, payments and a easy to use CMS."
 	/>
 </svelte:head>
-<SubpageTransition currentPage="project_02" backgroundColor="#faf7f2">
+<HorizontalSubpageTransition currentPage="project_02" backgroundColor="#faf7f2">
 	<div class="sticky-image">
 		<ResponsiveImage
 			imageWidth="2880"
@@ -66,7 +66,7 @@
 			</div>
 		</div>
 	</div>
-</SubpageTransition>
+</HorizontalSubpageTransition>
 
 <style>
 	.lower-container {

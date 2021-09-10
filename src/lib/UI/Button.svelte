@@ -65,7 +65,7 @@
 		</svg>
 	</button>
 {:else if buttonType === 'next'}
-	<a on:click aria-label="Go to the next subpage!" class={buttonType} {href}>
+	<a on:click aria-label="Go to the next subpage!" sveltekit:noscroll class={buttonType} {href}>
 		<svg aria-hidden="true" version="1.1" viewBox="0 0 54 15" xmlns="http://www.w3.org/2000/svg">
 			<g fill="none" fill-rule="evenodd">
 				<rect
@@ -86,7 +86,7 @@
 		</svg>
 	</a>
 {:else if buttonType === 'previous'}
-	<a on:click aria-label="Go the previous page!" class={buttonType} {href}>
+	<a on:click aria-label="Go the previous page!" sveltekit:noscroll class={buttonType} {href}>
 		<svg
 			aria-hidden="true"
 			width="54"

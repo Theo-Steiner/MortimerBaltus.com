@@ -1,6 +1,6 @@
 <script>
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
-	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
+	import HorizontalSubpageTransition from '$lib/UX/HorizontalSubpageTransition.svelte';
 	import { t } from 'precompile-intl-runtime';
 </script>
 
@@ -11,7 +11,7 @@
 		content="Eberhard Müller develops sophis­ti­cated textile interiors at the ghest level."
 	/>
 </svelte:head>
-<SubpageTransition currentPage="project_03" backgroundColor="#151515">
+<HorizontalSubpageTransition currentPage="project_03" backgroundColor="#151515">
 	<div class="sticky-image">
 		<ResponsiveImage
 			imageWidth="2786"
@@ -71,7 +71,7 @@
 			</div>
 		</div>
 	</div>
-</SubpageTransition>
+</HorizontalSubpageTransition>
 
 <style>
 	.outside-link {

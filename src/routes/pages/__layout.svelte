@@ -4,8 +4,10 @@
 	import navState from '$lib/UX/nav-state';
 	import deGallery from '$lib/data/deGallery.json';
 	import jpGallery from '$lib/data/jpGallery.json';
+	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
 
 	let slug = 'title';
+	let innerWidth;
 
 	$: {
 		slug = $page.path.split('/')[2];
@@ -58,40 +60,16 @@
 	$: reportNavigation($navigating);
 
 	$: nextLink = getNextSubpage($page.path);
-	let slideDirection = 'static';
-
-	function setSlide(direction) {
-		slideDirection = direction;
-	}
 </script>
 
 <Navigation
 	previousLink={$navState.history[$navState.history.length - 1]}
 	currentPage={slug}
-	on:go-previous={() => setSlide('inverse')}
-	on:go-next={() => setSlide('normal')}
 	{nextLink}
+	{innerWidth}
 />
-<main
-	class:inverse-slide={slideDirection === 'inverse'}
-	class:normal-slide={slideDirection === 'normal'}
->
+
+<SubpageTransition bind:innerWidth>
 	<slot />
-	<!-- Footer is inside the SubpageTransition container -->
-</main>
-
-<style>
-	main {
-		display: flex;
-		flex-direction: row;
-		width: 200vw;
-	}
-
-	.inverse-slide {
-		width: 200vw;
-		position: absolute;
-		top: 0;
-		left: -100vw;
-		flex-direction: row-reverse;
-	}
-</style>
+</SubpageTransition>
+<!-- Footer is inside the SubpageTransition container -->

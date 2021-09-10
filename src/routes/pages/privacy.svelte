@@ -1,6 +1,6 @@
 <script>
-	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
 	import SlidingText from '$lib/UI/SlidingText.svelte';
+	import HorizontalSubpageTransition from '$lib/UX/HorizontalSubpageTransition.svelte';
 </script>
 
 <svelte:head>
@@ -8,7 +8,7 @@
 	<meta name="description" content="The Privacy Statement of MortimerBaltus.com" />
 </svelte:head>
 
-<SubpageTransition currentPage="privacy">
+<HorizontalSubpageTransition currentPage="privacy">
 	<div lang="en" class="container">
 		<p class="intro">
 			At MortimerBaltus, accessible from MortimerBaltus.com, one of our main priorities is the
@@ -151,7 +151,7 @@
 		</SlidingText>
 		<hr />
 	</div>
-</SubpageTransition>
+</HorizontalSubpageTransition>
 
 <style>
 	.container {
