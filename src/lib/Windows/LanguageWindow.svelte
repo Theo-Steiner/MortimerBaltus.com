@@ -15,7 +15,7 @@
 		id={13}
 		enlargeable={false}
 	>
-		<LazyComponent componentPath="../UI/WindowUI/Language/LanguageUI.svelte">
+		<LazyComponent componentImport={() => import('../UI/WindowUI/Language/LanguageUI.svelte')}>
 			<figure>
 				<LanguageLetter languageSelected="en" />
 			</figure>

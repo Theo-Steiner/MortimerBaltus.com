@@ -1,24 +1,33 @@
 <script>
 	import IntersectionObserver from '$lib/UX/IntersectionObserver.svelte';
 
-	export let componentPath;
+	export let componentImport;
+	export let exposesIntersecting = false;
 
 	let componentPromise;
+	let componentLoaded = false;
 
 	function loadComponent() {
-		componentPromise = import(componentPath);
+		if (!componentLoaded) {
+			componentPromise = componentImport();
+			componentLoaded = true;
+		}
 	}
 </script>
 
 <IntersectionObserver let:intersecting>
 	{#if intersecting}
 		<div use:loadComponent />
-		{#if componentPromise}
-			{#await componentPromise}
-				<slot />
-			{:then { default: LoadedComponent }}
+	{/if}
+	{#if componentPromise}
+		{#await componentPromise}
+			<slot />
+		{:then { default: LoadedComponent }}
+			{#if exposesIntersecting}
+				<LoadedComponent {intersecting} />
+			{:else}
 				<LoadedComponent />
-			{/await}
-		{/if}
+			{/if}
+		{/await}
 	{/if}
 </IntersectionObserver>

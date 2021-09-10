@@ -1,5 +1,7 @@
 <script>
-	export let isPaused = false;
+	export let intersecting = false;
+
+	let hovered = false;
 	let show = 'html';
 
 	function matrix(node, params) {
@@ -41,26 +43,39 @@
 
 	let lastCall;
 
-	function startTimer(node, string) {
-		if (!isPaused) {
-			setTimeout(() => {
-				show = string;
-			}, 10000);
+	function showNext(nextState) {
+		if (intersecting && !hovered) {
+			show = nextState;
 		} else {
-			lastCall = string;
+			lastCall = nextState;
+		}
+	}
+
+	function startTimer(_, nextState) {
+		if (intersecting && !hovered) {
+			if (!lastCall) {
+				setTimeout(() => {
+					showNext(nextState);
+				}, 10000);
+			} else {
+				show = nextState;
+			}
+		} else {
+			lastCall = nextState;
 		}
 	}
 
 	function restart() {
-		startTimer(lastCall);
+		startTimer(undefined, lastCall);
 	}
 
-	$: if (!isPaused && lastCall) {
+	$: if (intersecting && !hovered && lastCall) {
 		restart();
+		lastCall = undefined;
 	}
 </script>
 
-<ul lang="en">
+<ul on:mouseenter={() => (hovered = true)} on:mouseleave={() => (hovered = false)} lang="en">
 	{#if show === 'html'}
 		<li
 			use:startTimer={'transition'}
@@ -126,13 +141,13 @@
 			<span class="highlight-cyan">technologyStack</span> &#123;
 		</li>
 		<li transition:matrix class="twice-indented">
-			<span class="highlight-red">builtOn</span>: "Cloud-infrastructure and CDNs",
+			<span class="highlight-red">builtOn</span>: 'Cloud-Infrastructure',
 		</li>
 		<li transition:matrix class="twice-indented">
-			<span class="highlight-red">this.provides</span>: "Performance and reliability",
+			<span class="highlight-red">this.enables</span>: ['Performance', 'Reliability'],
 		</li>
 		<li transition:matrix class="twice-indented">
-			<span class="highlight-red">this.allowsFor</span>: scalability&amp;&amp;globalDeployment
+			<span class="highlight-red">this.scalability</span>: globalDeployment
 		</li>
 		<li transition:matrix class="indented">&#125;</li>
 		<li transition:matrix class="indented">
@@ -157,6 +172,7 @@
 		font-family: 'Courier New', Courier, monospace;
 		list-style: none;
 		font-size: 13px;
+		font-weight: 600;
 		margin: 0px;
 		line-height: 20px;
 		letter-spacing: -0.2px;
@@ -205,15 +221,16 @@
 	}
 
 	ul {
-		margin: 9px;
+		margin-top: 8px;
+		margin-left: 8px;
 		padding: 0px;
 	}
 
 	.indented {
-		margin-left: 15px;
+		margin-left: 10px;
 	}
 
 	.twice-indented {
-		margin-left: 30px;
+		margin-left: 20px;
 	}
 </style>

@@ -20,7 +20,10 @@
 			large: 8
 		}}
 	>
-		<LazyComponent componentPath="../UI/WindowUI/CleanCodeUI.svelte">
+		<LazyComponent
+			exposesIntersecting
+			componentImport={() => import('../UI/WindowUI/CleanCodeUI.svelte')}
+		>
 			<ul lang="en">
 				<li>
 					&lt;<span class="highlight-yellow">@MORTIMERBALTUS</span>
