@@ -25,7 +25,9 @@
 		letter-spacing: -0.28px;
 
 		/* Slide effect properties */
-		transition: all 400ms ease-in-out;
+		transition: color 600ms cubic-bezier(0.32, 0, 0.67, 0),
+			background-color 600ms cubic-bezier(0.32, 0, 0.67, 0),
+			max-height 600ms cubic-bezier(0.83, 0, 0.15, 1);
 		overflow: hidden;
 		height: auto;
 		max-height: 54px;
@@ -41,6 +43,8 @@
 	}
 
 	.slide {
+		transition: color 300ms ease-in-out, background-color 300ms ease-in-out,
+			max-height 600ms cubic-bezier(0.83, 0, 0.15, 1);
 		max-height: 200vh;
 		background-color: #151515;
 		color: #fefefe;
@@ -48,6 +52,9 @@
 
 	@media (hover: hover) {
 		section:hover {
+			transition: color 600ms cubic-bezier(0.32, 0, 0.67, 0),
+				background-color 400ms cubic-bezier(0.32, 0, 0.67, 0),
+				max-height 400ms cubic-bezier(0.83, 0, 0.15, 1);
 			background-color: #151515;
 			color: #fefefe;
 		}
