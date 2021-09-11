@@ -33,15 +33,6 @@
 		max-height: 54px;
 	}
 
-	:global(p) {
-		color: inherit;
-		padding: 5px 0 10px 0;
-		font-size: inherit;
-		line-height: inherit;
-		letter-spacing: inherit;
-		padding: none;
-	}
-
 	.slide {
 		transition: color 300ms ease-in-out, background-color 300ms ease-in-out,
 			max-height 600ms cubic-bezier(0.83, 0, 0.15, 1);

@@ -37,7 +37,7 @@ describes the terms on the basis of which you may make use of our website (“Te
 
 		<hr />
 		<SlidingText header="Accountability for Content">
-			<p>
+			<p class="intro">
 				The contents of our pages have been created with the utmost care. However, we cannot
 				guarantee the contents' accuracy, completeness or topicality. According to statutory
 				provisions, we are furthermore responsible for our own content on these web pages. In this
@@ -92,6 +92,14 @@ describes the terms on the basis of which you may make use of our website (“Te
 		padding: 0 10px 30px 10px;
 	}
 
+	p {
+		color: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		letter-spacing: inherit;
+		padding: 0;
+	}
+
 	li {
 		white-space: nowrap;
 		line-height: 24px;
@@ -134,7 +142,7 @@ describes the terms on the basis of which you may make use of our website (“Te
 	@media only screen and (min-device-width: 1440px) {
 		h1,
 		.contact-container,
-		p {
+		.intro {
 			max-width: 1200px;
 		}
 	}

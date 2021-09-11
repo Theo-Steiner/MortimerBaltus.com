@@ -168,6 +168,14 @@
 		padding: 73px 10px 30px 10px;
 	}
 
+	p {
+		color: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		letter-spacing: inherit;
+		padding: 0;
+	}
+
 	@media only screen and (min-device-width: 768px) {
 		.intro {
 			letter-spacing: -0.55px;
