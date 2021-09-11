@@ -66,7 +66,7 @@
 
 	.logo-container {
 		width: 100vw;
-		height: 75vw;
+		height: calc((19 / 32) * 100vw);
 		max-height: 853px;
 		display: flex;
 		justify-content: center;
@@ -89,7 +89,8 @@
 	}
 
 	video {
-		height: auto;
+		object-fit: cover;
+		height: calc((19 / 32) * 100vw);
 		width: 100vw;
 	}
 

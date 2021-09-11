@@ -133,15 +133,11 @@
 
 	.vk-image {
 		width: 100vw;
-		height: 180vw;
-		max-height: 853px;
+		height: auto;
+		aspect-ratio: 29/ 17;
+		display: block;
 		object-fit: cover;
 		object-position: center top;
-	}
-
-	.visitenkarten-container {
-		overflow: hidden;
-		min-height: 400px;
 	}
 
 	.stack {
@@ -154,16 +150,13 @@
 		z-index: 1;
 		width: 100%;
 		display: flex;
-		flex-wrap: wrap;
 		justify-content: center;
-		padding-bottom: 20vw;
+		padding-bottom: 12vw;
 	}
 
 	.vk {
-		width: 90vw;
-		height: 51vw;
-		max-width: 431px;
-		max-height: 244px;
+		width: 30vw;
+		height: 17vw;
 		margin: 1.8vw;
 		box-shadow: 0px 15px 25px -20px rgba(82, 102, 104, 0.66),
 			0px 15px 40px -10px rgba(82, 102, 104, 0.33);
@@ -173,23 +166,5 @@
 		width: 100vw;
 		display: flex;
 		flex-wrap: wrap;
-	}
-
-	@media only screen and (min-device-width: 768px) {
-		.vk-image {
-			width: 100vw;
-			height: auto;
-		}
-
-		.visitenkarten {
-			padding-bottom: min(10vh, 182px);
-		}
-
-		.vk {
-			width: 30vw;
-			height: 17vw;
-			max-width: none;
-			max-height: none;
-		}
 	}
 </style>
