@@ -15,8 +15,7 @@
 		isInForeground={true}
 	>
 		<p>
-			Your privacy is important to us, therefore we don’t use any tracking services by
-			third-parties. <br /><br /> Please read our Privacy Policy for more info on this subject!
+			{$t('windows.cookies.text')}
 		</p>
 	</WindowElement>
 </div>
@@ -31,12 +30,13 @@
 	}
 
 	p {
+		white-space: pre-line;
 		color: #151515;
 		font-size: 16px;
 		line-height: 18.5px;
 		letter-spacing: -0.17px;
 		margin: 0px;
-		padding: 7px;
+		padding: 6px;
 	}
 
 	@media only screen and (min-width: 1440px) {

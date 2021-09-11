@@ -2,11 +2,20 @@ export default {
 	windows: {
 		about: 'ABOUT',
 		contact: { title: 'CONTACT', text: '' },
-		cookies: { title: 'COOKIES', text: '' },
+		cookies: {
+			title: 'COOKIES',
+			text: 'Your privacy is important to us, therefore we don’t use any tracking services by third-parties.\n\n Please read our Privacy Policy for more info on this subject!'
+		},
 		'clean-code': 'CLEAN.CODE',
 		language: 'LANGUAGE',
-		legal: { title: 'LEGAL NOTICE', text: '' },
-		privacy: { title: 'PRIVACY POLICY', text: '' },
+		legal: {
+			title: 'LEGAL NOTICE',
+			text: "You like boring legal texts and bureaucracy? \n\nWe've got you covered!"
+		},
+		privacy: {
+			title: 'PRIVACY POLICY',
+			text: 'Eager to find out how browser-data is handled on our Website? \n\n Surely this is just your cup of tea...'
+		},
 		references: 'REFERENCES',
 		project_01: 'PROJECT_01',
 		project_02: 'PROJECT_02',
@@ -44,7 +53,7 @@ export default {
 		project_04: {
 			title: 'PROJECT_04',
 			introduction:
-				"This design proposal was developed as part of the visual identity development for a perfume start-up located in Germany. As part of this process we visualized multiple concepts for the client to decide which overall look suited their wishes and requirements best.\nDuring a very successfull launch in 2021 the perfume's first edition sold out in just 2 weeks - starting off the start-up finally branded as Soèm perfectly.\n\nThe process of brand identity development, which makes our work so enjoyable and special usually leaves us with great results that remain unseen. Therefore, we decided to use this space to showcase what is left on the cutting room floor."
+				"This design proposal was developed as part of the visual identity development for a perfume start-up located in Germany. As part of this process we visualized multiple concepts for the client to decide which overall look suited their wishes and requirements best.\nDuring a very successfull launch in 2021 the perfume's first edition sold out in just 2 weeks - starting off the start-up finally branded as Soèm perfectly.\u000A\u000AThe process of brand identity development, which makes our work so enjoyable and special usually leaves us with great results that remain unseen. Therefore, we decided to use this space to showcase what is left on the cutting room floor."
 		},
 		error: {
 			title: 'ERROR',

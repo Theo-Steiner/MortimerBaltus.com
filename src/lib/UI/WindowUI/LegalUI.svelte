@@ -1,9 +1,14 @@
+<script>
+	import { t } from 'svelte-intl-precompile';
+</script>
+
 <p>
-	You like boring legal texts and bureaucracy? <br /><br /> We've got you covered!
+	{$t('windows.legal.text')}
 </p>
 
 <style>
 	p {
+		white-space: pre-line;
 		display: block;
 		height: 133px;
 		width: 266px;
