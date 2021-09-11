@@ -46,7 +46,11 @@ export default {
 			introduction:
 				"This design proposal was developed as part of the visual identity development for a perfume start-up located in Germany. As part of this process we visualized multiple concepts for the client to decide which overall look suited their wishes and requirements best.\nDuring a very successfull launch in 2021 the perfume's first edition sold out in just 2 weeks - starting off the start-up finally branded as Soèm perfectly.\n\nThe process of brand identity development, which makes our work so enjoyable and special usually leaves us with great results that remain unseen. Therefore, we decided to use this space to showcase what is left on the cutting room floor."
 		},
-		placeholder: { title: 'PLACEHOLDER' },
+		error: {
+			title: 'ERROR',
+			errorMessage:
+				"We couldn't find this page on our server, so we'll have our intern go through the archives and send it by fax!"
+		},
 		undefined: { title: '' }
 	}
 };

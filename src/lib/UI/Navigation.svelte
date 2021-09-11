@@ -2,7 +2,6 @@
 	import Button from './Button.svelte';
 	import { fly } from 'svelte/transition';
 	import { t } from 'svelte-intl-precompile';
-	import { createEventDispatcher } from 'svelte';
 	import navState from '$lib/UX/nav-state';
 
 	export let currentPage;
@@ -10,8 +9,6 @@
 	export let previousLink;
 
 	export let innerWidth;
-
-	const dispatch = createEventDispatcher();
 </script>
 
 <nav out:fly={{ y: -100, duration: 400 }} in:fly={{ y: -300, delay: 700 }}>

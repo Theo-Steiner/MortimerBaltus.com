@@ -1,10 +1,10 @@
 {
-	"name": "skmb",
-	"version": "0.0.1",
+	"name": "mortimerbaltus",
+	"version": "1.0.0",
 	"scripts": {
 		"dev": "svelte-kit dev --host",
 		"build": "svelte-kit build --verbose",
-		"postbuild": "svelte-sitemap --domain https://mortimerbaltus.com",
+		"postbuild": "svelte-sitemap --domain https://mortimerbaltus.com; mv build/404/index.html build/404.html && echo 'moved 404.html to root'",
 		"preview": "svelte-kit preview",
 		"lint": "prettier --check . && eslint --ignore-path .gitignore .",
 		"format": "prettier --write ."
