@@ -20,15 +20,24 @@
 
 <style>
 	section {
-		font-size: 22px;
-		line-height: 26px;
-		letter-spacing: -0.55px;
+		font-size: 16px;
+		line-height: 1.18;
+		letter-spacing: -0.28px;
 
 		/* Slide effect properties */
 		transition: all 400ms ease-in-out;
 		overflow: hidden;
 		height: auto;
-		max-height: 56px;
+		max-height: 54px;
+	}
+
+	:global(p) {
+		color: inherit;
+		padding: 5px 0 10px 0;
+		font-size: inherit;
+		line-height: inherit;
+		letter-spacing: inherit;
+		padding: none;
 	}
 
 	.slide {
@@ -45,17 +54,21 @@
 	}
 
 	h2 {
-		font-size: 24px;
-		padding: 15px 10px 15px 10px;
+		padding: 15px 10px;
+		letter-spacing: -0.55px;
+		font-size: 18px;
+		line-height: 24px;
+		white-space: nowrap;
 	}
 
 	div {
-		padding: 5px 10px 20px 10px;
+		padding: 0px 10px 20px 10px;
 	}
 
 	@media only screen and (min-device-width: 768px) {
 		section {
 			max-height: 92px;
+			font-size: 22px;
 		}
 
 		div {
@@ -63,8 +76,9 @@
 		}
 
 		h2 {
+			font-size: 24px;
 			line-height: 52px;
-			padding: 20px 20px 20px 20px;
+			padding: 20px;
 		}
 	}
 </style>

@@ -86,11 +86,6 @@ describes the terms on the basis of which you may make use of our website (“Te
 		padding: 73px 10px 30px 10px;
 	}
 
-	p {
-		color: inherit;
-		padding: 5px 10px 20px 10px;
-	}
-
 	.contact-container {
 		display: flex;
 		flex-flow: row wrap;
@@ -120,10 +115,6 @@ describes the terms on the basis of which you may make use of our website (“Te
 			line-height: 1.05;
 			letter-spacing: -0.55px;
 			padding: 83px 20px 30px 20px;
-		}
-
-		p {
-			padding: 0px 20px 50px 20px;
 		}
 
 		.contact-container {

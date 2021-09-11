@@ -12,12 +12,12 @@
 </script>
 
 <script>
+	import HorizontalSubpageTransition from '$lib/UX/HorizontalSubpageTransition.svelte';
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
-	import SubpageTransition from '$lib/UX/SubpageTransition.svelte';
 	export let image;
 </script>
 
-<SubpageTransition currentPage="gallery">
+<HorizontalSubpageTransition backgroundColor="#151515" currentPage="gallery">
 	<section>
 		<ResponsiveImage
 			limitHeight={false}
@@ -28,7 +28,7 @@
 			alt={image.alt}
 		/>
 	</section>
-</SubpageTransition>
+</HorizontalSubpageTransition>
 
 <style>
 	section {
