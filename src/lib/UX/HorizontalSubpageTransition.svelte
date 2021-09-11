@@ -26,16 +26,21 @@
 	}}
 	style="--backgroundColor: {backgroundColor};"
 >
-	<slot />
+	<div>
+		<slot />
+	</div>
 	<Footer {currentPage} />
 </article>
 
 <style>
+	div {
+		min-height: calc(100vh - 333px);
+		background-color: var(--backgroundColor);
+	}
+
 	article {
 		position: absolute;
 		height: 100%;
 		overflow: scroll;
-
-		background-color: var(--backgroundColor);
 	}
 </style>
