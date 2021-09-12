@@ -39,6 +39,11 @@
 		padding: 6px;
 	}
 
+	p:lang(ja) {
+		font-size: 16px;
+		line-height: 145%;
+	}
+
 	@media only screen and (min-width: 1440px) {
 		div {
 			grid-column: 60/81;

@@ -19,4 +19,9 @@
 		letter-spacing: -0.28px;
 		padding: 9px 0px 15px 9px;
 	}
+
+	p:lang(ja) {
+		font-size: 18px;
+		line-height: 145%;
+	}
 </style>

@@ -405,6 +405,10 @@
 		color: #151515;
 	}
 
+	.action-button:lang(ja) {
+		font-size: 16px;
+	}
+
 	.cancel-button {
 		height: 54px;
 		width: 54px;
@@ -438,10 +442,15 @@
 		color: #ffffff;
 		background-color: #5a8bf3;
 		border-radius: 20px;
-		margin-left: 7px;
+		margin-left: 10px;
 		font-size: 16px;
 		line-height: 19.5px;
 		overflow: hidden;
+	}
+
+	.message-bubble:lang(ja) {
+		font-size: 14px;
+		line-height: 145%;
 	}
 
 	.message-container {
@@ -518,6 +527,10 @@
 		font-size: 20px;
 		margin: 0px;
 		padding: 10px;
+	}
+
+	p:lang(ja) {
+		font-size: 16px;
 	}
 
 	hr {

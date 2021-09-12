@@ -16,4 +16,9 @@
 		line-height: 25.5px;
 		letter-spacing: -0.28px;
 	}
+
+	p:lang(ja) {
+		font-size: 20px;
+		line-height: 145%;
+	}
 </style>
