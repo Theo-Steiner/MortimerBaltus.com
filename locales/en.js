@@ -15,8 +15,8 @@ export default {
 				info: 'If you wanna talk tech, ask me anything or just need someone to share memes with... hit me up at theo@mortimerbaltus.com',
 				cta: "I'm excited to hear from you!"
 			},
-			compose: 'Compose Email',
-			send: 'Send Email',
+			compose: 'Compose Message',
+			send: 'Send Message',
 			sending: 'Sending...',
 			success: "Thank's! I'll get back to you as soon as possible.",
 			error: 'Oops, something went terribly wrong... Please try again or use your own e-mail client'

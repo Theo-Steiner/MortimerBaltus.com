@@ -9,19 +9,14 @@
 			'<>/(){}ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890アイウエオカキクケコタチツテトサシスセソマミムメモなにぬねのはわを';
 		const text = node.textContent.trim();
 		const html = node.innerHTML.trim();
-		let lastTime = 0;
 		return {
-			duration: 3000,
+			duration: 1000,
 			...params,
 			tick(t) {
 				if (t === 1) {
 					node.innerHTML = html;
 					return;
 				}
-
-				const time = Date.now();
-				if (time - lastTime < 32) return;
-				lastTime = time;
 
 				let str = '';
 				for (let i = 0; i < text.length; i++) {
@@ -45,6 +40,7 @@
 
 	function showNext(nextState) {
 		if (intersecting && !hovered) {
+			console.log('SHOW NEXT IS CALLED');
 			show = nextState;
 		} else {
 			lastCall = nextState;
@@ -58,7 +54,7 @@
 					showNext(nextState);
 				}, 10000);
 			} else {
-				show = nextState;
+				showNext(nextState);
 			}
 		} else {
 			lastCall = nextState;
@@ -70,7 +66,7 @@
 	}
 
 	$: if (intersecting && !hovered && lastCall) {
-		restart();
+		setTimeout(restart, 1000);
 		lastCall = undefined;
 	}
 </script>

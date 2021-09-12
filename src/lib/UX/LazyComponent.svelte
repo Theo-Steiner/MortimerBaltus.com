@@ -7,18 +7,15 @@
 	let componentPromise;
 	let componentLoaded = false;
 
-	function loadComponent() {
+	const loadComponent = () => {
 		if (!componentLoaded) {
 			componentPromise = componentImport();
 			componentLoaded = true;
 		}
-	}
+	};
 </script>
 
-<IntersectionObserver let:intersecting>
-	{#if intersecting}
-		<div use:loadComponent />
-	{/if}
+<IntersectionObserver on:intersect={loadComponent} let:intersecting>
 	{#if componentPromise}
 		{#await componentPromise}
 			<slot />

@@ -6,7 +6,7 @@ export default {
 			moritz: {
 				name: 'モーリッツ・モーティマー（独）',
 				greeting: '初めまして、モーリッツと申します',
-				info: 'モーティマーバルトスのアートダイレクターです。本問い合わせフォームまたはmoritz@mortimerbaltus.comを通してメッセージを送ることが可能です。',
+				info: 'モーティマーバルトスのアートディレクターです。本問い合わせフォームまたはmoritz@mortimerbaltus.comを通してメッセージを送ることが可能です。',
 				cta: 'ご連絡をお待ちしております！'
 			},
 			theo: {
