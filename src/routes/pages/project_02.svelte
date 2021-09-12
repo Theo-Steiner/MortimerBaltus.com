@@ -24,7 +24,7 @@
 	<div class="lower-container">
 		<p>
 			{$t('pages.project_02.introduction')}
-			<a lang="en" class="outside-link" href="https://produkt.jp">produkt.jp ↗</a>
+			<a lang="en" class="outside-link" href="https://produkt.jp">produkt.jp ↗&#xFE0E;</a>
 		</p>
 		<ResponsiveImage
 			imageWidth="2326"

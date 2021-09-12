@@ -25,7 +25,7 @@
 		<p>
 			{$t('pages.project_01.introduction')}
 			<a lang="en" class="outside-link" href="https://concorazon-hamburg.com/"
-				>concorazon-hamburg.com ↗</a
+				>concorazon-hamburg.com ↗&#xFE0E;</a
 			>
 		</p>
 

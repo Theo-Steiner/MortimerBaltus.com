@@ -58,9 +58,11 @@
 			{$t('pages.about.introduction')}
 			<br />
 			<a lang="en" class="outside-link" href="https://concorazon-hamburg.com/"
-				>moritzmortimer.de ↗</a
+				>moritzmortimer.de ↗&#xFE0E;</a
 			>
-			<a lang="en" class="outside-link" href="https://concorazon-hamburg.com/">theosteiner.de ↗</a>
+			<a lang="en" class="outside-link" href="https://concorazon-hamburg.com/"
+				>theosteiner.de ↗&#xFE0E;</a
+			>
 		</p>
 	</div>
 	<div class="image-container sticky-image">

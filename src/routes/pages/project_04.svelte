@@ -27,7 +27,7 @@
 	<div class="lower-container">
 		<p>
 			{$t('pages.project_04.introduction')}
-			<a lang="en" class="outside-link" href="https://so-em.com">so-em.com ↗</a>
+			<a lang="en" class="outside-link" href="https://so-em.com">so-em.com ↗&#xFE0E;</a>
 		</p>
 		<!-- svelte-ignore a11y-media-has-caption -->
 		<video class="sticky-video" muted autoplay loop playsinline>

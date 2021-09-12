@@ -24,7 +24,9 @@
 	<div class="lower-container">
 		<p>
 			{$t('pages.project_03.introduction')}
-			<a lang="en" class="outside-link" href="https://eberhard-mueller.de">eberhard-mueller.de ↗</a>
+			<a lang="en" class="outside-link" href="https://eberhard-mueller.de"
+				>eberhard-mueller.de ↗&#xFE0E;</a
+			>
 		</p>
 		<ResponsiveImage
 			imageWidth="2326"
