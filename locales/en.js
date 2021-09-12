@@ -6,8 +6,8 @@ export default {
 			moritz: {
 				name: 'Moritz Mortimer (DE)',
 				greeting: 'Hi, nice to meet you',
-				info: 'You can send me a message right from this window or shoot me an email the old fashioned way at moritz@mortimerbaltus.com',
-				cta: "I can't wait to hear from you!"
+				info: "Please don't hesitate to message me either by using this window or by sending me an email via moritz@mortimerbaltus.com",
+				cta: "Can't wait to hear from you!"
 			},
 			theo: {
 				name: 'Theodor Baltus (JP)',
