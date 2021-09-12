@@ -3,7 +3,7 @@
 	import HorizontalSubpageTransition from '$lib/UX/HorizontalSubpageTransition.svelte';
 	import { t } from 'precompile-intl-runtime';
 	let videoSlug =
-		'https://res.cloudinary.com/thdrstnr/video/upload/ac_none,c_scale,q_100,w_1280/MortimerBaltus/Soe/Soe_02_ai4z59';
+		'https://res.cloudinary.com/thdrstnr/video/upload/ac_none,c_scale,q_auto:best,w_1280/MortimerBaltus/Soe/Soe_02_ai4z59';
 </script>
 
 <svelte:head>
