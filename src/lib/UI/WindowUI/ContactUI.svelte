@@ -1,6 +1,7 @@
 <script>
+	import { t } from 'svelte-intl-precompile';
 	import { horizontalSlide } from '$lib/UX/css_utils';
-	import { slide } from 'svelte/transition';
+	import { scale } from 'svelte/transition';
 
 	let view = 'overview';
 	let messageCounter = 0;
@@ -106,7 +107,7 @@
 					}}
 				>
 					<img src={moritzmoji} alt="Moritz Mortimer Müller as a Memoji" draggable="false" />
-					<p>Moritz Mortimer (DE)</p>
+					<p>{$t(`windows.contact.moritz.name`)}</p>
 				</button>
 				<hr />
 				<button
@@ -116,7 +117,7 @@
 					}}
 				>
 					<img src={theomoji} alt="Theodor Baltus Steiner as a Memoji" draggable="false" />
-					<p>Theodor Baltus (JP)</p>
+					<p>{$t(`windows.contact.theo.name`)}</p>
 				</button>
 			</div>
 		</div>
@@ -136,8 +137,8 @@
 							resetChatView();
 						}}
 					/>
-					<p style="height: 38px;" transition:slide class="message-bubble" use:startMessageTimer>
-						{view === 'moritz' ? 'Hi, nice to meet you!' : "Hey, I'm Theo!"}
+					<p style="height: 38px;" transition:scale class="message-bubble" use:startMessageTimer>
+						{$t(`windows.contact.${view}.greeting`)}
 					</p>
 				</div>
 				<div class="message long-message" style="height: 95px;">
@@ -154,10 +155,8 @@
 								resetChatView();
 							}}
 						/>
-						<p style="height: 95px;" transition:slide class="message-bubble" use:startMessageTimer>
-							{view === 'moritz'
-								? 'You can send me a message right from this window or shoot me an email the old fashioned way at moritz@mortimerbaltus.de'
-								: 'If you wanna talk tech, ask me anything or just need someone to share memes with... hit me up at theo@mortimerbaltus.de'}
+						<p style="height: 95px;" transition:scale class="message-bubble" use:startMessageTimer>
+							{$t(`windows.contact.${view}.info`)}
 						</p>
 					{/if}
 				</div>
@@ -174,10 +173,8 @@
 								resetChatView();
 							}}
 						/>
-						<p style="height: 38px;" transition:slide class="message-bubble">
-							{view === 'moritz'
-								? "I can't wait to hear from you!"
-								: "I'm excited to hear from you!"}
+						<p style="height: 38px;" transition:scale class="message-bubble">
+							{$t(`windows.contact.${view}.cta`)}
 						</p>
 					{/if}
 				</div>
@@ -209,7 +206,7 @@
 								view === 'moritz' ? 'moritz@mortimerbaltus.com' : 'theo@mortimerbaltus.com'
 							}`;
 							resetChatView();
-						}}>Compose Email</button
+						}}>{$t(`windows.contact.compose`)}</button
 					>
 				</div>
 			</div>
@@ -271,7 +268,7 @@
 						type="submit"
 						class:disabled={!isFormValid}
 						{disabled}
-						on:click={submitForm}>{isLoading ? 'Sending...' : 'Send Email'}</button
+						on:click={submitForm}>{$t(`windows.contact.${!isLoading ? 'send' : 'sending'}`)}</button
 					>
 				</div>
 			</form>
@@ -291,10 +288,8 @@
 							view = 'overview';
 						}}
 					/>
-					<p transition:slide class="message-bubble">
-						{success
-							? "Thank's! I'll get back to you as soon as possible."
-							: 'Oops, something went terribly wrong... Please try again or use your own e-mail client'}
+					<p transition:scale class="message-bubble">
+						{$t(`windows.contact.${success ? 'success' : 'error'}`)}
 					</p>
 				</div>
 			</div>
@@ -443,7 +438,7 @@
 		color: #ffffff;
 		background-color: #5a8bf3;
 		border-radius: 20px;
-		margin-left: 10px;
+		margin-left: 7px;
 		font-size: 16px;
 		line-height: 19.5px;
 		overflow: hidden;
