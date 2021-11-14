@@ -13,7 +13,7 @@
 		parallax="very-fast"
 		href="/pages/gallery/{jpGallery[randomIndex].name.toLowerCase()}"
 		background={`url("https://res.cloudinary.com/thdrstnr/image/upload/c_pad,w_iw_div_2,ar_1,b_auto:predominant/c_crop,w_5,g_north_west/MortimerBaltus/${slug}")`}
-		title={jpGallery[randomIndex].name}
+		title={`${jpGallery[randomIndex].name}.jpg`}
 		id={8}
 		isInForeground={true}
 	>

@@ -14,7 +14,7 @@
 		parallax="very-fast"
 		href="/pages/gallery/{deGallery[randomIndex].name}"
 		background={`url("https://res.cloudinary.com/thdrstnr/image/upload/c_pad,w_iw_div_2,ar_1,b_auto:predominant/c_crop,w_5,g_north_west/MortimerBaltus/${slug}")`}
-		title={deGallery[randomIndex].name}
+		title={`${deGallery[randomIndex].name}.jpg`}
 		id={11}
 		isInForeground={true}
 	>
