@@ -12,8 +12,6 @@
 </script>
 
 <script>
-	import { page } from '$app/stores';
-
 	import HorizontalSubpageTransition from '$lib/UX/HorizontalSubpageTransition.svelte';
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
 	export let image;
@@ -23,7 +21,7 @@
 	}
 </script>
 
-{#key $page.path}
+{#key image}
 	<HorizontalSubpageTransition>
 		<section use:updateCurrentImage>
 			<ResponsiveImage
@@ -43,6 +41,7 @@
 		display: flex;
 		align-items: center;
 		height: 100vh;
+		width: 100vw;
 		overflow: hidden;
 	}
 </style>
