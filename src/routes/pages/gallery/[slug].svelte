@@ -12,23 +12,31 @@
 </script>
 
 <script>
+	import { page } from '$app/stores';
+
 	import HorizontalSubpageTransition from '$lib/UX/HorizontalSubpageTransition.svelte';
 	import ResponsiveImage from '$lib/UX/ResponsiveImage.svelte';
 	export let image;
+	let currentImage = image;
+	function updateCurrentImage() {
+		currentImage = image;
+	}
 </script>
 
-<HorizontalSubpageTransition backgroundColor="#151515" currentPage="gallery">
-	<section>
-		<ResponsiveImage
-			limitHeight={false}
-			objectFit="contain"
-			imageHeight={image.height}
-			imageWidth={image.width}
-			imageID={image.src}
-			alt={image.alt}
-		/>
-	</section>
-</HorizontalSubpageTransition>
+{#key $page.path}
+	<HorizontalSubpageTransition>
+		<section use:updateCurrentImage>
+			<ResponsiveImage
+				limitHeight={false}
+				objectFit="contain"
+				imageHeight={currentImage.height}
+				imageWidth={currentImage.width}
+				imageID={currentImage.src}
+				alt={currentImage.alt}
+			/>
+		</section>
+	</HorizontalSubpageTransition>
+{/key}
 
 <style>
 	section {

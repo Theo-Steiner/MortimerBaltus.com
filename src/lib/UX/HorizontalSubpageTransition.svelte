@@ -17,7 +17,7 @@
 		opacity: 1,
 		easing: quartInOut
 	}}
-	in:fly|local={{
+	in:fly={{
 		delay: 300,
 		duration: 500,
 		x: -$navState.flightPath,
