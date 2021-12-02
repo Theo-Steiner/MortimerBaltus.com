@@ -21,6 +21,11 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Gallery - {image.name.toUpperCase()}</title>
+	<meta name="description" content={image.alt} />
+</svelte:head>
+
 {#key image}
 	<HorizontalSubpageTransition>
 		<section use:updateCurrentImage>

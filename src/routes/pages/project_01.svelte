@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-	<title>Project_01</title>
+	<title>Project_01 - Con Corazón</title>
 	<meta
 		name="description"
 		content="Con Corazón is a brand supporting artisans from countries at war"

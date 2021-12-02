@@ -5,7 +5,7 @@
 
 <svelte:head>
 	<title>Privacy Policy</title>
-	<meta name="description" content="The Privacy Statement of MortimerBaltus.com" />
+	<meta name="description" content="Privacy Statement of MortimerBaltus.com" />
 </svelte:head>
 
 <HorizontalSubpageTransition currentPage="privacy">

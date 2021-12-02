@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Project_04</title>
+	<title>Project_04 - Soèm</title>
 	<meta
 		name="description"
 		content="Proposal for a visual identity for a perfume startup from Germany - now succesfully launched under the name Soèm"

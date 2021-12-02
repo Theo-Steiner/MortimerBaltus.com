@@ -5,6 +5,10 @@
 	import { t } from 'precompile-intl-runtime';
 </script>
 
+<svelte:head>
+	<title>404 - Page not found</title>
+	<meta name="description" content="Page not found" />
+</svelte:head>
 <SubpageTransition>
 	<Navigation previousLink="/" innerWidth nextLink="/pages/about" currentPage="error" />
 	<div>

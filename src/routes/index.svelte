@@ -24,6 +24,7 @@
 <svelte:window bind:innerHeight />
 <PageTransition {innerHeight}>
 	<div class="container">
+		<h1 style="display: none;">MortimerBaltus</h1>
 		<div class="mortimer-baltus">
 			<svg width="462" height="50" viewBox="0 0 462 50" xmlns="http://www.w3.org/2000/svg">
 				<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -87,10 +88,10 @@
 				</g>
 			</svg>
 			<noscript>
-				<h1 style="font-size: 4vh; margin: 0 8vw 0 8vw;">
+				<p style="font-size: 4vh; margin: 0 8vw 0 8vw;">
 					Please enable your JavaScript! <br /> We put a lot of effort into this Website, and would love
 					for you to see it the way it was ment to be seen!
-				</h1>
+				</p>
 			</noscript>
 			<div class="masking">
 				<h2 lang="en">

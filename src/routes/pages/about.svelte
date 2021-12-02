@@ -48,7 +48,7 @@
 <svelte:window bind:innerHeight bind:innerWidth />
 
 <svelte:head>
-	<title>ABOUT</title>
+	<title>ABOUT - MortimerBaltus</title>
 	<meta name="description" content="We are MortimerBaltus. Nice to meet you!" />
 </svelte:head>
 

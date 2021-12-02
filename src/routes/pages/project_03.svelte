@@ -5,10 +5,10 @@
 </script>
 
 <svelte:head>
-	<title>Project_03</title>
+	<title>Project_03 - Eberhard Müller</title>
 	<meta
 		name="description"
-		content="Eberhard Müller develops sophis­ti­cated textile interiors at the ghest level."
+		content="Eberhard Müller develops sophisticated textile interiors at the highest level."
 	/>
 </svelte:head>
 <HorizontalSubpageTransition currentPage="project_03" backgroundColor="#151515">

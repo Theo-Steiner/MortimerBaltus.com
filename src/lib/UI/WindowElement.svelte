@@ -136,9 +136,9 @@
 			<header>
 				<Button buttonType="minimize" on:toggle-minimize={toggleMinimize} />
 				{#if title}
-					<h1>{title.toUpperCase()}</h1>
+					<h2>{title.toUpperCase()}</h2>
 				{:else}
-					<h1>Title</h1>
+					<h2>Title</h2>
 				{/if}
 				{#if enlargeable}
 					<div bind:this={enlargeButton}>
@@ -225,7 +225,7 @@
 		margin: 0px;
 	}
 
-	h1 {
+	h2 {
 		margin: 0;
 		font-size: 13px;
 	}

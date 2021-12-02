@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-	<title>Project_02</title>
+	<title>Project_02 - PRODUKT</title>
 	<meta
 		name="description"
 		content="PRODUKT is a multi-area brand we helped establish in 2020 & 2021. For this, we designed the products, created a brand identity and built a online shop complete with shipping, payments and a easy to use CMS."
