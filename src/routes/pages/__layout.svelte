@@ -10,7 +10,7 @@
 	let innerWidth;
 
 	$: {
-		slug = $page.path.split('/')[2];
+		slug = $page.url.pathname.split('/')[2];
 	}
 
 	const informationPages = ['/pages/privacy', '/pages/legal', '/pages/about'];
@@ -59,7 +59,7 @@
 
 	$: reportNavigation($navigating);
 
-	$: nextLink = getNextSubpage($page.path);
+	$: nextLink = getNextSubpage($page.url.pathname);
 </script>
 
 <Navigation

@@ -1,8 +1,8 @@
 <script context="module">
 	import deGallery from '$lib/data/deGallery.json';
 	import jpGallery from '$lib/data/jpGallery.json';
-	export async function load({ page }) {
-		let slug = page.params.slug;
+	export async function load({ params }) {
+		let { slug } = params;
 		let image =
 			deGallery.find((el) => el.name === slug) || jpGallery.find((el) => el.name === slug);
 		return {
