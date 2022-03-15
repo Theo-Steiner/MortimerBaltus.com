@@ -45,13 +45,13 @@
 	}
 
 	function reportNavigation(route) {
-		if (route?.from?.path) {
+		if (route?.from?.pathname) {
 			const history = $navState.history;
-			if (route?.to?.path === history[history.length - 1]) {
+			if (route?.to?.pathname === history[history.length - 1]) {
 				history.pop();
 				navState.setHistory(history);
 			} else {
-				history.push(route.from.path);
+				history.push(route.from.pathname);
 				navState.setHistory(history);
 			}
 		}
