@@ -35,12 +35,14 @@
 <style>
 	div {
 		min-height: calc(100vh - 333px);
+		min-height: calc(100dvh - 333px);
 		background-color: var(--backgroundColor);
 	}
 
 	article {
 		position: absolute;
-		height: 100%;
+		height: 100vh;
+		height: 100dvh;
 		overflow: scroll;
 	}
 </style>

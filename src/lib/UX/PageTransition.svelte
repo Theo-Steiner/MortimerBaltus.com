@@ -28,10 +28,15 @@
 <style>
 	main {
 		height: 100vh;
-		height: var(--windowInnerHeight);
+		height: 100dvh;
 		width: 100%;
 		position: absolute;
 		top: 0;
 		left: 0;
+	}
+	@supports not (height: 100dvh) {
+		main {
+			height: var(--windowInnerHeight);
+		}
 	}
 </style>
